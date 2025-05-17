@@ -1,7 +1,28 @@
-<h1>Add Brick</h1>
-<form method="POST">
-    Name: <input type="text" name="name" required><br>
-    Color: <input type="text" name="color" required><br>
-    Quantity: <input type="number" name="quantity" required><br>
-    <button type="submit">Add Brick</button>
-</form>
+{% extends 'base.html' %}
+{% block title %}Add/Edit Brick{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-header text-center"><h4>{% if brick %}Edit{% else %}Add{% endif %} Brick</h4></div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="name" class="form-control" value="{{ brick.name if brick else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Color</label>
+                        <input type="text" name="color" class="form-control" value="{{ brick.color if brick else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Quantity</label>
+                        <input type="number" name="quantity" class="form-control" value="{{ brick.quantity if brick else '' }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">{% if brick %}Update{% else %}Add{% endif %} Brick</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

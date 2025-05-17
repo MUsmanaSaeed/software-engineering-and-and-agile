@@ -1,12 +1,12 @@
-<h1>Welcome to Brick Management App</h1>
-{% if session['username'] %}
-    <p>Hello, {{ session['username'] }}!</p>
-    <a href="{{ url_for('logout') }}">Logout</a>
-    <a href="{{ url_for('bricks') }}">View Bricks</a>
-    {% if session['role'] == 'admin' %}
-        <a href="{{ url_for('add_brick') }}">Add Brick</a>
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div class="text-center">
+    <h1 class="display-4">Welcome to Brick Management App</h1>
+    {% if session['username'] %}
+        <p class="lead">Hello, {{ session['username'] }}!</p>
+    {% else %}
+        <p class="lead">Please log in or register to manage bricks.</p>
     {% endif %}
-{% else %}
-    <a href="{{ url_for('login') }}">Login</a>
-    <a href="{{ url_for('register') }}">Register</a>
-{% endif %}
+</div>
+{% endblock %}
