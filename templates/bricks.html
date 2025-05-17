@@ -1,0 +1,12 @@
+<h1>Bricks</h1>
+<ul>
+    {% for brick in bricks %}
+        <li>{{ brick.name }} - {{ brick.color }} - {{ brick.quantity }}
+            {% if session['role'] == 'admin' %}
+                <a href="{{ url_for('edit_brick', id=brick.id) }}">Edit</a>
+                <a href="{{ url_for('delete_brick', id=brick.id) }}">Delete</a>
+            {% endif %}
+        </li>
+    {% endfor %}
+</ul>
+<a href="{{ url_for('index') }}">Home</a>
