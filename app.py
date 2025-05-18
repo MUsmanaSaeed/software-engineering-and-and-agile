@@ -54,6 +54,7 @@ def register():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    username = ''
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -66,7 +67,8 @@ def login():
             return redirect(url_for('index'))
         else:
             flash('Invalid credentials!', 'danger')
-    return render_template('login.html')
+            return render_template('login.html', username=username)
+    return render_template('login.html', username=username)
 
 @app.route('/logout')
 def logout():
