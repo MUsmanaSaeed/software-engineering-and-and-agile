@@ -32,9 +32,12 @@
 <div class="container">
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
-        <div id="flash-messages">
+        <div id="flash-messages"
+             style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; min-width: 320px; pointer-events: none;">
             {% for category, message in messages %}
-                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                <div class="alert alert-{{ category }} alert-dismissible fade show mb-2"
+                     role="alert"
+                     style="pointer-events: auto;">
                     {{ message }}
                     <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                 </div>
