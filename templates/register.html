@@ -9,7 +9,7 @@
                 <form method="POST">
                     <div class="mb-3">
                         <label class="form-label">Username</label>
-                        <input type="text" name="username" class="form-control" required>
+                        <input type="text" name="username" class="form-control" required value="{{ username|default('') }}">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Password</label>
@@ -18,8 +18,8 @@
                     <div class="mb-3">
                         <label class="form-label">Role</label>
                         <select name="role" class="form-select">
-                            <option value="regular">Regular</option>
-                            <option value="admin">Admin</option>
+                            <option value="user" {% if role == 'user' %}selected{% endif %}>User</option>
+                            <option value="admin" {% if role == 'admin' %}selected{% endif %}>Admin</option>
                         </select>
                     </div>
                     <button type="submit" class="btn btn-success w-100">Register</button>

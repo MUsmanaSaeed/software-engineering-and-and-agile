@@ -3,7 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'your_secret_key'
+app.config['SECRET_KEY'] = 'brick_management_system'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bricks.db'
 db = SQLAlchemy(app)
 
@@ -29,17 +29,28 @@ def index():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    username = ''
+    role = ''
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
         role = request.form['role']
+
+        # Username and password length validation
+        if len(username) < 5:
+            flash('Username must be at least 5 characters long.', 'danger')
+            return render_template('register.html', username=username, role=role)
+        if len(password) < 8:
+            flash('Password must be at least 8 characters long.', 'danger')
+            return render_template('register.html', username=username, role=role)
+
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
         new_user = User(username=username, password=hashed_password, role=role)
         db.session.add(new_user)
         db.session.commit()
         flash('Registration successful!', 'success')
         return redirect(url_for('login'))
-    return render_template('register.html')
+    return render_template('register.html', username=username, role=role)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
