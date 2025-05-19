@@ -1,73 +1,98 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>{% block title %}Brick App{% endblock %}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <title>{% block title %}Brick Manager{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap 5 CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='sidebar.css') }}">
 </head>
 <body>
-<nav class="navbar navbar-expand-lg bg-body-tertiary mb-4 border-bottom">
-    <div class="container">
-        <a class="navbar-brand" href="{{ url_for('index') }}">Brick Manager</a>
-        <div class="d-flex align-items-center">
-            <button class="btn btn-outline-light theme-toggle me-2" onclick="toggleTheme()">🌓 Theme</button>
-            <ul class="navbar-nav">
-                {% if session['username'] %}
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('bricks') }}">Bricks</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('logout') }}">Logout</a></li>
+    <div class="d-flex">
+        <nav id="sidebar" class="sidebar d-flex flex-column">
+            <div>
+                <div class="sidebar-header d-flex align-items-center justify-content-between">
+                    <span>Brick Manager</span>
+                    <button class="sidebar-toggler" id="sidebarCollapse" aria-label="Toggle sidebar">
+                        <i class="bi bi-list"></i>
+                    </button>
+                </div>
+                <ul class="nav flex-column mt-3">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" href="{{ url_for('index') }}">
+                            <i class="bi bi-house-door rounded-pill"></i> <span>Home</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'bricks' %}active{% endif %}" href="{{ url_for('bricks') }}">
+                            <i class="bi bi-box rounded-pill"></i> <span>Bricks</span>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'manufacturers' %}active{% endif %}" href="{{ url_for('manufacturers') }}">
+                            <i class="bi bi-factory rounded-pill"></i> <span>Manufacturers</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="mt-auto mb-3">
+                {% if session.get('username') %}
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <span class="nav-link disabled">
+                            <i class="bi bi-person-circle rounded-pill"></i> <span>{{ session['username'] }}</span>
+                        </span>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('logout') }}">
+                            <i class="bi bi-box-arrow-right rounded-pill"></i> <span>Logout</span>
+                        </a>
+                    </li>
+                </ul>
                 {% else %}
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('login') }}">Login</a></li>
-                    <li class="nav-item"><a class="nav-link" href="{{ url_for('register') }}">Register</a></li>
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('login') }}">
+                            <i class="bi bi-box-arrow-in-right rounded-pill"></i> <span>Login</span>
+                        </a>
+                    </li>
+                </ul>
                 {% endif %}
-            </ul>
+            </div>
+        </nav>
+        <div id="content" class="content-area flex-grow-1">
+            <div class="container mt-4 content-inner">
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                  {% if messages %}
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                      </div>
+                    {% endfor %}
+                  {% endif %}
+                {% endwith %}
+                {% block content %}{% endblock %}
+            </div>
         </div>
     </div>
-</nav>
-
-<div class="container">
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        <div id="flash-messages"
-             style="position: fixed; bottom: 30px; right: 30px; z-index: 9999; min-width: 320px; pointer-events: none;">
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }} alert-dismissible fade show mb-2"
-                     role="alert"
-                     style="pointer-events: auto;">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
-            {% endfor %}
-        </div>
-        <script>
-            setTimeout(function() {
-                var flash = document.getElementById('flash-messages');
-                if (flash) { flash.style.display = 'none'; }
-            }, 10000);
-        </script>
-    {% endif %}
-{% endwith %}
-{% block content %}{% endblock %}
-</div>
-
-<script>
-    function toggleTheme() {
-        const html = document.documentElement;
-        const currentTheme = html.getAttribute('data-bs-theme');
-        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-        html.setAttribute('data-bs-theme', newTheme);
-        localStorage.setItem('theme', newTheme);
-    }
-
-    // On page load, set theme from localStorage if available
-    document.addEventListener('DOMContentLoaded', () => {
-        const savedTheme = localStorage.getItem('theme');
-        if (savedTheme) {
-            document.documentElement.setAttribute('data-bs-theme', savedTheme);
+    <!-- Bootstrap 5 and Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
+        const toggler = document.getElementById('sidebarCollapse');
+        toggler.addEventListener('click', function () {
+            sidebar.classList.toggle('collapsed');
+            content.classList.toggle('collapsed');
+        });
+        // For mobile: show/hide sidebar
+        if (window.innerWidth < 769) {
+            sidebar.classList.add('collapsed');
+            content.classList.add('collapsed');
         }
-    });
-</script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </script>
 </body>
 </html>
-        

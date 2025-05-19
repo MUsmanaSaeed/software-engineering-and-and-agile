@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% block title %}{% if manufacturer %}Edit{% else %}Add{% endif %} Manufacturer{% endblock %}
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white text-center">
+                <h4 class="mb-0">{% if manufacturer %}Edit{% else %}Add{% endif %} Manufacturer</h4>
+            </div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" name="name" class="form-control" value="{{ manufacturer.name if manufacturer else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Address</label>
+                        <input type="text" name="address" class="form-control" value="{{ manufacturer.address if manufacturer else '' }}" required>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">{% if manufacturer %}Update{% else %}Add{% endif %} Manufacturer</button>
+                </form>
+            </div>
+        </div>
+        <div class="text-center mt-3">
+            <a href="{{ url_for('manufacturers') }}" class="btn btn-link">Back to Manufacturers</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

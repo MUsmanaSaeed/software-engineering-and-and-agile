@@ -1,10 +1,12 @@
 {% extends 'base.html' %}
-{% block title %}Add/Edit Brick{% endblock %}
+{% block title %}{% if brick %}Edit{% else %}Add{% endif %} Brick{% endblock %}
 {% block content %}
-<div class="row justify-content-center">
-    <div class="col-md-6">
-        <div class="card shadow">
-            <div class="card-header text-center"><h4>{% if brick %}Edit{% else %}Add{% endif %} Brick</h4></div>
+<div class="row justify-content-center mt-5">
+    <div class="col-md-8 col-lg-6">
+        <div class="card shadow-lg border-0">
+            <div class="card-header bg-primary text-white text-center">
+                <h4 class="mb-0">{% if brick %}Edit{% else %}Add{% endif %} Brick</h4>
+            </div>
             <div class="card-body">
                 <form method="POST">
                     <div class="mb-3">
@@ -12,16 +14,60 @@
                         <input type="text" name="name" class="form-control" value="{{ brick.name if brick else '' }}" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Color</label>
-                        <input type="text" name="color" class="form-control" value="{{ brick.color if brick else '' }}" required>
+                        <label class="form-label">Colour</label>
+                        <input type="text" name="colour" class="form-control" value="{{ brick.colour if brick else '' }}" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Quantity</label>
-                        <input type="number" name="quantity" class="form-control" value="{{ brick.quantity if brick else '' }}" required>
+                        <label class="form-label">Material</label>
+                        <input type="text" name="material" class="form-control" value="{{ brick.material if brick else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Strength</label>
+                        <input type="text" name="strength" class="form-control" value="{{ brick.strength if brick else '' }}" required>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <div class="mb-3">
+                                <label class="form-label">Width (mm)</label>
+                                <input type="number" step="0.01" name="width" class="form-control" value="{{ brick.width if brick else '' }}" required>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label class="form-label">Depth (mm)</label>
+                                <input type="number" step="0.01" name="depth" class="form-control" value="{{ brick.depth if brick else '' }}" required>
+                            </div>
+                        </div>
+                        <div class="col">
+                            <div class="mb-3">
+                                <label class="form-label">Height (mm)</label>
+                                <input type="number" step="0.01" name="height" class="form-control" value="{{ brick.height if brick else '' }}" required>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Type</label>
+                        <input type="text" name="type" class="form-control" value="{{ brick.type if brick else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Voids</label>
+                        <input type="number" name="voids" class="form-control" value="{{ brick.voids if brick else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Manufacturer</label>
+                        <select name="manufacturer_id" class="form-select" required>
+                            <option value="" disabled {% if not brick %}selected{% endif %}>Select Manufacturer</option>
+                            {% for m in manufacturers %}
+                                <option value="{{ m.id }}" {% if brick and brick.manufacturer_id == m.id %}selected{% endif %}>{{ m.name }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
                     <button type="submit" class="btn btn-success w-100">{% if brick %}Update{% else %}Add{% endif %} Brick</button>
                 </form>
             </div>
+        </div>
+        <div class="text-center mt-3">
+            <a href="{{ url_for('bricks') }}" class="btn btn-link">Back to Bricks</a>
         </div>
     </div>
 </div>

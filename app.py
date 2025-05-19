@@ -13,11 +13,24 @@ class User(db.Model):
     password = db.Column(db.String(150), nullable=False)
     role = db.Column(db.String(50), nullable=False)
 
+class Manufacturer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(150), nullable=False, unique=True)
+    address = db.Column(db.String(250), nullable=False)
+    bricks = db.relationship('Brick', backref='manufacturer', lazy=True)
+
 class Brick(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False)
-    color = db.Column(db.String(50), nullable=False)
-    quantity = db.Column(db.Integer, nullable=False)
+    colour = db.Column(db.String(50), nullable=False)
+    material = db.Column(db.String(100), nullable=False)
+    strength = db.Column(db.String(50), nullable=False)
+    width = db.Column(db.Float, nullable=False)
+    depth = db.Column(db.Float, nullable=False)
+    height = db.Column(db.Float, nullable=False)
+    type = db.Column(db.String(100), nullable=False)
+    voids = db.Column(db.Integer, nullable=False)
+    manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.id'), nullable=False)
 
 @app.before_request
 def create_tables():
@@ -36,7 +49,6 @@ def register():
         password = request.form['password']
         role = request.form['role']
 
-        # Username and password length validation
         if len(username) < 5:
             flash('Username must be at least 5 characters long.', 'danger')
             return render_template('register.html', username=username, role=role)
@@ -76,6 +88,50 @@ def logout():
     flash('Logged out successfully!', 'success')
     return redirect(url_for('login'))
 
+# Manufacturer CRUD
+@app.route('/manufacturers')
+def manufacturers():
+    all_manufacturers = Manufacturer.query.all()
+    return render_template('manufacturers.html', manufacturers=all_manufacturers)
+
+@app.route('/add_manufacturer', methods=['GET', 'POST'])
+def add_manufacturer():
+    if request.method == 'POST':
+        name = request.form['name']
+        address = request.form['address']
+        if not name or not address:
+            flash('All fields are required.', 'danger')
+            return render_template('add_manufacturer.html')
+        new_manufacturer = Manufacturer(name=name, address=address)
+        db.session.add(new_manufacturer)
+        db.session.commit()
+        flash('Manufacturer added successfully!', 'success')
+        return redirect(url_for('manufacturers'))
+    return render_template('add_manufacturer.html')
+
+@app.route('/edit_manufacturer/<int:id>', methods=['GET', 'POST'])
+def edit_manufacturer(id):
+    manufacturer = Manufacturer.query.get_or_404(id)
+    if request.method == 'POST':
+        manufacturer.name = request.form['name']
+        manufacturer.address = request.form['address']
+        db.session.commit()
+        flash('Manufacturer updated successfully!', 'success')
+        return redirect(url_for('manufacturers'))
+    return render_template('edit_manufacturer.html', manufacturer=manufacturer)
+
+@app.route('/delete_manufacturer/<int:id>')
+def delete_manufacturer(id):
+    if session.get('role') != 'admin':
+        flash('Only admins can delete manufacturers.', 'danger')
+        return redirect(url_for('manufacturers'))
+    manufacturer = Manufacturer.query.get_or_404(id)
+    db.session.delete(manufacturer)
+    db.session.commit()
+    flash('Manufacturer deleted successfully!', 'success')
+    return redirect(url_for('manufacturers'))
+
+# Brick CRUD
 @app.route('/bricks')
 def bricks():
     all_bricks = Brick.query.all()
@@ -83,28 +139,48 @@ def bricks():
 
 @app.route('/add_brick', methods=['GET', 'POST'])
 def add_brick():
+    manufacturers = Manufacturer.query.all()
     if request.method == 'POST':
         name = request.form['name']
-        color = request.form['color']
-        quantity = request.form['quantity']
-        new_brick = Brick(name=name, color=color, quantity=quantity)
+        colour = request.form['colour']
+        material = request.form['material']
+        strength = request.form['strength']
+        width = float(request.form['width'])
+        depth = float(request.form['depth'])
+        height = float(request.form['height'])
+        type_ = request.form['type']
+        voids = int(request.form['voids'])
+        manufacturer_id = int(request.form['manufacturer_id'])
+        new_brick = Brick(
+            name=name, colour=colour, material=material, strength=strength,
+            width=width, depth=depth, height=height, type=type_,
+            voids=voids, manufacturer_id=manufacturer_id
+        )
         db.session.add(new_brick)
         db.session.commit()
         flash('Brick added successfully!', 'success')
         return redirect(url_for('bricks'))
-    return render_template('add_brick.html')
+    return render_template('add_brick.html', manufacturers=manufacturers)
 
 @app.route('/edit_brick/<int:id>', methods=['GET', 'POST'])
 def edit_brick(id):
     brick = Brick.query.get_or_404(id)
+    manufacturers = Manufacturer.query.all()
     if request.method == 'POST':
         brick.name = request.form['name']
-        brick.color = request.form['color']
-        brick.quantity = request.form['quantity']
+        brick.colour = request.form['colour']
+        brick.material = request.form['material']
+        brick.strength = request.form['strength']
+        brick.width = float(request.form['width'])
+        brick.depth = float(request.form['depth'])
+        brick.height = float(request.form['height'])
+        brick.type = request.form['type']
+        brick.voids = int(request.form['voids'])
+        brick.manufacturer_id = int(request.form['manufacturer_id'])
         db.session.commit()
         flash('Brick updated successfully!', 'success')
         return redirect(url_for('bricks'))
-    return render_template('edit_brick.html', brick=brick)
+    return render_template('edit_brick.html', brick=brick, manufacturers=manufacturers)
 
 @app.route('/delete_brick/<int:id>')
 def delete_brick(id):
