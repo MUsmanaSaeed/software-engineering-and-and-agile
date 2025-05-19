@@ -54,13 +54,13 @@ body {
     margin-right: 0.5rem;
 }
 .content-area {
-    margin-left: 220px;
+    margin-left: 20px;
     min-height: 100vh;
     display: flex;
     transition: margin-left 0.3s;
 }
 .content-area.collapsed {
-    margin-left: 60px;
+    margin-left: 20px;
 }
 .content-inner {
     width: 100%;
