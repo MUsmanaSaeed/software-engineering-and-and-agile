@@ -3,6 +3,7 @@ from models import db
 from users import users_bp
 from manufacturers import manufacturers_bp
 from bricks import bricks_bp
+from manage_users import manage_users_bp
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'brickManagementSystem'
@@ -28,6 +29,7 @@ def index():
 app.register_blueprint(users_bp)
 app.register_blueprint(manufacturers_bp)
 app.register_blueprint(bricks_bp)
+app.register_blueprint(manage_users_bp)
 
 if __name__ == 'app':
     with app.app_context():

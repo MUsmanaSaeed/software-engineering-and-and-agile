@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}{% if user %}Edit{% else %}Add{% endif %} User{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-12 col-sm-8 col-md-5 col-lg-4">
+        <div class="card shadow">
+            <div class="card-header text-center"><h4>{% if user %}Edit{% else %}Add{% endif %} User</h4></div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <input type="text" name="userName" class="form-control" value="{{ user.userName if user else '' }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Password {% if user %}<span class="text-muted">(leave blank to keep current)</span>{% endif %}</label>
+                        <input type="password" name="password" class="form-control" {% if not user %}required{% endif %}>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" name="isAdmin" id="isAdmin" {% if user and user.isAdmin %}checked{% endif %}>
+                        <label class="form-check-label" for="isAdmin">Admin</label>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">{% if user %}Update{% else %}Add{% endif %} User</button>
+                </form>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{{ url_for('manage_users.users') }}" class="btn btn-link">Back to Users</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
