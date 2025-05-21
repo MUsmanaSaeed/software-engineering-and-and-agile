@@ -1,6 +1,7 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
+from functools import wraps
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'brick_management_system'
@@ -35,6 +36,17 @@ class Brick(db.Model):
 @app.before_request
 def create_tables():
     db.create_all()
+
+# --- LOGIN REQUIRED DECORATOR ---
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        if not session.get('user_id'):
+            flash('Please log in to access this page.', 'warning')
+            return redirect(url_for('login', next=request.url))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/')
 def index():
@@ -76,7 +88,8 @@ def login():
             session['username'] = user.username
             session['role'] = user.role
             flash('Login successful!', 'success')
-            return redirect(url_for('index'))
+            next_url = request.args.get('next')
+            return redirect(next_url) if next_url else redirect(url_for('index'))
         else:
             flash('Invalid credentials!', 'danger')
             return render_template('login.html', username=username)
@@ -95,6 +108,7 @@ def manufacturers():
     return render_template('manufacturers.html', manufacturers=all_manufacturers)
 
 @app.route('/add_manufacturer', methods=['GET', 'POST'])
+@login_required
 def add_manufacturer():
     if request.method == 'POST':
         name = request.form['name']
@@ -110,6 +124,7 @@ def add_manufacturer():
     return render_template('add_manufacturer.html')
 
 @app.route('/edit_manufacturer/<int:id>', methods=['GET', 'POST'])
+@login_required
 def edit_manufacturer(id):
     manufacturer = Manufacturer.query.get_or_404(id)
     if request.method == 'POST':
@@ -121,6 +136,7 @@ def edit_manufacturer(id):
     return render_template('edit_manufacturer.html', manufacturer=manufacturer)
 
 @app.route('/delete_manufacturer/<int:id>')
+@login_required
 def delete_manufacturer(id):
     if session.get('role') != 'admin':
         flash('Only admins can delete manufacturers.', 'danger')
@@ -138,6 +154,7 @@ def bricks():
     return render_template('bricks.html', bricks=all_bricks)
 
 @app.route('/add_brick', methods=['GET', 'POST'])
+@login_required
 def add_brick():
     manufacturers = Manufacturer.query.all()
     if request.method == 'POST':
@@ -163,6 +180,7 @@ def add_brick():
     return render_template('add_brick.html', manufacturers=manufacturers)
 
 @app.route('/edit_brick/<int:id>', methods=['GET', 'POST'])
+@login_required
 def edit_brick(id):
     brick = Brick.query.get_or_404(id)
     manufacturers = Manufacturer.query.all()
@@ -183,6 +201,7 @@ def edit_brick(id):
     return render_template('edit_brick.html', brick=brick, manufacturers=manufacturers)
 
 @app.route('/delete_brick/<int:id>')
+@login_required
 def delete_brick(id):
     brick = Brick.query.get_or_404(id)
     db.session.delete(brick)
