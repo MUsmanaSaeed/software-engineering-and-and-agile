@@ -55,10 +55,10 @@
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Manufacturer</label>
-                        <select name="manufacturer_id" class="form-select" required>
-                            <option value="" disabled>Select Manufacturer</option>
-                            {% for m in manufacturers %}
-                                <option value="{{ m.id }}" {% if brick.manufacturer_id == m.id %}selected{% endif %}>{{ m.name }}</option>
+                        <select name="manufacturerId" class="form-control" required>
+                            <option value="">Select Manufacturer</option>
+                            {% for manufacturer in manufacturers %}
+                                <option value="{{ manufacturer.id }}" {% if brick.manufacturerId == manufacturer.id %}selected{% endif %}>{{ manufacturer.name }}</option>
                             {% endfor %}
                         </select>
                     </div>

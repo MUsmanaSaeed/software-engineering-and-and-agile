@@ -4,15 +4,15 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'brick_management_system'
+app.config['SECRET_KEY'] = 'brickManagementSystem'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///bricks.db'
 db = SQLAlchemy(app)
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(150), nullable=False, unique=True)
+    userName = db.Column(db.String(150), nullable=False, unique=True)
     password = db.Column(db.String(150), nullable=False)
-    is_admin = db.Column(db.Boolean, default=False, nullable=False)
+    isAdmin = db.Column(db.Boolean, default=False, nullable=False)
 
 class Manufacturer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -31,137 +31,137 @@ class Brick(db.Model):
     height = db.Column(db.Float, nullable=False)
     type = db.Column(db.String(100), nullable=False)
     voids = db.Column(db.Integer, nullable=False)
-    manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.id'), nullable=False)
+    manufacturerId = db.Column(db.Integer, db.ForeignKey('manufacturer.id'), nullable=False)
 
 @app.before_request
-def create_tables_and_require_login():
+def createTablesAndRequireLogin():
     db.create_all()
     # Require login for all routes except login, register, and static files
-    allowed_routes = ['login', 'register', 'static']
-    if request.endpoint not in allowed_routes and not session.get('user_id'):
+    allowedRoutes = ['login', 'register', 'static']
+    if request.endpoint not in allowedRoutes and not session.get('userId'):
         return redirect(url_for('login', next=request.url))
 
-def login_required(f):
+def loginRequired(f):
     @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if not session.get('user_id'):
+    def decoratedFunction(*args, **kwargs):
+        if not session.get('userId'):
             flash('Please log in to access this page.', 'warning')
             return redirect(url_for('login', next=request.url))
         return f(*args, **kwargs)
-    return decorated_function
+    return decoratedFunction
 
 @app.route('/')
-def index():
+def Index():
     return render_template('index.html')
 
 @app.route('/register', methods=['GET', 'POST'])
-def register():
-    username = ''
-    is_admin = False
+def Register():
+    userName = ''
+    isAdmin = False
     if request.method == 'POST':
-        username = request.form['username']
+        userName = request.form['username']
         password = request.form['password']
-        is_admin = bool(request.form.get('is_admin'))
+        isAdmin = bool(request.form.get('is_admin'))
 
-        if len(username) < 5:
+        if len(userName) < 5:
             flash('Username must be at least 5 characters long.', 'danger')
-            return render_template('register.html', username=username, is_admin=is_admin)
+            return render_template('register.html', username=userName, is_admin=isAdmin)
         if len(password) < 8:
             flash('Password must be at least 8 characters long.', 'danger')
-            return render_template('register.html', username=username, is_admin=is_admin)
+            return render_template('register.html', username=userName, is_admin=isAdmin)
 
-        if User.query.filter_by(username=username).first():
+        if User.query.filter_by(userName=userName).first():
             flash('Username already exists.', 'danger')
-            return render_template('register.html', username=username, is_admin=is_admin)
+            return render_template('register.html', username=userName, is_admin=isAdmin)
 
-        hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
-        new_user = User(username=username, password=hashed_password, is_admin=is_admin)
-        db.session.add(new_user)
+        hashedPassword = generate_password_hash(password, method='pbkdf2:sha256')
+        newUser = User(userName=userName, password=hashedPassword, isAdmin=isAdmin)
+        db.session.add(newUser)
         db.session.commit()
         flash('Registration successful!', 'success')
         return redirect(url_for('login'))
-    return render_template('register.html', username=username, is_admin=is_admin)
+    return render_template('register.html', username=userName, is_admin=isAdmin)
 
 @app.route('/login', methods=['GET', 'POST'])
-def login():
-    username = ''
+def Login():
+    userName = ''
     if request.method == 'POST':
-        username = request.form['username']
+        userName = request.form['username']
         password = request.form['password']
-        user = User.query.filter_by(username=username).first()
+        user = User.query.filter_by(userName=userName).first()
         if user and check_password_hash(user.password, password):
-            session['user_id'] = user.id
-            session['username'] = user.username
-            session['is_admin'] = user.is_admin
+            session['userId'] = user.id
+            session['userName'] = user.userName
+            session['isAdmin'] = user.isAdmin
             flash('Login successful!', 'success')
-            next_url = request.args.get('next')
-            return redirect(next_url) if next_url else redirect(url_for('index'))
+            nextUrl = request.args.get('next')
+            return redirect(nextUrl) if nextUrl else redirect(url_for('Index'))
         else:
             flash('Invalid credentials!', 'danger')
-            return render_template('login.html', username=username)
-    return render_template('login.html', username=username)
+            return render_template('login.html', username=userName)
+    return render_template('login.html', username=userName)
 
 @app.route('/logout')
-def logout():
+def Logout():
     session.clear()
     flash('Logged out successfully!', 'success')
-    return redirect(url_for('login'))
+    return redirect(url_for('Login'))
 
 # Manufacturer CRUD
 @app.route('/manufacturers')
-def manufacturers():
-    all_manufacturers = Manufacturer.query.all()
-    return render_template('manufacturers.html', manufacturers=all_manufacturers)
+def Manufacturers():
+    allManufacturers = Manufacturer.query.all()
+    return render_template('manufacturers.html', manufacturers=allManufacturers)
 
 @app.route('/add_manufacturer', methods=['GET', 'POST'])
-@login_required
-def add_manufacturer():
+@loginRequired
+def AddManufacturer():
     if request.method == 'POST':
         name = request.form['name']
         address = request.form['address']
         if not name or not address:
             flash('All fields are required.', 'danger')
             return render_template('add_manufacturer.html')
-        new_manufacturer = Manufacturer(name=name, address=address)
-        db.session.add(new_manufacturer)
+        newManufacturer = Manufacturer(name=name, address=address)
+        db.session.add(newManufacturer)
         db.session.commit()
         flash('Manufacturer added successfully!', 'success')
-        return redirect(url_for('manufacturers'))
+        return redirect(url_for('Manufacturers'))
     return render_template('add_manufacturer.html')
 
 @app.route('/edit_manufacturer/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_manufacturer(id):
+@loginRequired
+def EditManufacturer(id):
     manufacturer = Manufacturer.query.get_or_404(id)
     if request.method == 'POST':
         manufacturer.name = request.form['name']
         manufacturer.address = request.form['address']
         db.session.commit()
         flash('Manufacturer updated successfully!', 'success')
-        return redirect(url_for('manufacturers'))
+        return redirect(url_for('Manufacturers'))
     return render_template('edit_manufacturer.html', manufacturer=manufacturer)
 
 @app.route('/delete_manufacturer/<int:id>')
-@login_required
-def delete_manufacturer(id):
-    if not session.get('is_admin'):
+@loginRequired
+def DeleteManufacturer(id):
+    if not session.get('isAdmin'):
         flash('Only admins can delete manufacturers.', 'danger')
-        return redirect(url_for('manufacturers'))
+        return redirect(url_for('Manufacturers'))
     manufacturer = Manufacturer.query.get_or_404(id)
     db.session.delete(manufacturer)
     db.session.commit()
     flash('Manufacturer deleted successfully!', 'success')
-    return redirect(url_for('manufacturers'))
+    return redirect(url_for('Manufacturers'))
 
 # Brick CRUD
 @app.route('/bricks')
-def bricks():
-    all_bricks = Brick.query.all()
-    return render_template('bricks.html', bricks=all_bricks)
+def Bricks():
+    allBricks = Brick.query.all()
+    return render_template('bricks.html', bricks=allBricks)
 
 @app.route('/add_brick', methods=['GET', 'POST'])
-@login_required
-def add_brick():
+@loginRequired
+def AddBrick():
     manufacturers = Manufacturer.query.all()
     if request.method == 'POST':
         name = request.form['name']
@@ -173,21 +173,21 @@ def add_brick():
         height = float(request.form['height'])
         type_ = request.form['type']
         voids = int(request.form['voids'])
-        manufacturer_id = int(request.form['manufacturer_id'])
-        new_brick = Brick(
+        manufacturerId = int(request.form['manufacturer_id'])
+        newBrick = Brick(
             name=name, colour=colour, material=material, strength=strength,
             width=width, depth=depth, height=height, type=type_,
-            voids=voids, manufacturer_id=manufacturer_id
+            voids=voids, manufacturerId=manufacturerId
         )
-        db.session.add(new_brick)
+        db.session.add(newBrick)
         db.session.commit()
         flash('Brick added successfully!', 'success')
-        return redirect(url_for('bricks'))
+        return redirect(url_for('Bricks'))
     return render_template('add_brick.html', manufacturers=manufacturers)
 
 @app.route('/edit_brick/<int:id>', methods=['GET', 'POST'])
-@login_required
-def edit_brick(id):
+@loginRequired
+def EditBrick(id):
     brick = Brick.query.get_or_404(id)
     manufacturers = Manufacturer.query.all()
     if request.method == 'POST':
@@ -200,20 +200,20 @@ def edit_brick(id):
         brick.height = float(request.form['height'])
         brick.type = request.form['type']
         brick.voids = int(request.form['voids'])
-        brick.manufacturer_id = int(request.form['manufacturer_id'])
+        brick.manufacturerId = int(request.form['manufacturer_id'])
         db.session.commit()
         flash('Brick updated successfully!', 'success')
-        return redirect(url_for('bricks'))
+        return redirect(url_for('Bricks'))
     return render_template('edit_brick.html', brick=brick, manufacturers=manufacturers)
 
 @app.route('/delete_brick/<int:id>')
-@login_required
-def delete_brick(id):
+@loginRequired
+def DeleteBrick(id):
     brick = Brick.query.get_or_404(id)
     db.session.delete(brick)
     db.session.commit()
     flash('Brick deleted successfully!', 'success')
-    return redirect(url_for('bricks'))
+    return redirect(url_for('Bricks'))
 
 if __name__ == '__main__':
     app.run(debug=True)

@@ -9,16 +9,16 @@
                 <form method="POST">
                     <div class="mb-3">
                         <label class="form-label">Username</label>
-                        <input type="text" name="username" class="form-control" value="{{ username|default('') }}" required>
+                        <input type="text" name="userName" class="form-control" value="{{ username|default('') }}" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Password</label>
                         <input type="password" name="password" class="form-control" required>
                     </div>
                     <div class="form-check mb-3">
-                        <input class="form-check-input" type="checkbox" name="is_admin" id="is_admin"
+                        <input class="form-check-input" type="checkbox" name="isAdmin" id="isAdmin"
                             {% if is_admin %}checked{% endif %}>
-                        <label class="form-check-label" for="is_admin">
+                        <label class="form-check-label" for="isAdmin">
                             Register as admin
                         </label>
                     </div>
