@@ -222,4 +222,13 @@ def deleteBrick(id):
 if __name__ == 'app':
     with app.app_context():
         db.create_all()  # Only create tables once, at startup
+        # In a real-world application, hardcode admin credentials would NOT be hardcoded like this.
+        if not User.query.filter_by(userName='admin').first():
+            admin_user = User(
+                userName='admin',
+                password=generate_password_hash('p4$$w0rd', method='pbkdf2:sha256'),
+                isAdmin=True
+            )
+            db.session.add(admin_user)
+            db.session.commit()
     app.run(debug=True)
