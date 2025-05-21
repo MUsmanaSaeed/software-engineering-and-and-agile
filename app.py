@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, flash, session, abort
+from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
@@ -12,7 +12,7 @@ class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(150), nullable=False, unique=True)
     password = db.Column(db.String(150), nullable=False)
-    role = db.Column(db.String(50), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False, nullable=False)
 
 class Manufacturer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -37,8 +37,6 @@ class Brick(db.Model):
 def create_tables():
     db.create_all()
 
-# --- LOGIN REQUIRED DECORATOR ---
-
 def login_required(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -55,26 +53,30 @@ def index():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     username = ''
-    role = ''
+    is_admin = False
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        role = request.form['role']
+        is_admin = bool(request.form.get('is_admin'))
 
         if len(username) < 5:
             flash('Username must be at least 5 characters long.', 'danger')
-            return render_template('register.html', username=username, role=role)
+            return render_template('register.html', username=username, is_admin=is_admin)
         if len(password) < 8:
             flash('Password must be at least 8 characters long.', 'danger')
-            return render_template('register.html', username=username, role=role)
+            return render_template('register.html', username=username, is_admin=is_admin)
+
+        if User.query.filter_by(username=username).first():
+            flash('Username already exists.', 'danger')
+            return render_template('register.html', username=username, is_admin=is_admin)
 
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
-        new_user = User(username=username, password=hashed_password, role=role)
+        new_user = User(username=username, password=hashed_password, is_admin=is_admin)
         db.session.add(new_user)
         db.session.commit()
         flash('Registration successful!', 'success')
         return redirect(url_for('login'))
-    return render_template('register.html', username=username, role=role)
+    return render_template('register.html', username=username, is_admin=is_admin)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -86,7 +88,7 @@ def login():
         if user and check_password_hash(user.password, password):
             session['user_id'] = user.id
             session['username'] = user.username
-            session['role'] = user.role
+            session['is_admin'] = user.is_admin
             flash('Login successful!', 'success')
             next_url = request.args.get('next')
             return redirect(next_url) if next_url else redirect(url_for('index'))
@@ -138,7 +140,7 @@ def edit_manufacturer(id):
 @app.route('/delete_manufacturer/<int:id>')
 @login_required
 def delete_manufacturer(id):
-    if session.get('role') != 'admin':
+    if not session.get('is_admin'):
         flash('Only admins can delete manufacturers.', 'danger')
         return redirect(url_for('manufacturers'))
     manufacturer = Manufacturer.query.get_or_404(id)
