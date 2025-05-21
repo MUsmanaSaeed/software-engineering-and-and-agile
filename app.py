@@ -219,6 +219,7 @@ def deleteBrick(id):
     flash('Brick deleted successfully!', 'success')
     return redirect(url_for('bricks'))
 
-if __name__ == '__main__':
-    db.create_all()  # Only create tables once, at startup
+if __name__ == 'app':
+    with app.app_context():
+        db.create_all()  # Only create tables once, at startup
     app.run(debug=True)
