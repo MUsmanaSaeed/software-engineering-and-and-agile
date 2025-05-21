@@ -34,11 +34,15 @@ class Brick(db.Model):
     manufacturerId = db.Column(db.Integer, db.ForeignKey('manufacturer.id'), nullable=False)
 
 @app.before_request
-def createTablesAndRequireLogin():
-    db.create_all()
+def require_login():
     # Require login for all routes except login, register, and static files
-    allowedRoutes = ['login', 'register', 'static']
-    if request.endpoint not in allowedRoutes and not session.get('userId'):
+    allowedRoutes = ['login', 'register']
+    endpoint = request.endpoint
+    if endpoint is None:
+        return  # Let Flask handle it
+    if endpoint in allowedRoutes or endpoint.startswith('static'):
+        return  # Allow access
+    if not session.get('userId'):
         return redirect(url_for('login', next=request.url))
 
 def loginRequired(f):
@@ -216,4 +220,5 @@ def deleteBrick(id):
     return redirect(url_for('bricks'))
 
 if __name__ == '__main__':
+    db.create_all()  # Only create tables once, at startup
     app.run(debug=True)
