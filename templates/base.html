@@ -25,12 +25,12 @@
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'bricks' %}active{% endif %}" href="{{ url_for('bricks') }}">
+                        <a class="nav-link {% if request.endpoint == 'bricks.bricks' %}active{% endif %}" href="{{ url_for('bricks.bricks') }}">
                             <i class="bi bi-box rounded-pill"></i> <span>Bricks</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link {% if request.endpoint == 'manufacturers' %}active{% endif %}" href="{{ url_for('manufacturers') }}">
+                        <a class="nav-link {% if request.endpoint == 'manufacturers.manufacturers' %}active{% endif %}" href="{{ url_for('manufacturers.manufacturers') }}">
                             <i class="bi bi-buildings"></i> <span>Manufacturers</span>
                         </a>
                     </li>
@@ -45,7 +45,7 @@
                         </span>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('logout') }}">
+                        <a class="nav-link" href="{{ url_for('users.logout') }}">
                             <i class="bi bi-box-arrow-right rounded-pill"></i> <span>Logout</span>
                         </a>
                     </li>
@@ -53,7 +53,7 @@
                 {% else %}
                 <ul class="nav flex-column">
                     <li class="nav-item">
-                        <a class="nav-link" href="{{ url_for('login') }}">
+                        <a class="nav-link" href="{{ url_for('users.login') }}">
                             <i class="bi bi-box-arrow-in-right rounded-pill"></i> <span>Login</span>
                         </a>
                     </li>

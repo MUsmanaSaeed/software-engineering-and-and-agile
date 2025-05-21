@@ -4,7 +4,7 @@
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h2>Manufacturers</h2>
     {% if session.get('userId') %}
-    <a href="{{ url_for('addManufacturer') }}" class="btn btn-primary">Add Manufacturer</a>
+    <a href="{{ url_for('manufacturers.addManufacturer') }}" class="btn btn-primary">Add Manufacturer</a>
     {% endif %}
 </div>
 <div class="table-responsive">
@@ -27,8 +27,8 @@
                 <td>{{ m.address }}</td>
                 {% if session.get('userId') %}
                 <td>
-                    <a href="{{ url_for('editManufacturer', id=m.id) }}" class="btn btn-sm btn-warning">Edit</a>
-                    <a href="{{ url_for('deleteManufacturer', id=m.id) }}" class="btn btn-sm btn-danger"
+                    <a href="{{ url_for('manufacturers.editManufacturer', id=m.id) }}" class="btn btn-sm btn-warning">Edit</a>
+                    <a href="{{ url_for('manufacturers.deleteManufacturer', id=m.id) }}" class="btn btn-sm btn-danger"
                        onclick="return confirm('Are you sure you want to delete this manufacturer?');">Delete</a>
                 </td>
                 {% endif %}
