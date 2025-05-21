@@ -34,8 +34,12 @@ class Brick(db.Model):
     manufacturer_id = db.Column(db.Integer, db.ForeignKey('manufacturer.id'), nullable=False)
 
 @app.before_request
-def create_tables():
+def create_tables_and_require_login():
     db.create_all()
+    # Require login for all routes except login, register, and static files
+    allowed_routes = ['login', 'register', 'static']
+    if request.endpoint not in allowed_routes and not session.get('user_id'):
+        return redirect(url_for('login', next=request.url))
 
 def login_required(f):
     @wraps(f)
