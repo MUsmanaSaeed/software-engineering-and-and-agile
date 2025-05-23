@@ -11,9 +11,14 @@
                         <label class="form-label">Username</label>
                         <input type="text" name="userName" class="form-control" value="{{ user.userName if user else '' }}" required>
                     </div>
-                    <div class="mb-3">
+                    <div class="mb-3 position-relative">
                         <label class="form-label">Password {% if user %}<span class="text-muted">(leave blank to keep current)</span>{% endif %}</label>
-                        <input type="password" name="password" class="form-control" {% if not user %}required{% endif %}>
+                        <div class="position-relative" style="width: 100%;">
+                            <input type="password" name="password" class="form-control pe-5" id="passwordInput" {% if not user %}required{% endif %} style="padding-right: 2.5rem; position: relative; z-index: 1; background-color: transparent;">
+                            <button type="button" class="peek-btn-login" id="togglePassword" tabindex="0">
+                                <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="form-check mb-3">
                         <input class="form-check-input" type="checkbox" name="isAdmin" id="isAdmin" {% if user and user.isAdmin %}checked{% endif %}>
@@ -28,4 +33,6 @@
         </div>
     </div>
 </div>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<script src="{{ url_for('static', filename='css/peek.js') }}"></script>
 {% endblock %}
