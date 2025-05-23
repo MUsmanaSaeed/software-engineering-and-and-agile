@@ -1,5 +1,5 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
-from werkzeug.security import generate_password_hash, check_password_hash
+from werkzeug.security import check_password_hash
 from models import db, User
 from functools import wraps
 
@@ -13,32 +13,6 @@ def loginRequired(f):
             return redirect(url_for('users.login', next=request.url))
         return f(*args, **kwargs)
     return decoratedFunction
-
-@users_bp.route('/register', methods=['GET', 'POST'])
-def register():
-    userName = ''
-    if request.method == 'POST':
-        userName = request.form['userName']
-        password = request.form['password']
-
-        if len(userName) < 5:
-            flash('Username must be at least 5 characters long.', 'danger')
-            return render_template('register.html', userName=userName)
-        if len(password) < 8:
-            flash('Password must be at least 8 characters long.', 'danger')
-            return render_template('register.html', userName=userName)
-
-        if User.query.filter_by(userName=userName).first():
-            flash('Username already exists.', 'danger')
-            return render_template('register.html', userName=userName)
-
-        hashedPassword = generate_password_hash(password, method='pbkdf2:sha256')
-        newUser = User(userName=userName, password=hashedPassword, isAdmin=False)
-        db.session.add(newUser)
-        db.session.commit()
-        flash('Registration successful!', 'success')
-        return redirect(url_for('users.login'))
-    return render_template('register.html', userName=userName)
 
 @users_bp.route('/login', methods=['GET', 'POST'])
 def login():
