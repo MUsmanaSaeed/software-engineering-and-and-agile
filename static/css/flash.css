@@ -1,0 +1,58 @@
+/* Floating flash message styles */
+.floating-flash-container {
+    position: fixed;
+    bottom: 32px;
+    right: 32px;
+    z-index: 9999;
+    width: 100%;
+    max-width: 400px;
+    min-width: 300px;
+    pointer-events: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.5rem;
+}
+.floating-flash-container .alert {
+    pointer-events: auto;
+    margin-bottom: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    opacity: 0.98;
+    min-width: 250px;
+    animation: flash-in 0.4s;
+    border-radius: 0.75rem;
+    font-size: 1.05rem;
+    padding: 0.75rem 1.25rem;
+    padding-right: 3.25rem; /* Increase space for the close button */
+    background-clip: padding-box;
+    position: relative;
+    white-space: normal; /* Allow wrapping */
+    text-overflow: unset;
+    overflow: visible;
+    width: 100%; /* Take full width of the container */
+    max-width: 100%;
+    word-break: break-word;
+}
+.floating-flash-container .alert .btn-close {
+    position: absolute;
+    top: 50%;
+    right: 0.75rem; /* Make spacing on both sides of X more equal */
+    transform: translateY(-50%);
+    z-index: 2;
+    width: 1.5rem;
+    height: 1.5rem;
+    font-size: 1.25rem;
+    padding: 0.25rem;
+    line-height: 1;
+    background-size: 1.25rem 1.25rem;
+}
+@keyframes flash-in {
+    from {
+        transform: translateY(30px) scale(0.98);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0) scale(1);
+        opacity: 0.98;
+    }
+}
