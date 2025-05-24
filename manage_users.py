@@ -47,6 +47,9 @@ def add_user():
         return redirect(url_for('manage_users.users'))
     return render_template('manage_user_form.html', user=None)
 
+def render_manage_user_form(user):
+    return render_template('manage_user_form.html', user=user)
+
 @manage_users_bp.route('/users/edit/<int:id>', methods=['GET', 'POST'])
 @loginRequired
 @adminRequired
@@ -54,25 +57,34 @@ def edit_user(id):
     user = User.query.get_or_404(id)
     if request.method == 'POST':
         userName = request.form['userName']
-        isAdmin = bool(request.form.get('isAdmin'))
+        is_self = user.id == session.get('userId')
+        isAdmin = True if is_self else bool(request.form.get('isAdmin'))
+        attempted_user = User(id=user.id, userName=userName, isAdmin=isAdmin, password=user.password)
+
+        # Validation checks
+        if is_self and not request.form.get('isAdmin'):
+            flash('Admins cannot remove their own admin rights.', 'warning')
+            return render_manage_user_form(attempted_user)
         if len(userName) < 5:
             flash('Username must be at least 5 characters long.', 'danger')
-            return render_template('manage_user_form.html', user=user)
+            return render_manage_user_form(attempted_user)
         if user.userName != userName and User.query.filter_by(userName=userName).first():
             flash('Username already exists.', 'danger')
-            return render_template('manage_user_form.html', user=user)
+            return render_manage_user_form(attempted_user)
+        password = request.form.get('password')
+        if password and len(password) < 8:
+            flash('Password must be at least 8 characters long.', 'danger')
+            return render_manage_user_form(attempted_user)
+
+        # Apply changes
         user.userName = userName
         user.isAdmin = isAdmin
-        password = request.form.get('password')
         if password:
-            if len(password) < 8:
-                flash('Password must be at least 8 characters long.', 'danger')
-                return render_template('manage_user_form.html', user=user)
             user.password = generate_password_hash(password, method='pbkdf2:sha256')
         db.session.commit()
         flash('User updated successfully!', 'success')
         return redirect(url_for('manage_users.users'))
-    return render_template('manage_user_form.html', user=user)
+    return render_manage_user_form(user)
 
 @manage_users_bp.route('/users/delete/<int:id>', methods=['POST'])
 @loginRequired
