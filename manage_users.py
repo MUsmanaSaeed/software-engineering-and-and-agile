@@ -30,19 +30,41 @@ def add_user():
         userName = request.form['userName']
         password = request.form['password']
         isAdmin = bool(request.form.get('isAdmin'))
-        if len(userName) < 5:
-            flash('Username must be at least 5 characters long.', 'danger')
+        if len(userName) < 3:
+            message = 'Username must be at least 3 characters long.'
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return {"success": False, "message": message}, 400
+            flash(message, 'danger')
             return render_template('manage_user_form.html', user=None)
         if len(password) < 8:
-            flash('Password must be at least 8 characters long.', 'danger')
+            message = 'Password must be at least 8 characters long.'
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return {"success": False, "message": message}, 400
+            flash(message, 'danger')
             return render_template('manage_user_form.html', user=None)
         if User.query.filter_by(userName=userName).first():
-            flash('Username already exists.', 'danger')
+            message = 'Username already exists.'
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return {"success": False, "message": message}, 400
+            flash(message, 'danger')
             return render_template('manage_user_form.html', user=None)
         hashedPassword = generate_password_hash(password, method='pbkdf2:sha256')
         newUser = User(userName=userName, password=hashedPassword, isAdmin=isAdmin)
         db.session.add(newUser)
         db.session.commit()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            from flask import url_for, flash
+            flash('User added successfully!', 'success')
+            return {
+                "success": True,
+                "user": {
+                    "id": newUser.id,
+                    "userName": newUser.userName,
+                    "isAdmin": newUser.isAdmin
+                },
+                "message": "User added successfully!",
+                "redirect": url_for('manage_users.users')
+            }
         flash('User added successfully!', 'success')
         return redirect(url_for('manage_users.users'))
     return render_template('manage_user_form.html', user=None)
@@ -63,17 +85,29 @@ def edit_user(id):
 
         # Validation checks
         if is_self and not request.form.get('isAdmin'):
-            flash('Admins cannot remove their own admin rights.', 'warning')
+            message = 'Admins cannot remove their own admin rights.'
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return {"success": False, "message": message}, 400
+            flash(message, 'warning')
             return render_manage_user_form(attempted_user)
-        if len(userName) < 5:
-            flash('Username must be at least 5 characters long.', 'danger')
+        if len(userName) < 3:
+            message = 'Username must be at least 3 characters long.'
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return {"success": False, "message": message}, 400
+            flash(message, 'danger')
             return render_manage_user_form(attempted_user)
         if user.userName != userName and User.query.filter_by(userName=userName).first():
-            flash('Username already exists.', 'danger')
+            message = 'Username already exists.'
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return {"success": False, "message": message}, 400
+            flash(message, 'danger')
             return render_manage_user_form(attempted_user)
         password = request.form.get('password')
         if password and len(password) < 8:
-            flash('Password must be at least 8 characters long.', 'danger')
+            message = 'Password must be at least 8 characters long.'
+            if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+                return {"success": False, "message": message}, 400
+            flash(message, 'danger')
             return render_manage_user_form(attempted_user)
 
         # Apply changes
@@ -82,6 +116,19 @@ def edit_user(id):
         if password:
             user.password = generate_password_hash(password, method='pbkdf2:sha256')
         db.session.commit()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            from flask import url_for, flash
+            flash('User updated successfully!', 'success')
+            return {
+                "success": True,
+                "user": {
+                    "id": user.id,
+                    "userName": user.userName,
+                    "isAdmin": user.isAdmin
+                },
+                "message": "User updated successfully!",
+                "redirect": url_for('manage_users.users')
+            }
         flash('User updated successfully!', 'success')
         return redirect(url_for('manage_users.users'))
     return render_manage_user_form(user)
