@@ -9,12 +9,16 @@
                 <form method="POST" id="userForm">
                     <div class="mb-3">
                         <label class="form-label">Username</label>
-                        <input type="text" name="userName" class="form-control" value="{{ user.userName if user else '' }}" required>
+                        <div class="input-group has-validation">
+                            <span class="input-group-text bg-white border-end-0 p-0" id="usernameErrorIcon" style="display: none;"><i class="bi bi-exclamation-circle text-danger"></i></span>
+                            <input type="text" name="userName" class="form-control{% if error_fields and 'userName' in error_fields %} is-invalid{% endif %}" value="{{ user.userName if user else '' }}" required aria-describedby="usernameErrorIcon">
+                        </div>
                     </div>
                     <div class="mb-3 position-relative">
                         <label class="form-label">Password {% if user %}<span class="text-muted">(leave blank to keep current)</span>{% endif %}</label>
-                        <div class="position-relative" style="width: 100%;">
-                            <input type="password" name="password" class="form-control pe-5" id="passwordInput" {% if not user %}required{% endif %} style="padding-right: 2.5rem; position: relative; z-index: 1; background-color: transparent;">
+                        <div class="input-group has-validation position-relative" style="width: 100%;">
+                            <span class="input-group-text bg-white border-end-0 p-0" id="passwordErrorIcon" style="display: none;"><i class="bi bi-exclamation-circle text-danger"></i></span>
+                            <input type="password" name="password" class="form-control pe-5{% if error_fields and 'password' in error_fields %} is-invalid{% endif %}" id="passwordInput" {% if not user %}required{% endif %} style="padding-right: 2.5rem; position: relative; z-index: 1; background-color: transparent;" aria-describedby="passwordErrorIcon">
                             <button type="button" class="peek-btn-login" id="togglePassword" tabindex="0">
                                 <i class="bi bi-eye" id="togglePasswordIcon"></i>
                             </button>
@@ -48,12 +52,33 @@
     transform: translateY(0) scale(1);
     pointer-events: auto;
 }
+.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220,53,69,.25);
+}
+/* Fix show password button alignment */
+#passwordInput {
+    padding-right: 2.5rem !important;
+}
 </style>
 <script src="{{ url_for('static', filename='peek.js') }}"></script>
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const form = document.getElementById('userForm');
     const messageDiv = document.getElementById('formMessage');
+    // Remove is-invalid on input
+    [form.userName, form.password].forEach(function(input) {
+        if (input) {
+            input.addEventListener('input', function() {
+                if (input.classList.contains('is-invalid')) {
+                    if ((input.name === 'userName' && input.value.length >= 3) ||
+                        (input.name === 'password' && (input.value.length === 0 || input.value.length >= 8))) {
+                        input.classList.remove('is-invalid');
+                    }
+                }
+            });
+        }
+    });
     function showMessage(html) {
         messageDiv.innerHTML = html;
         // Force reflow to restart animation if needed
@@ -145,6 +170,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 form.password.value = '';
             } else {
                 showMessage(`<div class='alert alert-danger'>${body.message || 'An error occurred.'}</div>`);
+                // Highlight invalid fields
+                if (body.error_fields) {
+                    if (body.error_fields.includes('userName')) form.userName.classList.add('is-invalid');
+                    if (body.error_fields.includes('password')) form.password.classList.add('is-invalid');
+                }
             }
         })
         .catch(() => {
