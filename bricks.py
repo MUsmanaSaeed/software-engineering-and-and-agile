@@ -55,7 +55,7 @@ def addBrick():
         db.session.add(newBrick)
         db.session.commit()
         flash('Brick added successfully!', 'success')
-        return redirect(url_for('bricks.bricks'))
+        return redirect(url_for('bricks.bricks', brick_id=newBrick.id))
     return render_template('add_brick.html', manufacturers=manufacturers)
 
 @bricks_bp.route('/edit_brick/<int:id>', methods=['GET', 'POST'])
@@ -76,7 +76,7 @@ def editBrick(id):
         brick.manufacturerId = int(request.form['manufacturer_id'])
         db.session.commit()
         flash('Brick updated successfully!', 'success')
-        return redirect(url_for('bricks.bricks'))
+        return redirect(url_for('bricks.bricks', brick_id=brick.id))
     return render_template('edit_brick.html', brick=brick, manufacturers=manufacturers)
 
 @bricks_bp.route('/delete_brick/<int:id>')
