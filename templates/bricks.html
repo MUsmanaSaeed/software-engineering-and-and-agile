@@ -55,41 +55,9 @@
     </div>
   </div>
 </div>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/bricks.css') }}">
 <script>
-// Show brick details when a row is clicked
-const rows = document.querySelectorAll('.brick-row');
-const panel = document.getElementById('brick-detail-panel');
-const actions = document.getElementById('detail-actions');
-const editLink = document.getElementById('edit-link');
-const deleteLink = document.getElementById('delete-link');
-rows.forEach(row => {
-  row.addEventListener('click', function() {
-    const brick = JSON.parse(this.dataset.brick);
-    document.getElementById('detail-name').textContent = brick.name;
-    document.getElementById('detail-manufacturer').textContent = brick.manufacturer.name;
-    document.getElementById('detail-colour').textContent = brick.colour;
-    document.getElementById('detail-material').textContent = brick.material;
-    document.getElementById('detail-strength').textContent = brick.strength;
-    document.getElementById('detail-width').textContent = brick.width;
-    document.getElementById('detail-depth').textContent = brick.depth;
-    document.getElementById('detail-height').textContent = brick.height;
-    document.getElementById('detail-type').textContent = brick.type;
-    document.getElementById('detail-voids').textContent = brick.voids;
-    panel.style.display = 'block';
-    if (actions && editLink && deleteLink) {
-      editLink.href = `/edit_brick/${brick.id}`;
-      deleteLink.href = `/delete_brick/${brick.id}`;
-      actions.style.display = 'block';
-    }
-    // Remove row highlighting (no-op)
-  });
-});
+  window.selectedBrickId = "{{ selected_brick_id|tojson|safe }}";
 </script>
-<style>
-@media (min-width: 992px) {
-  .bricks-table-responsive {
-    max-width: 100%;
-  }
-}
-</style>
+<script src="{{ url_for('static', filename='bricks.js') }}"></script>
 {% endblock %}

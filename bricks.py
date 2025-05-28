@@ -5,7 +5,8 @@ from users import loginRequired
 bricks_bp = Blueprint('bricks', __name__)
 
 @bricks_bp.route('/bricks')
-def bricks():
+@bricks_bp.route('/bricks/<int:brick_id>')
+def bricks(brick_id=None):
     allBricks = Brick.query.all()
     # Convert to list of dicts for JSON serialization in template
     def brick_to_dict(brick):
@@ -26,7 +27,10 @@ def bricks():
             }
         }
     brick_dicts = [brick_to_dict(b) for b in allBricks]
-    return render_template('bricks.html', bricks=brick_dicts)
+    selected_brick_id = None
+    if brick_id is not None and any(b['id'] == brick_id for b in brick_dicts):
+        selected_brick_id = brick_id
+    return render_template('bricks.html', bricks=brick_dicts, selected_brick_id=selected_brick_id)
 
 @bricks_bp.route('/add_brick', methods=['GET', 'POST'])
 @loginRequired

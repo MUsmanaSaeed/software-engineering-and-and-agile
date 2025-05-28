@@ -1,0 +1,5 @@
+@media (min-width: 992px) {
+  .bricks-table-responsive {
+    max-width: 100%;
+  }
+}
