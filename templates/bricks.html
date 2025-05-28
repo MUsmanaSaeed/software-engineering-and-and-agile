@@ -7,50 +7,89 @@
     <a href="{{ url_for('bricks.addBrick') }}" class="btn btn-primary">Add Brick</a>
     {% endif %}
 </div>
-<div class="table-responsive">
-    <table class="table table-striped table-hover align-middle">
+<div class="row">
+  <div class="col-lg-4 col-12">
+    <div class="table-responsive bricks-table-responsive">
+      <table class="table table-striped table-hover align-middle" id="bricks-table">
         <thead class="table-primary">
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Colour</th>
-                <th>Material</th>
-                <th>Strength</th>
-                <th>Width</th>
-                <th>Depth</th>
-                <th>Height</th>
-                <th>Type</th>
-                <th>Voids</th>
-                <th>Manufacturer</th>
-                {% if session.get('userId') %}
-                <th>Actions</th>
-                {% endif %}
-            </tr>
+          <tr>
+            <th>Name</th>
+            <th>Manufacturer</th>
+          </tr>
         </thead>
         <tbody>
         {% for brick in bricks %}
-            <tr>
-                <td>{{ brick.id }}</td>
-                <td>{{ brick.name }}</td>
-                <td>{{ brick.colour }}</td>
-                <td>{{ brick.material }}</td>
-                <td>{{ brick.strength }}</td>
-                <td>{{ brick.width }}</td>
-                <td>{{ brick.depth }}</td>
-                <td>{{ brick.height }}</td>
-                <td>{{ brick.type }}</td>
-                <td>{{ brick.voids }}</td>
-                <td>{{ brick.manufacturer.name }}</td>
-                {% if session.get('userId') %}
-                <td>
-                    <a href="{{ url_for('bricks.editBrick', id=brick.id) }}" class="btn btn-sm btn-warning">Edit</a>
-                    <a href="{{ url_for('bricks.deleteBrick', id=brick.id) }}" class="btn btn-sm btn-danger"
-                       onclick="return confirm('Are you sure you want to delete this brick?');">Delete</a>
-                </td>
-                {% endif %}
-            </tr>
+          <tr class="brick-row" data-brick='{{ brick | tojson | safe }}' data-id="{{ brick.id }}">
+            <td>{{ brick.name }}</td>
+            <td>{{ brick.manufacturer.name }}</td>
+          </tr>
         {% endfor %}
         </tbody>
-    </table>
+      </table>
+    </div>
+  </div>
+  <div class="col-lg-8 col-12">
+    <div id="brick-detail-panel" class="card" style="display:none;">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h4 class="card-title mb-0" id="detail-name"></h4>
+          {% if session.get('userId') %}
+          <div id="detail-actions" style="display:none;">
+            <a href="#" id="edit-link" class="btn btn-warning btn-sm">Edit</a>
+            <a href="#" id="delete-link" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this brick?');">Delete</a>
+          </div>
+          {% endif %}
+        </div>
+        <h6 class="card-subtitle mb-2 text-muted" id="detail-manufacturer"></h6>
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"><strong>Colour:</strong> <span id="detail-colour"></span></li>
+          <li class="list-group-item"><strong>Material:</strong> <span id="detail-material"></span></li>
+          <li class="list-group-item"><strong>Strength:</strong> <span id="detail-strength"></span></li>
+          <li class="list-group-item"><strong>Width:</strong> <span id="detail-width"></span></li>
+          <li class="list-group-item"><strong>Depth:</strong> <span id="detail-depth"></span></li>
+          <li class="list-group-item"><strong>Height:</strong> <span id="detail-height"></span></li>
+          <li class="list-group-item"><strong>Type:</strong> <span id="detail-type"></span></li>
+          <li class="list-group-item"><strong>Voids:</strong> <span id="detail-voids"></span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
 </div>
+<script>
+// Show brick details when a row is clicked
+const rows = document.querySelectorAll('.brick-row');
+const panel = document.getElementById('brick-detail-panel');
+const actions = document.getElementById('detail-actions');
+const editLink = document.getElementById('edit-link');
+const deleteLink = document.getElementById('delete-link');
+rows.forEach(row => {
+  row.addEventListener('click', function() {
+    const brick = JSON.parse(this.dataset.brick);
+    document.getElementById('detail-name').textContent = brick.name;
+    document.getElementById('detail-manufacturer').textContent = brick.manufacturer.name;
+    document.getElementById('detail-colour').textContent = brick.colour;
+    document.getElementById('detail-material').textContent = brick.material;
+    document.getElementById('detail-strength').textContent = brick.strength;
+    document.getElementById('detail-width').textContent = brick.width;
+    document.getElementById('detail-depth').textContent = brick.depth;
+    document.getElementById('detail-height').textContent = brick.height;
+    document.getElementById('detail-type').textContent = brick.type;
+    document.getElementById('detail-voids').textContent = brick.voids;
+    panel.style.display = 'block';
+    if (actions && editLink && deleteLink) {
+      editLink.href = `/edit_brick/${brick.id}`;
+      deleteLink.href = `/delete_brick/${brick.id}`;
+      actions.style.display = 'block';
+    }
+    // Remove row highlighting (no-op)
+  });
+});
+</script>
+<style>
+@media (min-width: 992px) {
+  .bricks-table-responsive {
+    max-width: 100%;
+  }
+}
+</style>
 {% endblock %}

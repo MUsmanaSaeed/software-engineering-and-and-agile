@@ -7,7 +7,26 @@ bricks_bp = Blueprint('bricks', __name__)
 @bricks_bp.route('/bricks')
 def bricks():
     allBricks = Brick.query.all()
-    return render_template('bricks.html', bricks=allBricks)
+    # Convert to list of dicts for JSON serialization in template
+    def brick_to_dict(brick):
+        return {
+            'id': brick.id,
+            'name': brick.name,
+            'colour': brick.colour,
+            'material': brick.material,
+            'strength': brick.strength,
+            'width': brick.width,
+            'depth': brick.depth,
+            'height': brick.height,
+            'type': brick.type,
+            'voids': brick.voids,
+            'manufacturer': {
+                'id': brick.manufacturer.id if brick.manufacturer else None,
+                'name': brick.manufacturer.name if brick.manufacturer else ''
+            }
+        }
+    brick_dicts = [brick_to_dict(b) for b in allBricks]
+    return render_template('bricks.html', bricks=brick_dicts)
 
 @bricks_bp.route('/add_brick', methods=['GET', 'POST'])
 @loginRequired
