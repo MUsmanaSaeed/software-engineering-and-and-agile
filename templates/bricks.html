@@ -1,15 +1,15 @@
 {% extends 'base.html' %}
 {% block title %}Bricks{% endblock %}
 {% block content %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Bricks</h2>
-    {% if session.get('userId') %}
-    <a href="{{ url_for('bricks.addBrick') }}" class="btn btn-primary">Add Brick</a>
-    {% endif %}
-</div>
-<div class="row">
-  <div class="col-lg-4 col-12">
-    <div class="table-responsive bricks-table-responsive">
+<div class="row flex-lg-nowrap" style="height: 80vh; min-height: 500px;">
+  <div class="col-lg-4 col-12 d-flex flex-column">
+    <div class="d-flex justify-content-between align-items-center mb-3">
+      <h2 class="mb-0">Bricks</h2>
+      {% if session.get('userId') %}
+      <a href="{{ url_for('bricks.addBrick') }}" class="btn btn-primary ms-3">Add Brick</a>
+      {% endif %}
+    </div>
+    <div class="table-responsive bricks-table-responsive flex-grow-1">
       <table class="table table-striped table-hover align-middle" id="bricks-table">
         <thead class="table-primary">
           <tr>
@@ -28,9 +28,9 @@
       </table>
     </div>
   </div>
-  <div class="col-lg-8 col-12">
-    <div id="brick-detail-panel" class="card" style="display:none;">
-      <div class="card-body">
+  <div class="col-lg-8 col-12 d-flex flex-column" style="height: 100%;">
+    <div id="brick-detail-panel" class="card flex-grow-1 h-100" style="display:none;">
+      <div class="card-body d-flex flex-column h-100">
         <div class="d-flex justify-content-between align-items-center mb-2">
           <h4 class="card-title mb-0" id="detail-name"></h4>
           {% if session.get('userId') %}
@@ -41,7 +41,8 @@
           {% endif %}
         </div>
         <h6 class="card-subtitle mb-2 text-muted" id="detail-manufacturer"></h6>
-        <ul class="list-group list-group-flush">
+        <button id="back-to-brick-btn" class="btn btn-secondary btn-sm mb-3" style="display:none; width: fit-content;">Back to Brick</button>
+        <ul class="list-group list-group-flush mb-0">
           <li class="list-group-item"><strong>Colour:</strong> <span id="detail-colour"></span></li>
           <li class="list-group-item"><strong>Material:</strong> <span id="detail-material"></span></li>
           <li class="list-group-item"><strong>Strength:</strong> <span id="detail-strength"></span></li>

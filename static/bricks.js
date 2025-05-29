@@ -7,6 +7,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const actions = document.getElementById('detail-actions');
   const editLink = document.getElementById('edit-link');
   const deleteLink = document.getElementById('delete-link');
+  const backBtn = document.getElementById('back-to-brick-btn');
+  let previousBrickId = null;
+
+  // Add event listener for Back to Brick button
+  if (backBtn) {
+    backBtn.addEventListener('click', function() {
+      if (previousBrickId) {
+        const row = document.querySelector(`.brick-row[data-id='${previousBrickId}']`);
+        if (row) {
+          row.click();
+        }
+      }
+    });
+  }
+
   rows.forEach(row => {
     row.addEventListener('click', function() {
       const brick = JSON.parse(this.dataset.brick);
@@ -29,6 +44,17 @@ document.addEventListener('DOMContentLoaded', () => {
       // Update the URL with the selected brick ID
       const newUrl = `${window.location.pathname.replace(/\/(\d+)?$/, '')}/${brick.id}`;
       window.history.pushState({ brickId: brick.id }, '', newUrl);
+      // Store previous brick id
+      const currentId = window.location.pathname.match(/\/(\d+)$/);
+      if (currentId && brick.id != currentId[1]) {
+        previousBrickId = currentId[1];
+      }
+      // Show/hide back button
+      if (previousBrickId && previousBrickId != brick.id) {
+        if (backBtn) backBtn.style.display = 'inline-block';
+      } else {
+        if (backBtn) backBtn.style.display = 'none';
+      }
       // Remove row highlighting (no-op)
     });
   });
@@ -64,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 window.addEventListener('popstate', (event) => {
   const panel = document.getElementById('brick-detail-panel');
   const actions = document.getElementById('detail-actions');
+  const backBtn = document.getElementById('back-to-brick-btn');
   const match = window.location.pathname.match(/\/(\d+)$/);
   if (match) {
     const brickId = match[1];
@@ -75,4 +102,6 @@ window.addEventListener('popstate', (event) => {
     panel.style.display = 'none';
     if (actions) actions.style.display = 'none';
   }
+  previousBrickId = null;
+  if (backBtn) backBtn.style.display = 'none';
 });
