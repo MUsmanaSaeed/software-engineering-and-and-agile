@@ -6,7 +6,7 @@
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h2 class="mb-0">Bricks</h2>
       {% if session.get('userId') %}
-      <a href="{{ url_for('bricks.addBrick') }}" class="btn btn-primary ms-3">Add Brick</a>
+      <a href="{{ url_for('bricks.addBrick') }}{% if selected_brick_id %}?selected_brick_id={{ selected_brick_id }}{% endif %}" class="btn btn-primary ms-3">Add Brick</a>
       {% endif %}
     </div>
     <div class="table-responsive bricks-table-responsive flex-grow-1">

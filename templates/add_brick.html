@@ -63,7 +63,7 @@
                         </select>
                     </div>
                     <div class="d-flex gap-2">
-                        <a href="{{ url_for('bricks.bricks') }}" class="btn btn-secondary flex-fill">Cancel</a>
+                        <button type="button" class="btn btn-secondary flex-fill" onclick="window.history.back()">Cancel</button>
                         <button type="submit" class="btn btn-success flex-fill">{% if brick %}Update{% else %}Add{% endif %} Brick</button>
                     </div>
                 </form>

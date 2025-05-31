@@ -36,6 +36,7 @@ def bricks(brick_id=None):
 @loginRequired
 def addBrick():
     manufacturers = Manufacturer.query.all()
+    selected_brick_id = request.args.get('selected_brick_id', type=int)
     if request.method == 'POST':
         name = request.form['name']
         colour = request.form['colour']
@@ -56,7 +57,7 @@ def addBrick():
         db.session.commit()
         flash('Brick added successfully!', 'success')
         return redirect(url_for('bricks.bricks', brick_id=newBrick.id))
-    return render_template('add_brick.html', manufacturers=manufacturers)
+    return render_template('add_brick.html', manufacturers=manufacturers, selected_brick_id=selected_brick_id)
 
 @bricks_bp.route('/edit_brick/<int:id>', methods=['GET', 'POST'])
 @loginRequired
