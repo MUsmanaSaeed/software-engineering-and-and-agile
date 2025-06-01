@@ -9,6 +9,10 @@
       <a href="{{ url_for('bricks.addBrick') }}{% if selected_brick_id %}?selected_brick_id={{ selected_brick_id }}{% endif %}" class="btn btn-primary ms-3">Add Brick</a>
       {% endif %}
     </div>
+    <!-- Search box for filtering bricks -->
+    <div class="mb-2">
+      <input type="text" id="brick-search-box" class="form-control" placeholder="Search bricks by name...">
+    </div>
     <div class="table-responsive bricks-table-responsive flex-grow-1">
       <table class="table table-striped table-hover align-middle" id="bricks-table">
         <colgroup>

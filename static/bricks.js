@@ -84,6 +84,22 @@ document.addEventListener('DOMContentLoaded', () => {
     panel.style.display = 'none';
     if (actions) actions.style.display = 'none';
   }
+
+  // Search/filter functionality for bricks table
+  const searchBox = document.getElementById('brick-search-box');
+  if (searchBox) {
+    searchBox.addEventListener('input', function() {
+      const filter = this.value.trim().toLowerCase();
+      document.querySelectorAll('.brick-row').forEach(row => {
+        const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+        if (name.includes(filter)) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    });
+  }
 });
 
 // Handle browser back/forward navigation
