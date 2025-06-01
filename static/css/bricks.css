@@ -23,18 +23,18 @@ html, body {
 }
 
 @media (max-width: 991.98px) {
-  .row.flex-lg-nowrap {
-    flex-wrap: wrap;
-    height: auto;
-    min-height: unset;
-  }
-  #brick-detail-panel {
-    min-height: 300px;
-  }
+    .row.flex-lg-nowrap {
+        flex-wrap: wrap;
+        height: auto;
+        min-height: unset;
+    }
+    #brick-detail-panel {
+        min-height: 300px;
+    }
 }
 
 @media (min-width: 992px) {
-  .bricks-table-responsive {
-    max-width: 100%;
-  }
+    .bricks-table-responsive {
+        max-width: 100%;
+    }
 }
