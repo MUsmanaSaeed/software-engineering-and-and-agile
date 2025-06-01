@@ -22,26 +22,29 @@ html, body {
   min-height: 0;
 }
 
+.bricks-table-responsive table {
+  table-layout: fixed;
+  width: 100%;
+}
+
 @media (max-width: 991.98px) {
-    .row.flex-lg-nowrap {
-        flex-wrap: wrap;
-        height: auto;
-        min-height: unset;
-    }
-    #brick-detail-panel {
-        min-height: 300px;
-    }
+  .row.flex-lg-nowrap {
+    flex-wrap: wrap;
+    height: auto;
+    min-height: unset;
+  }
+  #brick-detail-panel {
+    min-height: 300px;
+  }
 }
 
 @media (min-width: 992px) {
-    .row.flex-lg-nowrap > #brick-detail-panel {
-        width: 50%;
-    }
-    .row.flex-lg-nowrap > *:not(#brick-detail-panel) {
-        width: 50%;
-    }
-    .bricks-table-responsive {
-        max-width: 100%;
-        width: 100%; /* Fill container, container is now 50% */
-    }
+  .row.flex-lg-nowrap > #brick-detail-panel,
+  .row.flex-lg-nowrap > *:not(#brick-detail-panel) {
+    width: 50%;
+  }
+  .bricks-table-responsive {
+    max-width: 100%;
+    width: 100%;
+  }
 }
