@@ -33,6 +33,7 @@ html, body {
     border-radius: 0.375rem 0.375rem 0 0;
     background: #e9f5ff;
     padding: 0.75rem;
+    position: relative;
 }
 
 .table-search-box {
@@ -65,6 +66,23 @@ thead tr:nth-child(2) th {
     padding-bottom: 0;
 }
 
+#brick-filter-btn {
+    padding: 0 0.6rem;
+    height: 2.5rem;
+    min-width: 2.5rem;
+    width: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    font-size: 1.25rem;
+}
+
+#brick-filter-btn i {
+    font-size: 1.25rem;
+    margin: 0;
+}
+
 @media (max-width: 991.98px) {
   .row.flex-lg-nowrap {
     flex-wrap: wrap;
@@ -85,4 +103,53 @@ thead tr:nth-child(2) th {
     max-width: 100%;
     width: 100%;
   }
+}
+
+/* Filter Dropdown Styles (positioned under filter button) */
+#brick-filter-dropdown.brick-filter-dropdown {
+  position: absolute;
+  z-index: 1050;
+  left: auto;
+  right: 0;
+  top: 100%;
+  min-width: 300px;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 0.5rem;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+  padding: 1rem 1rem 0.75rem 1rem;
+  margin-top: 0.25rem;
+  max-width: 420px;
+}
+
+.brick-filter-dropdown .form-label {
+  font-size: 0.95rem;
+  margin-bottom: 0.25rem;
+}
+
+.brick-filter-dropdown .btn-close {
+  float: right;
+  margin-top: -0.5rem;
+  margin-right: -0.5rem;
+}
+
+@media (max-width: 600px) {
+  #brick-filter-dropdown.brick-filter-dropdown {
+    min-width: 220px;
+    max-width: 98vw;
+    padding: 0.75rem 0.5rem 0.5rem 0.5rem;
+    right: 0;
+    left: auto;
+  }
+  #brick-filter-btn {
+    height: 2.25rem;
+    min-width: 2.25rem;
+    width: 2.25rem;
+    font-size: 1.1rem;
+  }
+}
+
+/* Remove old modal styles if present */
+.brick-filter-modal, .brick-filter-modal-content {
+  display: none !important;
 }

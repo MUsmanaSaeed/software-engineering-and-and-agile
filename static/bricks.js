@@ -100,6 +100,109 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     });
   }
+
+  // --- Filter Dropdown Logic ---
+  const filterBtn = document.getElementById('brick-filter-btn');
+  const filterDropdown = document.getElementById('brick-filter-dropdown');
+  const closeFilterDropdown = document.getElementById('close-filter-dropdown');
+  const applyFilterBtn = document.getElementById('apply-filter-btn');
+  const clearFilterBtn = document.getElementById('clear-filter-btn');
+  const manufacturerSelect = document.getElementById('manufacturer-filter-select');
+
+  let activeManufacturerFilter = '';
+
+  function showFilterDropdown() {
+    if (filterDropdown) filterDropdown.style.display = 'block';
+  }
+  function hideFilterDropdown() {
+    if (filterDropdown) filterDropdown.style.display = 'none';
+  }
+
+  if (filterBtn && filterDropdown) {
+    filterBtn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      if (filterDropdown.style.display === 'block') {
+        hideFilterDropdown();
+      } else {
+        showFilterDropdown();
+      }
+    });
+  }
+  if (closeFilterDropdown) {
+    closeFilterDropdown.addEventListener('click', hideFilterDropdown);
+  }
+  // Hide dropdown if clicking outside
+  document.addEventListener('click', function(e) {
+    if (filterDropdown && filterDropdown.style.display === 'block') {
+      if (!filterDropdown.contains(e.target) && e.target !== filterBtn) {
+        hideFilterDropdown();
+      }
+    }
+  });
+
+  function updateFilterBadge() {
+    const badge = document.getElementById('brick-filter-badge');
+    const rows = document.querySelectorAll('.brick-row');
+    let hiddenCount = 0;
+    rows.forEach(row => {
+      if (row.style.display === 'none') hiddenCount++;
+    });
+    if (badge) {
+      if (hiddenCount > 0) {
+        badge.textContent = '1'; // Only show indicator, not count
+        badge.style.display = 'inline-block';
+      } else {
+        badge.style.display = 'none';
+      }
+    }
+  }
+
+  function filterRows() {
+    const searchValue = searchBox ? searchBox.value.trim().toLowerCase() : '';
+    // Get selected manufacturer (single select)
+    let selectedManufacturer = '';
+    if (manufacturerSelect) {
+      selectedManufacturer = manufacturerSelect.value;
+    }
+    document.querySelectorAll('.brick-row').forEach(row => {
+      const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+      const manufacturer = row.querySelector('td:nth-child(2)').textContent;
+      const matchesName = name.includes(searchValue);
+      const matchesManufacturer = !selectedManufacturer || manufacturer === selectedManufacturer;
+      row.style.display = (matchesName && matchesManufacturer) ? '' : 'none';
+    });
+    updateFilterBadge();
+  }
+
+  if (applyFilterBtn && manufacturerSelect) {
+    applyFilterBtn.addEventListener('click', function() {
+      filterRows();
+      hideFilterDropdown();
+    });
+  }
+  if (clearFilterBtn && manufacturerSelect) {
+    clearFilterBtn.addEventListener('click', function() {
+      manufacturerSelect.value = '';
+      filterRows();
+      hideFilterDropdown();
+    });
+  }
+  if (manufacturerSelect) {
+    manufacturerSelect.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        applyFilterBtn.click();
+      }
+    });
+    manufacturerSelect.addEventListener('change', updateFilterBadge);
+  }
+
+  // Update filterRows to also run on search
+  if (searchBox) {
+    searchBox.addEventListener('input', filterRows);
+  }
+
+  // Initialize badge on page load
+  updateFilterBadge();
 });
 
 // Handle browser back/forward navigation

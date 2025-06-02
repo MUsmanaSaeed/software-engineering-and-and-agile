@@ -10,8 +10,35 @@
             {% endif %}
         </div>
         <div class="table-responsive bricks-table-responsive flex-grow-1">
-            <div class="table-search-container">
+            <div class="table-search-container d-flex align-items-center gap-2 position-relative" style="z-index: 10;">
                 <input type="text" id="brick-search-box" class="form-control table-search-box" placeholder="Search bricks by name...">
+                <button type="button" id="brick-filter-btn" class="btn btn-outline-secondary ms-2 position-relative" title="Filter bricks" aria-label="Filter">
+                    <i class="bi bi-funnel"></i>
+                    <span id="brick-filter-badge" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-primary" style="display:none; font-size:0.75rem; min-width:1.3em; padding:0.2em 0.4em;">
+                      0
+                    </span>
+                </button>
+                <!-- Filter Dropdown (not modal) -->
+                <div id="brick-filter-dropdown" class="brick-filter-dropdown" style="display:none;">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span class="fw-semibold">Filter Bricks</span>
+                        <button type="button" class="btn-close" id="close-filter-dropdown" aria-label="Close"></button>
+                    </div>
+                    <div class="mb-3">
+                        <label for="manufacturer-filter-select" class="form-label">Manufacturer</label>
+                        <select id="manufacturer-filter-select" class="form-select">
+                            <option value="">All Manufacturers</option>
+                            {% set manufacturers = bricks | map(attribute='manufacturer') | map(attribute='name') | unique | list %}
+                            {% for m in manufacturers %}
+                            <option value="{{ m }}">{{ m }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="d-flex justify-content-end gap-2">
+                        <button type="button" class="btn btn-secondary btn-sm" id="clear-filter-btn">Clear</button>
+                        <button type="button" class="btn btn-primary btn-sm" id="apply-filter-btn">Apply</button>
+                    </div>
+                </div>
             </div>
             <table class="table table-striped table-hover align-middle" id="bricks-table">
                 <colgroup>
