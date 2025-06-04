@@ -88,3 +88,16 @@ def deleteBrick(id):
     db.session.commit()
     flash('Brick deleted successfully!', 'success')
     return redirect(url_for('bricks.bricks'))
+
+@bricks_bp.route('/delete_bricks_by_manufacturer/<int:manufacturer_id>')
+@loginRequired
+def deleteBricksByManufacturer(manufacturer_id):
+    Brick.query.filter_by(manufacturerId=manufacturer_id).delete()
+    db.session.commit()
+    flash('All bricks for the manufacturer have been deleted.', 'success')
+    return redirect(url_for('manufacturers.manufacturers'))
+
+# Utility function for internal use (not a route)
+def delete_bricks_by_manufacturer(manufacturer_id):
+    Brick.query.filter_by(manufacturerId=manufacturer_id).delete()
+    db.session.commit()

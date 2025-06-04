@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from models import db, Manufacturer
 from users import loginRequired
+from bricks import delete_bricks_by_manufacturer
 
 manufacturers_bp = Blueprint('manufacturers', __name__)
 
@@ -44,6 +45,8 @@ def deleteManufacturer(id):
         flash('Only admins can delete manufacturers.', 'danger')
         return redirect(url_for('manufacturers.manufacturers'))
     manufacturer = Manufacturer.query.get_or_404(id)
+    # Call the function from bricks.py to delete all bricks for this manufacturer
+    delete_bricks_by_manufacturer(manufacturer.id)
     db.session.delete(manufacturer)
     db.session.commit()
     flash('Manufacturer deleted successfully!', 'success')
