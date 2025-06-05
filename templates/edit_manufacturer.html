@@ -15,7 +15,10 @@
                         <label class="form-label">Address</label>
                         <input type="text" name="address" class="form-control" value="{{ manufacturer.address }}" required>
                     </div>
-                    <button type="submit" class="btn btn-primary w-100">Save Changes</button>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('manufacturers.manufacturers') }}" class="btn btn-secondary w-50">Cancel</a>
+                        <button type="submit" class="btn btn-primary w-50">Save Changes</button>
+                    </div>
                 </form>
             </div>
         </div>
