@@ -48,6 +48,14 @@ def addBrick():
         type_ = request.form['type']
         voids = int(request.form['voids'])
         manufacturerId = int(request.form['manufacturer_id'])
+        # Duplicate name check (case-insensitive)
+        existing = Brick.query.filter(db.func.lower(Brick.name) == name.lower()).first()
+        if existing:
+            flash('A brick with this name already exists.', 'danger')
+            # Re-render add page with entered values, not edit mode
+            form_data = dict(request.form)
+            form_data['manufacturerId'] = manufacturerId
+            return render_template('add_brick.html', manufacturers=manufacturers, selected_brick_id=selected_brick_id, brick=form_data)
         newBrick = Brick(
             name=name, colour=colour, material=material, strength=strength,
             width=width, depth=depth, height=height, type=type_,
@@ -65,7 +73,13 @@ def editBrick(id):
     brick = Brick.query.get_or_404(id)
     manufacturers = Manufacturer.query.all()
     if request.method == 'POST':
-        brick.name = request.form['name']
+        name = request.form['name']
+        # Duplicate name check (case-insensitive, exclude self)
+        existing = Brick.query.filter(db.func.lower(Brick.name) == name.lower(), Brick.id != brick.id).first()
+        if existing:
+            flash('A brick with this name already exists.', 'danger')
+            return render_template('edit_brick.html', brick=brick, manufacturers=manufacturers)
+        brick.name = name
         brick.colour = request.form['colour']
         brick.material = request.form['material']
         brick.strength = request.form['strength']
