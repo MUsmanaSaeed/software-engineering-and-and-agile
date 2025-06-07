@@ -12,6 +12,8 @@ class Manufacturer(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(150), nullable=False, unique=True)
     address = db.Column(db.String(250), nullable=False)
+    phoneNo = db.Column(db.String(50), nullable=True)
+    email = db.Column(db.String(120), nullable=True)
     bricks = db.relationship('Brick', backref='manufacturer', lazy=True)
 
 class Brick(db.Model):

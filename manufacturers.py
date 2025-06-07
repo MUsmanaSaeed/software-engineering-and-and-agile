@@ -16,10 +16,12 @@ def addManufacturer():
     if request.method == 'POST':
         name = request.form['name']
         address = request.form['address']
+        phoneNo = request.form.get('phoneNo', '')
+        email = request.form.get('email', '')
         if not name or not address:
             flash('All fields are required.', 'danger')
             return render_template('add_manufacturer.html')
-        newManufacturer = Manufacturer(name=name, address=address)
+        newManufacturer = Manufacturer(name=name, address=address, phoneNo=phoneNo, email=email)
         db.session.add(newManufacturer)
         db.session.commit()
         flash('Manufacturer added successfully!', 'success')
@@ -33,6 +35,8 @@ def editManufacturer(id):
     if request.method == 'POST':
         manufacturer.name = request.form['name']
         manufacturer.address = request.form['address']
+        manufacturer.phoneNo = request.form.get('phoneNo', '')
+        manufacturer.email = request.form.get('email', '')
         db.session.commit()
         flash('Manufacturer updated successfully!', 'success')
         return redirect(url_for('manufacturers.manufacturers'))

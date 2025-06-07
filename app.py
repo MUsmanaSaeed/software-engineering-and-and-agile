@@ -39,7 +39,7 @@ if __name__ == 'app':
         if not User.query.filter_by(userName='admin').first():
             admin_user = User(
                 userName='admin',
-                password=generate_password_hash('p4$$w0rd', method='pbkdf2:sha256'),
+                password=generate_password_hash('p4$$w0rd', method='pbkdf2:sha256'), # would not do this in real life
                 isAdmin=True
             )
             db.session.add(admin_user)
