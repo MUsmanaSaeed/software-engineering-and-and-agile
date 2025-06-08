@@ -31,8 +31,6 @@ document.getElementById('confirmDeleteBtn').onclick = function() {
   }
 };
 
-// Manufacturer auto-selection and URL sync for manufacturers page
-
 document.addEventListener('DOMContentLoaded', function() {
     const rows = document.querySelectorAll('.manufacturer-row');
     const panel = document.getElementById('manufacturer-detail-panel');
@@ -40,19 +38,81 @@ document.addEventListener('DOMContentLoaded', function() {
     const editLink = document.getElementById('edit-m-link');
     const deleteLink = document.getElementById('delete-m-link');
 
-    // --- Auto-select manufacturer if /manufacturers/(id) is in URL ---
-    const pathMatch = window.location.pathname.match(/^\/manufacturers\/(\d+)/);
-    const selectedId = pathMatch ? pathMatch[1] : null;
-    if (selectedId) {
-        const row = Array.from(rows).find(r => r.dataset.id === selectedId);
-        if (row) row.click();
+    // --- Auto-select manufacturer if selectedManufacturerId or /manufacturers/(id) is in URL ---
+    let manufacturerId = null;
+    // Use selectedManufacturerId from Flask if available
+    const selectedManufacturerId = window.selectedManufacturerId !== undefined ? window.selectedManufacturerId : null;
+    if (selectedManufacturerId !== null && selectedManufacturerId !== 'null') {
+        manufacturerId = selectedManufacturerId;
+    } else {
+        // Only match /manufacturers/{id} for manufacturer page
+        const match = window.location.pathname.match(/\/manufacturers\/(\d+)$/);
+        if (match) {
+            manufacturerId = match[1];
+        }
+    }
+    if (manufacturerId) {
+        // Find the row and select it without setTimeout
+        const row = document.querySelector(`.manufacturer-row[data-id='${manufacturerId}']`);
+        if (row) {
+            // Remove active class from all rows
+            rows.forEach(r => r.classList.remove('active'));
+            // Add active class to selected row
+            row.classList.add('active');
+            // Populate the detail panel as in the click handler
+            const m = JSON.parse(row.dataset.manufacturer);
+            const newUrl = `/manufacturers/${m.id}`;
+            if (!window.location.pathname.startsWith('/manufacturers') || window.location.pathname !== newUrl) {
+                window.history.pushState({}, '', newUrl);
+            }
+            document.getElementById('detail-m-name').textContent = m.name;
+            document.getElementById('detail-m-address').textContent = m.address;
+            document.getElementById('detail-m-phone').textContent = m.phoneNo || '';
+            document.getElementById('detail-m-email').textContent = m.email || '';
+            // Bricks list
+            const brickList = document.getElementById('detail-m-bricks');
+            brickList.innerHTML = '';
+            if (m.bricks && m.bricks.length > 0) {
+                m.bricks.forEach(function(b) {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.textContent = b.name;
+                    brickList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.textContent = 'No bricks.';
+                brickList.appendChild(li);
+            }
+            panel.style.display = 'block';
+            if (actions && editLink && deleteLink) {
+                editLink.href = `/edit_manufacturer/${m.id}`;
+                // Instead of direct link, set up modal trigger
+                deleteLink.setAttribute('data-bs-toggle', 'modal');
+                deleteLink.setAttribute('data-bs-target', '#deleteModal');
+                deleteLink.setAttribute('data-id', m.id);
+                deleteLink.setAttribute('data-name', m.name);
+                actions.style.display = 'block';
+            }
+            if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            if (panel) panel.style.display = 'none';
+            if (actions) actions.style.display = 'none';
+        }
+    } else {
+        if (panel) panel.style.display = 'none';
+        if (actions) actions.style.display = 'none';
     }
     // --- End auto-select ---
 
     rows.forEach(row => {
         row.addEventListener('click', function() {
+            // Remove active class from all rows
+            rows.forEach(r => r.classList.remove('active'));
+            // Add active class to selected row
+            this.classList.add('active');
             const m = JSON.parse(this.dataset.manufacturer);
-            // Update URL to /manufacturers/{id} without reloading
             const newUrl = `/manufacturers/${m.id}`;
             if (!window.location.pathname.startsWith('/manufacturers') || window.location.pathname !== newUrl) {
                 window.history.pushState({}, '', newUrl);

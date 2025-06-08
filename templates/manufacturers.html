@@ -6,7 +6,8 @@
         <div class="d-flex justify-content-between align-items-center mb-3">
             <h2 class="mb-0">Manufacturers</h2>
             {% if session.get('userId') %}
-            <a href="{{ url_for('manufacturers.addManufacturer') }}" class="btn btn-primary ms-3">Add Manufacturer</a>
+            <a href="{{ url_for('manufacturers.addManufacturer') }}{% if selected_manufacturer_id %}?selected_manufacturer_id={{ selected_manufacturer_id }}{% endif %}" class="btn btn-primary ms-3">Add Manufacturer</a>
+            <!-- <a href="{{ url_for('manufacturers.addManufacturer') }}" class="btn btn-primary ms-3">Add Manufacturer</a> -->
             {% endif %}
         </div>
         <div class="table-responsive bricks-table-responsive flex-grow-1">
@@ -51,7 +52,6 @@
         </div>
     </div>
 </div>
-<!-- Delete Manufacturer Modal (restored) -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-danger">
@@ -77,66 +77,10 @@
     </div>
   </div>
 </div>
+<script>
+window.selectedManufacturerId = "{{ selected_manufacturer_id|tojson|safe }}";
+</script>
 <script id="manufacturerBricksData" type="application/json">{% set manufacturer_bricks = {} %}{% for m in manufacturers %}{% set _ = manufacturer_bricks.update({m.id: m.bricks|map(attribute='name')|list}) %}{% endfor %}{{ manufacturer_bricks | tojson | safe }}</script>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/manufacturers.css') }}">
 <script src="{{ url_for('static', filename='manufacturers.js') }}"></script>
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    const rows = document.querySelectorAll('.manufacturer-row');
-    const panel = document.getElementById('manufacturer-detail-panel');
-    const actions = document.getElementById('detail-m-actions');
-    const editLink = document.getElementById('edit-m-link');
-    const deleteLink = document.getElementById('delete-m-link');
-
-    // --- Auto-select manufacturer if /manufacturers/(id) is in URL ---
-    const pathMatch = window.location.pathname.match(/^\/manufacturers\/(\d+)/);
-    const selectedId = pathMatch ? pathMatch[1] : null;
-    if (selectedId) {
-        const row = Array.from(rows).find(r => r.dataset.id === selectedId);
-        if (row) row.click();
-    }
-    // --- End auto-select ---
-
-    rows.forEach(row => {
-        row.addEventListener('click', function() {
-            const m = JSON.parse(this.dataset.manufacturer);
-            // Update URL to /manufacturers/{id} without reloading
-            const newUrl = `/manufacturers/${m.id}`;
-            if (!window.location.pathname.startsWith('/manufacturers') || window.location.pathname !== newUrl) {
-                window.history.pushState({}, '', newUrl);
-            }
-            document.getElementById('detail-m-name').textContent = m.name;
-            document.getElementById('detail-m-address').textContent = m.address;
-            document.getElementById('detail-m-phone').textContent = m.phoneNo || '';
-            document.getElementById('detail-m-email').textContent = m.email || '';
-            // Bricks list
-            const brickList = document.getElementById('detail-m-bricks');
-            brickList.innerHTML = '';
-            if (m.bricks && m.bricks.length > 0) {
-                m.bricks.forEach(function(b) {
-                    const li = document.createElement('li');
-                    li.className = 'list-group-item';
-                    li.textContent = b.name;
-                    brickList.appendChild(li);
-                });
-            } else {
-                const li = document.createElement('li');
-                li.className = 'list-group-item';
-                li.textContent = 'No bricks.';
-                brickList.appendChild(li);
-            }
-            panel.style.display = 'block';
-            if (actions && editLink && deleteLink) {
-                editLink.href = `/edit_manufacturer/${m.id}`;
-                // Instead of direct link, set up modal trigger
-                deleteLink.setAttribute('data-bs-toggle', 'modal');
-                deleteLink.setAttribute('data-bs-target', '#deleteModal');
-                deleteLink.setAttribute('data-id', m.id);
-                deleteLink.setAttribute('data-name', m.name);
-                actions.style.display = 'block';
-            }
-        });
-    });
-});
-</script>
 {% endblock %}
