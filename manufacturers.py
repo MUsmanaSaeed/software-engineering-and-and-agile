@@ -6,9 +6,21 @@ from bricks import delete_bricks_by_manufacturer
 manufacturers_bp = Blueprint('manufacturers', __name__)
 
 @manufacturers_bp.route('/manufacturers')
-def manufacturers():
+@manufacturers_bp.route('/manufacturers/<int:selected_id>')
+def manufacturers(selected_id=None):
     allManufacturers = Manufacturer.query.all()
-    return render_template('manufacturers.html', manufacturers=allManufacturers)
+    # Convert to dicts for JSON serialization in template
+    def manufacturer_to_dict(m):
+        return {
+            'id': m.id,
+            'name': m.name,
+            'address': m.address,
+            'phoneNo': m.phoneNo,
+            'email': m.email,
+            'bricks': [{'id': b.id, 'name': b.name} for b in m.bricks]
+        }
+    manufacturer_dicts = [manufacturer_to_dict(m) for m in allManufacturers]
+    return render_template('manufacturers.html', manufacturers=manufacturer_dicts, selected_id=selected_id)
 
 @manufacturers_bp.route('/add_manufacturer', methods=['GET', 'POST'])
 @loginRequired
@@ -20,6 +32,11 @@ def addManufacturer():
         email = request.form.get('email', '')
         if not name or not address:
             flash('All fields are required.', 'danger')
+            return render_template('add_manufacturer.html')
+        # Duplicate name check (case-insensitive)
+        existing = Manufacturer.query.filter(db.func.lower(Manufacturer.name) == name.lower()).first()
+        if existing:
+            flash('A manufacturer with this name already exists.', 'danger')
             return render_template('add_manufacturer.html')
         newManufacturer = Manufacturer(name=name, address=address, phoneNo=phoneNo, email=email)
         db.session.add(newManufacturer)
@@ -45,13 +62,21 @@ def editManufacturer(id):
 @manufacturers_bp.route('/delete_manufacturer/<int:id>')
 @loginRequired
 def deleteManufacturer(id):
-    if not session.get('isAdmin'):
-        flash('Only admins can delete manufacturers.', 'danger')
-        return redirect(url_for('manufacturers.manufacturers'))
     manufacturer = Manufacturer.query.get_or_404(id)
+    has_bricks = len(manufacturer.bricks) > 0
+    if has_bricks and not session.get('isAdmin'):
+        flash('Only admins can delete manufacturers with bricks.', 'danger')
+        # Stay on the same manufacturer detail after failed delete
+        return redirect(url_for('manufacturers.manufacturers', selected_id=id))
     # Call the function from bricks.py to delete all bricks for this manufacturer
     delete_bricks_by_manufacturer(manufacturer.id)
     db.session.delete(manufacturer)
     db.session.commit()
     flash('Manufacturer deleted successfully!', 'success')
-    return redirect(url_for('manufacturers.manufacturers'))
+    # After delete, select the next manufacturer (by id) if any, else none
+    next_manufacturer = Manufacturer.query.order_by(Manufacturer.id).first()
+    next_id = next_manufacturer.id if next_manufacturer else None
+    if next_id:
+        return redirect(url_for('manufacturers.manufacturers', selected_id=next_id))
+    else:
+        return redirect(url_for('manufacturers.manufacturers'))

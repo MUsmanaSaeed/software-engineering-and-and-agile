@@ -9,11 +9,15 @@ html, body {
   flex-wrap: nowrap;
 }
 
+/* Brick detail panel styles (copied and adapted from manufacturer panel) */
 #brick-detail-panel {
   height: 100%;
   min-height: 400px;
   display: flex;
   flex-direction: column;
+  border-radius: 0.75rem;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.10);
+  background: #fff;
 }
 
 .bricks-table-responsive {
@@ -152,4 +156,68 @@ thead tr:nth-child(2) th {
 /* Remove old modal styles if present */
 .brick-filter-modal, .brick-filter-modal-content {
   display: none !important;
+}
+
+#brick-detail-panel .card-body {
+  padding: 2rem 2.5rem 2rem 2.5rem;
+}
+
+#brick-detail-panel h4.card-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+}
+
+#brick-detail-panel .list-group-item {
+  font-size: 1.08rem;
+  border: none;
+  padding-left: 0;
+  padding-right: 0;
+  background: transparent;
+}
+
+#brick-detail-panel .list-group-flush {
+  margin-bottom: 1.5rem;
+}
+
+#brick-detail-panel h6 {
+  font-size: 1.1rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+#brick-detail-panel ul.list-group {
+  /* Remove list-group styling for brick info */
+  max-height: none;
+  overflow-y: visible;
+  border-radius: 0;
+  border: none;
+  background: none;
+  margin-bottom: 0;
+  padding: 0;
+}
+
+#brick-detail-panel ul.list-group .list-group-item {
+  background: none;
+  border: none;
+  font-size: 1.08rem;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
+}
+
+#brick-detail-panel ul.list-group .list-group-item:last-child {
+  border-bottom: none;
+}
+
+#detail-actions {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+@media (max-width: 991.98px) {
+  #brick-detail-panel .card-body {
+    padding: 1.2rem 1rem 1.2rem 1rem;
+  }
 }

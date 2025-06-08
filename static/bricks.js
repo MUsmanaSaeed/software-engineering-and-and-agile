@@ -66,7 +66,8 @@ document.addEventListener('DOMContentLoaded', () => {
   if (selectedBrickId !== null && selectedBrickId !== 'null') {
     brickId = selectedBrickId;
   } else {
-    const match = window.location.pathname.match(/\/(\d+)$/);
+    // Only match /bricks/{id} for brick page
+    const match = window.location.pathname.match(/\/bricks\/(\d+)$/);
     if (match) {
       brickId = match[1];
     }

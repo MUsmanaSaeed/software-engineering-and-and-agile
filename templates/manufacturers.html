@@ -1,45 +1,57 @@
 {% extends 'base.html' %}
 {% block title %}Manufacturers{% endblock %}
 {% block content %}
-{% set manufacturer_bricks = {} %}
-{% for m in manufacturers %}
-  {% set _ = manufacturer_bricks.update({m.id: m.bricks|map(attribute='name')|list}) %}
-{% endfor %}
-<div class="d-flex justify-content-between align-items-center mb-3">
-    <h2>Manufacturers</h2>
-    {% if session.get('userId') %}
-    <a href="{{ url_for('manufacturers.addManufacturer') }}" class="btn btn-primary">Add Manufacturer</a>
-    {% endif %}
+<div class="row flex-lg-nowrap" style="height: 100%; min-height: 500px;">
+    <div class="col-lg-4 col-12 d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0">Manufacturers</h2>
+            {% if session.get('userId') %}
+            <a href="{{ url_for('manufacturers.addManufacturer') }}" class="btn btn-primary ms-3">Add Manufacturer</a>
+            {% endif %}
+        </div>
+        <div class="table-responsive bricks-table-responsive flex-grow-1">
+            <table class="table table-striped table-hover align-middle" id="manufacturers-table">
+                <thead class="table-primary">
+                    <tr>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for m in manufacturers %}
+                    <tr class="manufacturer-row" data-manufacturer='{{ m | tojson | safe }}' data-id="{{ m.id }}">
+                        <td>{{ m.name }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg-8 col-12 d-flex flex-column" id="manufacturer-detail-col" style="height: 100%;">
+        <div id="manufacturer-detail-panel" class="card flex-grow-1 h-100" style="display:none;">
+            <div class="card-body d-flex flex-column h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h4 class="card-title mb-0" id="detail-m-name"></h4>
+                    {% if session.get('userId') %}
+                    <div id="detail-m-actions" class="ms-2" style="display:none;">
+                        <a href="#" id="edit-m-link" class="btn btn-warning btn-sm">Edit</a>
+                        <a href="#" id="delete-m-link" class="btn btn-danger btn-sm">Delete</a>
+                    </div>
+                    {% endif %}
+                </div>
+                <ul class="list-group list-group-flush mb-3">
+                    <li class="list-group-item"><strong>Address:</strong> <span id="detail-m-address"></span></li>
+                    <li class="list-group-item"><strong>Phone:</strong> <span id="detail-m-phone"></span></li>
+                    <li class="list-group-item"><strong>Email:</strong> <span id="detail-m-email"></span></li>
+                </ul>
+                <div>
+                    <h6>Bricks by this Manufacturer:</h6>
+                    <ul class="list-group" id="detail-m-bricks"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-<div class="table-responsive">
-    <table class="table table-striped table-hover align-middle">
-        <thead class="table-primary">
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Address</th>
-                {% if session.get('userId') %}
-                <th>Actions</th>
-                {% endif %}
-            </tr>
-        </thead>
-        <tbody>
-        {% for m in manufacturers %}
-            <tr>
-                <td>{{ m.id }}</td>
-                <td>{{ m.name }}</td>
-                <td>{{ m.address }}</td>
-                {% if session.get('userId') %}
-                <td>
-                    <a href="{{ url_for('manufacturers.editManufacturer', id=m.id) }}" class="btn btn-sm btn-warning">Edit</a>
-                    <a href="#" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#deleteModal" data-id="{{ m.id }}" data-name="{{ m.name }}">Delete</a>
-                </td>
-                {% endif %}
-            </tr>
-        {% endfor %}
-        </tbody>
-    </table>
-</div>
+<!-- Delete Manufacturer Modal (restored) -->
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content border-danger">
@@ -65,8 +77,66 @@
     </div>
   </div>
 </div>
-<script id="manufacturerBricksData" type="application/json">{{ manufacturer_bricks | tojson | safe }}</script>
+<script id="manufacturerBricksData" type="application/json">{% set manufacturer_bricks = {} %}{% for m in manufacturers %}{% set _ = manufacturer_bricks.update({m.id: m.bricks|map(attribute='name')|list}) %}{% endfor %}{{ manufacturer_bricks | tojson | safe }}</script>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/manufacturers.css') }}">
 <script src="{{ url_for('static', filename='manufacturers.js') }}"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const rows = document.querySelectorAll('.manufacturer-row');
+    const panel = document.getElementById('manufacturer-detail-panel');
+    const actions = document.getElementById('detail-m-actions');
+    const editLink = document.getElementById('edit-m-link');
+    const deleteLink = document.getElementById('delete-m-link');
+
+    // --- Auto-select manufacturer if /manufacturers/(id) is in URL ---
+    const pathMatch = window.location.pathname.match(/^\/manufacturers\/(\d+)/);
+    const selectedId = pathMatch ? pathMatch[1] : null;
+    if (selectedId) {
+        const row = Array.from(rows).find(r => r.dataset.id === selectedId);
+        if (row) row.click();
+    }
+    // --- End auto-select ---
+
+    rows.forEach(row => {
+        row.addEventListener('click', function() {
+            const m = JSON.parse(this.dataset.manufacturer);
+            // Update URL to /manufacturers/{id} without reloading
+            const newUrl = `/manufacturers/${m.id}`;
+            if (!window.location.pathname.startsWith('/manufacturers') || window.location.pathname !== newUrl) {
+                window.history.pushState({}, '', newUrl);
+            }
+            document.getElementById('detail-m-name').textContent = m.name;
+            document.getElementById('detail-m-address').textContent = m.address;
+            document.getElementById('detail-m-phone').textContent = m.phoneNo || '';
+            document.getElementById('detail-m-email').textContent = m.email || '';
+            // Bricks list
+            const brickList = document.getElementById('detail-m-bricks');
+            brickList.innerHTML = '';
+            if (m.bricks && m.bricks.length > 0) {
+                m.bricks.forEach(function(b) {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.textContent = b.name;
+                    brickList.appendChild(li);
+                });
+            } else {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.textContent = 'No bricks.';
+                brickList.appendChild(li);
+            }
+            panel.style.display = 'block';
+            if (actions && editLink && deleteLink) {
+                editLink.href = `/edit_manufacturer/${m.id}`;
+                // Instead of direct link, set up modal trigger
+                deleteLink.setAttribute('data-bs-toggle', 'modal');
+                deleteLink.setAttribute('data-bs-target', '#deleteModal');
+                deleteLink.setAttribute('data-id', m.id);
+                deleteLink.setAttribute('data-name', m.name);
+                actions.style.display = 'block';
+            }
+        });
+    });
+});
+</script>
 {% endblock %}
