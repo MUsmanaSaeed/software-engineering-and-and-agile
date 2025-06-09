@@ -20,7 +20,12 @@ def manufacturers(selected_id=None):
             'bricks': [{'id': b.id, 'name': b.name} for b in m.bricks]
         }
     manufacturer_dicts = [manufacturer_to_dict(m) for m in allManufacturers]
-    return render_template('manufacturers.html', manufacturers=manufacturer_dicts, selected_manufacturer_id=selected_id)
+    # Explicitly set selected_manufacturer_id to None if not provided
+    if selected_id is None:
+        selected_manufacturer_id = None
+    else:
+        selected_manufacturer_id = selected_id
+    return render_template('manufacturers.html', manufacturers=manufacturer_dicts, selected_manufacturer_id=selected_manufacturer_id)
 
 @manufacturers_bp.route('/add_manufacturer', methods=['GET', 'POST'])
 @loginRequired
