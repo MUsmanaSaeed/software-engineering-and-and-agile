@@ -150,3 +150,19 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+// Search/filter functionality for manufacturers table
+const manufacturerSearchBox = document.getElementById('manufacturer-search-box');
+if (manufacturerSearchBox) {
+  manufacturerSearchBox.addEventListener('input', function() {
+    const filter = this.value.trim().toLowerCase();
+    document.querySelectorAll('.manufacturer-row').forEach(row => {
+      const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+      if (name.includes(filter)) {
+        row.style.display = '';
+      } else {
+        row.style.display = 'none';
+      }
+    });
+  });
+}
