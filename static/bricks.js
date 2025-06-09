@@ -36,6 +36,9 @@ document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('detail-type').textContent = brick.type;
       document.getElementById('detail-voids').textContent = brick.voids;
       panel.style.display = 'block';
+      if (document.getElementById('brick-placeholder-panel')) {
+        document.getElementById('brick-placeholder-panel').classList.add('d-none');
+      }
       if (actions && editLink && deleteLink) {
         editLink.href = `/edit_brick/${brick.id}`;
         deleteLink.href = `/delete_brick/${brick.id}`;
@@ -77,13 +80,22 @@ document.addEventListener('DOMContentLoaded', () => {
     if (row) {
       row.click();
       panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      if (document.getElementById('brick-placeholder-panel')) {
+        document.getElementById('brick-placeholder-panel').classList.add('d-none');
+      }
     } else {
       panel.style.display = 'none';
       if (actions) actions.style.display = 'none';
+      if (document.getElementById('brick-placeholder-panel')) {
+        document.getElementById('brick-placeholder-panel').classList.remove('d-none');
+      }
     }
   } else {
     panel.style.display = 'none';
     if (actions) actions.style.display = 'none';
+    if (document.getElementById('brick-placeholder-panel')) {
+      document.getElementById('brick-placeholder-panel').classList.remove('d-none');
+    }
   }
 
   // Search/filter functionality for bricks table
@@ -217,10 +229,16 @@ window.addEventListener('popstate', (event) => {
     const row = document.querySelector(`.brick-row[data-id='${brickId}']`);
     if (row) {
       row.click();
+      if (document.getElementById('brick-placeholder-panel')) {
+        document.getElementById('brick-placeholder-panel').classList.add('d-none');
+      }
     }
   } else {
     panel.style.display = 'none';
     if (actions) actions.style.display = 'none';
+    if (document.getElementById('brick-placeholder-panel')) {
+      document.getElementById('brick-placeholder-panel').classList.remove('d-none');
+    }
   }
   previousBrickId = null;
   if (backBtn) backBtn.style.display = 'none';

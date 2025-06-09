@@ -86,23 +86,23 @@ document.addEventListener('DOMContentLoaded', function() {
                 brickList.appendChild(li);
             }
             panel.style.display = 'block';
-            if (actions && editLink && deleteLink) {
-                editLink.href = `/edit_manufacturer/${m.id}`;
-                // Instead of direct link, set up modal trigger
-                deleteLink.setAttribute('data-bs-toggle', 'modal');
-                deleteLink.setAttribute('data-bs-target', '#deleteModal');
-                deleteLink.setAttribute('data-id', m.id);
-                deleteLink.setAttribute('data-name', m.name);
-                actions.style.display = 'block';
+            if (document.getElementById('manufacturer-placeholder-panel')) {
+                document.getElementById('manufacturer-placeholder-panel').classList.add('d-none');
             }
-            if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // ...existing code...
         } else {
             if (panel) panel.style.display = 'none';
             if (actions) actions.style.display = 'none';
+            if (document.getElementById('manufacturer-placeholder-panel')) {
+                document.getElementById('manufacturer-placeholder-panel').classList.remove('d-none');
+            }
         }
     } else {
         if (panel) panel.style.display = 'none';
         if (actions) actions.style.display = 'none';
+        if (document.getElementById('manufacturer-placeholder-panel')) {
+            document.getElementById('manufacturer-placeholder-panel').classList.remove('d-none');
+        }
     }
     // --- End auto-select ---
 
@@ -138,15 +138,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 brickList.appendChild(li);
             }
             panel.style.display = 'block';
-            if (actions && editLink && deleteLink) {
-                editLink.href = `/edit_manufacturer/${m.id}`;
-                // Instead of direct link, set up modal trigger
-                deleteLink.setAttribute('data-bs-toggle', 'modal');
-                deleteLink.setAttribute('data-bs-target', '#deleteModal');
-                deleteLink.setAttribute('data-id', m.id);
-                deleteLink.setAttribute('data-name', m.name);
-                actions.style.display = 'block';
+            if (document.getElementById('manufacturer-placeholder-panel')) {
+                document.getElementById('manufacturer-placeholder-panel').classList.add('d-none');
             }
+            // Instead of direct link, set up modal trigger
+            deleteLink.setAttribute('data-bs-toggle', 'modal');
+            deleteLink.setAttribute('data-bs-target', '#deleteModal');
+            deleteLink.setAttribute('data-id', m.id);
+            deleteLink.setAttribute('data-name', m.name);
+            actions.style.display = 'block';
         });
     });
 });
