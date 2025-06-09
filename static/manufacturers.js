@@ -216,3 +216,67 @@ if (manufacturerSearchBox) {
     });
   });
 }
+
+// --- Brick search for manufacturer detail panel ---
+const brickSearchBox = document.getElementById('brick-search-box');
+if (brickSearchBox) {
+    brickSearchBox.addEventListener('input', function() {
+        const filter = this.value.trim().toLowerCase();
+        const brickList = document.getElementById('detail-m-bricks');
+        if (!brickList) return;
+        // Use the bricks from the currently selected manufacturer row
+        // Find the selected manufacturer row (active)
+        const activeRow = document.querySelector('.manufacturer-row.active');
+        let bricks = [];
+        if (activeRow) {
+            const m = JSON.parse(activeRow.dataset.manufacturer);
+            bricks = m.bricks || [];
+        }
+        // Save all bricks for future filtering
+        brickList._allBricks = bricks;
+        // Filter bricks
+        const filtered = bricks.filter(b => b.name.toLowerCase().includes(filter));
+        brickList.innerHTML = '';
+        if (filtered.length > 0) {
+            filtered.forEach(function(b) {
+                const btn = document.createElement('a');
+                btn.className = 'btn btn-outline-primary btn-sm shadow-sm d-flex align-items-center justify-content-between brick-link-btn';
+                btn.textContent = b.name;
+                btn.href = `/bricks/${b.id}`;
+                btn.style.width = '100%';
+                btn.style.textAlign = 'left';
+                btn.style.borderRadius = '0.5rem';
+                btn.style.fontWeight = '500';
+                btn.style.letterSpacing = '0.02em';
+                btn.style.transition = 'background 0.2s, color 0.2s, box-shadow 0.2s';
+                btn.style.padding = '0.4rem 0.75rem';
+                // Add a right arrow icon
+                const icon = document.createElement('i');
+                icon.className = 'bi bi-arrow-right ms-auto';
+                btn.appendChild(icon);
+                // Add hover effect
+                btn.onmouseover = function() {
+                    btn.classList.add('btn-primary');
+                    btn.classList.remove('btn-outline-primary');
+                    btn.style.color = '#fff';
+                    btn.style.boxShadow = '0 2px 8px rgba(0,123,255,0.15)';
+                };
+                btn.onmouseout = function() {
+                    btn.classList.remove('btn-primary');
+                    btn.classList.add('btn-outline-primary');
+                    btn.style.color = '';
+                    btn.style.boxShadow = '';
+                };
+                brickList.appendChild(btn);
+            });
+        } else {
+            const div = document.createElement('div');
+            div.className = 'w-100 d-flex flex-column align-items-center justify-content-center py-3';
+            div.innerHTML = `
+                <i class="bi bi-box text-secondary mb-2" style="font-size: 2rem;"></i>
+                <span class="text-muted fw-semibold" style="font-size: 1.08rem;">No bricks found</span>
+            `;
+            brickList.appendChild(div);
+        }
+    });
+}

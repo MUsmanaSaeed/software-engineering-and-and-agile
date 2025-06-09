@@ -122,6 +122,29 @@
     box-shadow: 0 0 0 0.2rem rgba(13,110,253,.15);
 }
 
+/* Bricks search and outline container */
+.bricks-outline-container {
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  border: 1px solid #e0e0e0 !important;
+  background: #fcfcfc;
+}
+
+.bricks-search-container {
+  z-index: 10;
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.bricks-search-box {
+  background-color: #f8f9fa;
+  border-color: #e9ecef;
+  font-size: 0.95rem;
+}
+
 /* Table header styling to match search container */
 thead tr th {
     background: #e9f5ff;
