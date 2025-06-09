@@ -75,13 +75,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (m.bricks && m.bricks.length > 0) {
                 m.bricks.forEach(function(b) {
                     const li = document.createElement('li');
-                    li.className = 'list-group-item';
+                    li.className = 'list-group-item py-2 ps-3';
                     li.textContent = b.name;
                     brickList.appendChild(li);
                 });
             } else {
                 const li = document.createElement('li');
-                li.className = 'list-group-item';
+                li.className = 'list-group-item py-2 ps-3';
                 li.textContent = 'No bricks.';
                 brickList.appendChild(li);
             }
@@ -127,13 +127,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (m.bricks && m.bricks.length > 0) {
                 m.bricks.forEach(function(b) {
                     const li = document.createElement('li');
-                    li.className = 'list-group-item';
+                    li.className = 'list-group-item py-2 ps-3';
                     li.textContent = b.name;
                     brickList.appendChild(li);
                 });
             } else {
                 const li = document.createElement('li');
-                li.className = 'list-group-item';
+                li.className = 'list-group-item py-2 ps-3';
                 li.textContent = 'No bricks.';
                 brickList.appendChild(li);
             }
