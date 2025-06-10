@@ -26,14 +26,11 @@
                         <input type="email" name="email" class="form-control" value="{{ manufacturer.email if manufacturer else '' }}">
                     </div>
                     <div class="d-flex gap-2">
-                        <a href="{{ url_for('manufacturers.manufacturers') }}" class="btn btn-secondary w-50">Cancel</a>
+                        <button type="button" class="btn btn-secondary w-50" onclick="window.history.back()">Cancel</button>
                         <button type="submit" class="btn btn-success w-50">{% if manufacturer %}Update{% else %}Add{% endif %} Manufacturer</button>
                     </div>
                 </form>
             </div>
-        </div>
-        <div class="text-center mt-3">
-            <a href="{{ url_for('manufacturers.manufacturers') }}" class="btn btn-link">Back to Manufacturers</a>
         </div>
     </div>
 </div>

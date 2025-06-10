@@ -61,8 +61,15 @@ def editManufacturer(id):
         manufacturer.email = request.form.get('email', '')
         db.session.commit()
         flash('Manufacturer updated successfully!', 'success')
-        return redirect(url_for('manufacturers.manufacturers'))
+        # Redirect to manufacturers page and select the edited manufacturer
+        return redirect(url_for('manufacturers.manufacturers', selected_id=manufacturer.id))
     return render_template('edit_manufacturer.html', manufacturer=manufacturer)
+
+@manufacturers_bp.route('/cancel_edit_manufacturer/<int:id>')
+@loginRequired
+def cancelEditManufacturer(id):
+    # Redirect to manufacturers page and select the editing manufacturer
+    return redirect(url_for('manufacturers.manufacturers', selected_id=id))
 
 @manufacturers_bp.route('/delete_manufacturer/<int:id>')
 @loginRequired
