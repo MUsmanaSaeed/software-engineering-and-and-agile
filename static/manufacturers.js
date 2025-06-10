@@ -1,12 +1,43 @@
 let deleteId = null;
 const deleteModal = document.getElementById('deleteModal');
 deleteModal.addEventListener('show.bs.modal', function (event) {
-  const button = event.relatedTarget;
-  deleteId = button.getAttribute('data-id');
-  const name = button.getAttribute('data-name');
-  document.getElementById('manufacturerName').textContent = name;
+  // Always get the selected manufacturer row
+  let selectedRow = document.querySelector('.manufacturer-row.active');
+  let manufacturerId = null;
+  let manufacturerName = '';
+  if (selectedRow) {
+    const m = JSON.parse(selectedRow.dataset.manufacturer);
+    manufacturerId = m.id;
+    manufacturerName = m.name;
+  } else {
+    // fallback to button attributes if no row is selected
+    const button = event.relatedTarget;
+    manufacturerId = button ? button.getAttribute('data-id') : null;
+    manufacturerName = button ? button.getAttribute('data-name') : '';
+  }
+  deleteId = manufacturerId;
+  document.getElementById('manufacturerName').textContent = manufacturerName;
   const bricksList = document.getElementById('bricksList');
   bricksList.innerHTML = '';
+  // --- Populate bricks to be deleted ---
+  const bricksDataScript = document.getElementById('manufacturerBricksData');
+  if (bricksDataScript && deleteId) {
+    const bricksData = JSON.parse(bricksDataScript.textContent);
+    const brickNames = bricksData[deleteId] || [];
+    if (brickNames.length === 0) {
+      const li = document.createElement('li');
+      li.className = 'list-group-item text-center text-muted';
+      li.textContent = 'No bricks for this manufacturer.';
+      bricksList.appendChild(li);
+    } else {
+      brickNames.forEach(brickName => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.textContent = brickName;
+        bricksList.appendChild(li);
+      });
+    }
+  }
   setTimeout(function() {
     document.getElementById('cancelBtn').focus();
   }, 200);
@@ -175,13 +206,27 @@ document.addEventListener('DOMContentLoaded', function() {
             }
             handleManufacturerSelect(m);
             // Instead of direct link, set up modal trigger
-            deleteLink.setAttribute('data-bs-toggle', 'modal');
-            deleteLink.setAttribute('data-bs-target', '#deleteModal');
             deleteLink.setAttribute('data-id', m.id);
             deleteLink.setAttribute('data-name', m.name);
             actions.style.display = 'block';
         });
     });
+
+    // --- Prevent default for delete button and show modal manually ---
+    if (deleteLink) {
+        deleteLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            // Always set data-id and data-name from the currently selected row
+            const selectedRow = document.querySelector('.manufacturer-row.active');
+            if (selectedRow) {
+                const m = JSON.parse(selectedRow.dataset.manufacturer);
+                deleteLink.setAttribute('data-id', m.id);
+                deleteLink.setAttribute('data-name', m.name);
+            }
+            const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+            modal.show();
+        });
+    }
 
     // --- Bricks search box logic ---
     const brickSearchBox = document.getElementById('brick-search-box');

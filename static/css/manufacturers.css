@@ -35,12 +35,12 @@
   min-height: 400px;
   display: flex;
   flex-direction: column;
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   box-shadow: 0 4px 24px rgba(0,0,0,0.10);
   background: #fff;
 }
 #manufacturer-detail-panel .card-body {
-  padding: 2rem 2.5rem 2rem 2.5rem;
+  padding: 1.5rem;
 }
 #manufacturer-detail-panel h4.card-title {
   font-size: 1.6rem;
@@ -129,6 +129,9 @@
   border: 1px solid #b6c6e3 !important; /* lighter, less noticeable blue */
   background: #f8fafc;
   margin-top: 0.5rem;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 .bricks-search-container {
@@ -167,4 +170,48 @@
 /* Table header styling to match search container */
 thead tr th {
     background: #e9f5ff;
+}
+
+/* Make the bricks listbox fill the available remaining space */
+#manufacturer-bricks-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #adb5bd #fff;
+  display: flex;
+  flex-direction: column;
+}
+#manufacturer-bricks-list::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+  border-radius: 8px;
+}
+#manufacturer-bricks-list:hover::-webkit-scrollbar {
+  width: 16px;
+}
+#manufacturer-bricks-list::-webkit-scrollbar-thumb {
+  background: #adb5bd;
+  border-radius: 8px;
+  border: 2px solid #fff;
+  min-height: 20px;
+}
+#manufacturer-bricks-list::-webkit-scrollbar-thumb:hover {
+  background: #868e96;
+}
+#manufacturer-bricks-list::-webkit-scrollbar-button {
+  display: none;
+  height: 0;
+  width: 0;
+}
+#manufacturer-bricks-list .list-group-item.text-center.text-muted {
+  flex: 1 1 auto;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  min-height: 120px;
+  background: transparent;
+  border: none;
+  user-select: none;
+  pointer-events: none;
 }

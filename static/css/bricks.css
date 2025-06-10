@@ -15,7 +15,7 @@ html, body {
   min-height: 400px;
   display: flex;
   flex-direction: column;
-  border-radius: 0.75rem;
+  border-radius: 1rem;
   box-shadow: 0 4px 24px rgba(0,0,0,0.10);
   background: #fff;
 }
@@ -159,7 +159,7 @@ thead tr:nth-child(2) th {
 }
 
 #brick-detail-panel .card-body {
-  padding: 2rem 2.5rem 2rem 2.5rem;
+  padding: 1.5rem;
 }
 
 #brick-detail-panel h4.card-title {
