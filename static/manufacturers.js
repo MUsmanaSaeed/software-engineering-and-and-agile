@@ -73,46 +73,25 @@ document.addEventListener('DOMContentLoaded', function() {
             if (editLink) {
                 editLink.href = `/edit_manufacturer/${m.id}`;
             }
-            // Bricks list
+            // Show/hide brick buttons (rendered in HTML) based on bricks
             const brickList = document.getElementById('detail-m-bricks');
-            brickList.innerHTML = '';
-            if (m.bricks && m.bricks.length > 0) {
-                m.bricks.forEach(function(b) {
-                    const btn = document.createElement('a');
-                    btn.className = 'btn btn-outline-primary btn-sm shadow-sm d-flex align-items-center justify-content-between brick-link-btn';
-                    btn.textContent = b.name;
-                    btn.href = `/bricks/${b.id}`;
-                    btn.style.width = '100%';
-                    btn.style.textAlign = 'left';
-                    btn.style.borderRadius = '0.5rem';
-                    btn.style.fontWeight = '500';
-                    btn.style.letterSpacing = '0.02em';
-                    btn.style.transition = 'background 0.2s, color 0.2s, box-shadow 0.2s';
-                    btn.style.padding = '0.4rem 0.75rem';
-                    // Add a right arrow icon
-                    const icon = document.createElement('i');
-                    icon.className = 'bi bi-arrow-right ms-auto';
-                    btn.appendChild(icon);
-                    // Add hover effect
-                    btn.onmouseover = function() {
-                        btn.classList.add('btn-primary');
-                        btn.classList.remove('btn-outline-primary');
-                        btn.style.color = '#fff';
-                        btn.style.boxShadow = '0 2px 8px rgba(0,123,255,0.15)';
-                    };
-                    btn.onmouseout = function() {
-                        btn.classList.remove('btn-primary');
-                        btn.classList.add('btn-outline-primary');
-                        btn.style.color = '';
-                        btn.style.boxShadow = '';
-                    };
-                    brickList.appendChild(btn);
-                });
-            } else {
-                const span = document.createElement('span');
-                span.className = 'text-muted';
-                span.textContent = 'No bricks.';
-                brickList.appendChild(span);
+            if (brickList) {
+                const brickBtns = brickList.querySelectorAll('.brick-link-btn');
+                const noBricksMsg = brickList.querySelector('.no-bricks-found');
+                if (m.bricks && m.bricks.length > 0) {
+                    brickBtns.forEach(btn => {
+                        const brickName = btn.textContent.trim();
+                        if (m.bricks.some(b => b.name === brickName)) {
+                            btn.style.display = '';
+                        } else {
+                            btn.style.display = 'none';
+                        }
+                    });
+                    if (noBricksMsg) noBricksMsg.style.display = 'none';
+                } else {
+                    brickBtns.forEach(btn => btn.style.display = 'none');
+                    if (noBricksMsg) noBricksMsg.style.display = '';
+                }
             }
             panel.style.display = 'block';
             if (document.getElementById('manufacturer-placeholder-panel')) {
@@ -153,47 +132,25 @@ document.addEventListener('DOMContentLoaded', function() {
             if (editLink) {
                 editLink.href = `/edit_manufacturer/${m.id}`;
             }
-            // Bricks list
+            // Show/hide brick buttons (rendered in HTML) based on bricks
             const brickList = document.getElementById('detail-m-bricks');
-            brickList.innerHTML = '';
-            if (m.bricks && m.bricks.length > 0) {
-                m.bricks.forEach(function(b) {
-                    const btn = document.createElement('a');
-                    btn.className = 'btn btn-outline-primary btn-sm shadow-sm d-flex align-items-center justify-content-between brick-link-btn';
-                    btn.textContent = b.name;
-                    btn.href = `/bricks/${b.id}`;
-                    btn.style.width = '100%';
-                    btn.style.textAlign = 'left';
-                    btn.style.borderRadius = '0.5rem';
-                    btn.style.fontWeight = '500';
-                    btn.style.letterSpacing = '0.02em';
-                    btn.style.transition = 'background 0.2s, color 0.2s, box-shadow 0.2s';
-                    btn.style.padding = '0.4rem 0.75rem';
-                    btn.style.marginBottom = '0.10rem'; // Even less spacing
-                    // Add a right arrow icon
-                    const icon = document.createElement('i');
-                    icon.className = 'bi bi-arrow-right ms-auto';
-                    btn.appendChild(icon);
-                    // Add hover effect
-                    btn.onmouseover = function() {
-                        btn.classList.add('btn-primary');
-                        btn.classList.remove('btn-outline-primary');
-                        btn.style.color = '#fff';
-                        btn.style.boxShadow = '0 2px 8px rgba(0,123,255,0.15)';
-                    };
-                    btn.onmouseout = function() {
-                        btn.classList.remove('btn-primary');
-                        btn.classList.add('btn-outline-primary');
-                        btn.style.color = '';
-                        btn.style.boxShadow = '';
-                    };
-                    brickList.appendChild(btn);
-                });
-            } else {
-                const span = document.createElement('span');
-                span.className = 'text-muted';
-                span.textContent = 'No bricks.';
-                brickList.appendChild(span);
+            if (brickList) {
+                const brickBtns = brickList.querySelectorAll('.brick-link-btn');
+                const noBricksMsg = brickList.querySelector('.no-bricks-found');
+                if (m.bricks && m.bricks.length > 0) {
+                    brickBtns.forEach(btn => {
+                        const brickName = btn.textContent.trim();
+                        if (m.bricks.some(b => b.name === brickName)) {
+                            btn.style.display = '';
+                        } else {
+                            btn.style.display = 'none';
+                        }
+                    });
+                    if (noBricksMsg) noBricksMsg.style.display = 'none';
+                } else {
+                    brickBtns.forEach(btn => btn.style.display = 'none');
+                    if (noBricksMsg) noBricksMsg.style.display = '';
+                }
             }
             panel.style.display = 'block';
             if (document.getElementById('manufacturer-placeholder-panel')) {
@@ -232,59 +189,21 @@ if (brickSearchBox) {
         const filter = this.value.trim().toLowerCase();
         const brickList = document.getElementById('detail-m-bricks');
         if (!brickList) return;
-        // Use the bricks from the currently selected manufacturer row
-        // Find the selected manufacturer row (active)
-        const activeRow = document.querySelector('.manufacturer-row.active');
-        let bricks = [];
-        if (activeRow) {
-            const m = JSON.parse(activeRow.dataset.manufacturer);
-            bricks = m.bricks || [];
-        }
-        // Save all bricks for future filtering
-        brickList._allBricks = bricks;
-        // Filter bricks
-        const filtered = bricks.filter(b => b.name.toLowerCase().includes(filter));
-        brickList.innerHTML = '';
-        if (filtered.length > 0) {
-            filtered.forEach(function(b) {
-                const btn = document.createElement('a');
-                btn.className = 'btn btn-outline-primary btn-sm shadow-sm d-flex align-items-center justify-content-between brick-link-btn';
-                btn.textContent = b.name;
-                btn.href = `/bricks/${b.id}`;
-                btn.style.width = '100%';
-                btn.style.textAlign = 'left';
-                btn.style.borderRadius = '0.5rem';
-                btn.style.fontWeight = '500';
-                btn.style.letterSpacing = '0.02em';
-                btn.style.transition = 'background 0.2s, color 0.2s, box-shadow 0.2s';
-                btn.style.padding = '0.4rem 0.75rem';
-                // Add a right arrow icon
-                const icon = document.createElement('i');
-                icon.className = 'bi bi-arrow-right ms-auto';
-                btn.appendChild(icon);
-                // Add hover effect
-                btn.onmouseover = function() {
-                    btn.classList.add('btn-primary');
-                    btn.classList.remove('btn-outline-primary');
-                    btn.style.color = '#fff';
-                    btn.style.boxShadow = '0 2px 8px rgba(0,123,255,0.15)';
-                };
-                btn.onmouseout = function() {
-                    btn.classList.remove('btn-primary');
-                    btn.classList.add('btn-outline-primary');
-                    btn.style.color = '';
-                    btn.style.boxShadow = '';
-                };
-                brickList.appendChild(btn);
-            });
-        } else {
-            const div = document.createElement('div');
-            div.className = 'w-100 d-flex flex-column align-items-center justify-content-center py-3';
-            div.innerHTML = `
-                <i class="bi bi-box text-secondary mb-2" style="font-size: 2rem;"></i>
-                <span class="text-muted fw-semibold" style="font-size: 1.08rem;">No bricks found</span>
-            `;
-            brickList.appendChild(div);
+        // Only show/hide bricks, do not create or style them here
+        const brickItems = brickList.querySelectorAll('.brick-link-btn');
+        let anyVisible = false;
+        brickItems.forEach(btn => {
+            if (btn.textContent.toLowerCase().includes(filter)) {
+                btn.style.display = '';
+                anyVisible = true;
+            } else {
+                btn.style.display = 'none';
+            }
+        });
+        // Show/hide the 'no bricks found' message
+        const noBricksMsg = brickList.querySelector('.no-bricks-found');
+        if (noBricksMsg) {
+            noBricksMsg.style.display = anyVisible ? 'none' : '';
         }
     });
 }
