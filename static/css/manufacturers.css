@@ -124,10 +124,11 @@
 
 /* Bricks search and outline container */
 .bricks-outline-container {
-  padding: 0.5rem 0.75rem;
-  border-radius: 0.5rem;
-  border: 1px solid #e0e0e0 !important;
-  background: #fcfcfc;
+  padding: 1rem 1.2rem;
+  border-radius: 0.75rem;
+  border: 1px solid #b6c6e3 !important; /* lighter, less noticeable blue */
+  background: #f8fafc;
+  margin-top: 0.5rem;
 }
 
 .bricks-search-container {
@@ -143,6 +144,24 @@
   background-color: #f8f9fa;
   border-color: #e9ecef;
   font-size: 0.95rem;
+}
+
+/* Brick button style for manufacturer detail panel */
+.bricks-outline-btn {
+  border-width: 1px;
+  border-radius: 0.375rem;
+  font-size: 1.08rem;
+  padding: 0.5rem 1rem;
+  margin-bottom: 0.5rem;
+  background: #fff;
+  transition: box-shadow 0.15s, border-color 0.15s;
+}
+.bricks-outline-btn:hover, .bricks-outline-btn:focus {
+  background: #f0f8ff;
+  border-color: #0d6efd;
+  box-shadow: none;
+  color: #0d6efd;
+  text-decoration: none;
 }
 
 /* Table header styling to match search container */
