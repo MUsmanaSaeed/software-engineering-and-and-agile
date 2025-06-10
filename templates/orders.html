@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+{% block title %}Brick Orders{% endblock %}
+{% block content %}
+<div class="row flex-lg-nowrap" style="height: 100%; min-height: 500px;">
+    <div class="col-lg-4 col-12 d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h2 class="mb-0">Orders</h2>
+            <a href="#" class="btn btn-primary ms-3" data-bs-toggle="modal" data-bs-target="#addOrderModal">Add Order</a>
+        </div>
+        <div class="table-responsive orders-table-responsive flex-grow-1">
+            <div class="table-search-container d-flex align-items-center gap-2 position-relative" style="z-index: 10;">
+                <input type="text" id="order-search-box" class="form-control table-search-box" placeholder="Search orders by order number...">
+            </div>
+            <table class="table table-striped table-hover align-middle" id="orders-table">
+                <colgroup>
+                    <col style="width: 100%">
+                </colgroup>
+                <thead class="table-primary">
+                    <tr>
+                        <th>Order No</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order_no in order_nos %}
+                    <tr class="order-row" data-order-no="{{ order_no }}" style="cursor:pointer;">
+                        <td><a href="{{ url_for('orders.order_detail', order_no=order_no) }}">{{ order_no }}</a></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="col-lg-8 col-12 d-flex flex-column" style="height: 100%;">
+        {% if selected_order_no and order_details %}
+        <div id="order-detail-panel" class="card flex-grow-1 h-100">
+            <div class="card-body d-flex flex-column h-100">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <h4 class="card-title mb-0"><i class="bi bi-truck me-2"></i>Order No: {{ selected_order_no }}</h4>
+                    <a href="{{ url_for('orders.orders') }}" class="btn btn-secondary btn-sm">Back to Orders</a>
+                </div>
+                <div class="table-responsive flex-grow-1">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Brick</th>
+                                <th>Bricks Ordered</th>
+                                <th>Bricks Received</th>
+                                <th>Ordered Date</th>
+                                <th>Expected Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for order in order_details %}
+                            <tr>
+                                <td>{{ order.id }}</td>
+                                <td>{{ order.brick }}</td>
+                                <td>{{ order.bricks_ordered }}</td>
+                                <td>{{ order.bricks_received }}</td>
+                                <td>{{ order.ordered_date.strftime('%Y-%m-%d') }}</td>
+                                <td>{{ order.expected_date.strftime('%Y-%m-%d') }}</td>
+                                <td>
+                                    {% if order.bricks_received < order.bricks_ordered %}
+                                    <form method="POST" action="{{ url_for('orders.mark_received', order_id=order.id) }}" style="display:inline;">
+                                        <button type="submit" class="btn btn-success btn-sm">Order Received</button>
+                                    </form>
+                                    {% else %}
+                                    <span class="badge bg-success">Received</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mb-3">
+                    <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addOrderModal">Add Order</a>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <!-- Placeholder shown when no order is selected -->
+        <div id="order-placeholder-panel" class="card flex-grow-1 h-100">
+            <div class="card-body d-flex flex-column h-100 align-items-center justify-content-center text-muted">
+                <div class="text-center">
+                    <i class="bi bi-truck" style="font-size: 3rem;"></i>
+                    <h5 class="mt-3">No order selected</h5>
+                    <p>Select an order from the list to view its details.</p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+<!-- Add Order Modal -->
+<div class="modal fade" id="addOrderModal" tabindex="-1" aria-labelledby="addOrderModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{{ url_for('orders.add_order') }}">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addOrderModalLabel">Add Brick Order</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="orderNo" class="form-label">Order No</label>
+            <input type="text" class="form-control" id="orderNo" name="orderNo" required>
+          </div>
+          <div class="mb-3">
+            <label for="brick" class="form-label">Brick</label>
+            <input type="text" class="form-control" id="brick" name="brick" required>
+          </div>
+          <div class="mb-3">
+            <label for="bricks_ordered" class="form-label">Bricks Ordered</label>
+            <input type="number" class="form-control" id="bricks_ordered" name="bricks_ordered" required>
+          </div>
+          <div class="mb-3">
+            <label for="ordered_date" class="form-label">Ordered Date</label>
+            <input type="date" class="form-control" id="ordered_date" name="ordered_date" required>
+          </div>
+          <div class="mb-3">
+            <label for="expected_date" class="form-label">Expected Date</label>
+            <input type="date" class="form-control" id="expected_date" name="expected_date" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Add Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/orders.css') }}">
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.order-row').forEach(function(row) {
+        row.addEventListener('click', function(e) {
+            // Prevent default link if clicking the row
+            if (e.target.tagName.toLowerCase() === 'a') return;
+            const orderNo = row.getAttribute('data-order-no');
+            fetch(`{{ url_for('orders.order_detail', order_no='ORDER_NO_PLACEHOLDER') }}`.replace('ORDER_NO_PLACEHOLDER', orderNo))
+                .then(response => response.text())
+                .then(html => {
+                    // Parse the returned HTML and extract the detail panel
+                    const parser = new DOMParser();
+                    const doc = parser.parseFromString(html, 'text/html');
+                    const detailPanel = doc.querySelector('#order-detail-panel') || doc.querySelector('#order-placeholder-panel');
+                    if (detailPanel) {
+                        document.querySelector('.col-lg-8').innerHTML = '';
+                        document.querySelector('.col-lg-8').appendChild(detailPanel);
+                    }
+                });
+        });
+    });
+});
+</script>
+{% endblock %}

@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+{% block content %}
+<div class="container mt-4">
+    <h2>Order No: {{ order_no }}</h2>
+    <div class="mb-3">
+        <a href="{{ url_for('orders.orders') }}" class="btn btn-secondary">Back to Orders</a>
+    </div>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Brick</th>
+                <th>Bricks Ordered</th>
+                <th>Bricks Received</th>
+                <th>Ordered Date</th>
+                <th>Expected Date</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+            <tr>
+                <td>{{ order.id }}</td>
+                <td>{{ order.brick }}</td>
+                <td>{{ order.bricks_ordered }}</td>
+                <td>{{ order.bricks_received }}</td>
+                <td>{{ order.ordered_date.strftime('%Y-%m-%d') }}</td>
+                <td>{{ order.expected_date.strftime('%Y-%m-%d') }}</td>
+                <td>
+                    {% if order.bricks_received < order.bricks_ordered %}
+                    <form method="POST" action="{{ url_for('orders.mark_received', order_id=order.id) }}" style="display:inline;">
+                        <button type="submit" class="btn btn-success btn-sm">Order Received</button>
+                    </form>
+                    {% else %}
+                    <span class="badge bg-success">Received</span>
+                    {% endif %}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <div class="mb-3">
+        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addOrderModal">Add Order</a>
+    </div>
+</div>
+
+<!-- Add Order Modal (same as in orders.html, can be reused) -->
+<div class="modal fade" id="addOrderModal" tabindex="-1" aria-labelledby="addOrderModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="POST" action="{{ url_for('orders.add_order') }}">
+        <div class="modal-header">
+          <h5 class="modal-title" id="addOrderModalLabel">Add Brick Order</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="orderNo" class="form-label">Order No</label>
+            <input type="text" class="form-control" id="orderNo" name="orderNo" value="{{ order_no }}" required>
+          </div>
+          <div class="mb-3">
+            <label for="brick" class="form-label">Brick</label>
+            <input type="text" class="form-control" id="brick" name="brick" required>
+          </div>
+          <div class="mb-3">
+            <label for="bricks_ordered" class="form-label">Bricks Ordered</label>
+            <input type="number" class="form-control" id="bricks_ordered" name="bricks_ordered" required>
+          </div>
+          <div class="mb-3">
+            <label for="ordered_date" class="form-label">Ordered Date</label>
+            <input type="date" class="form-control" id="ordered_date" name="ordered_date" required>
+          </div>
+          <div class="mb-3">
+            <label for="expected_date" class="form-label">Expected Date</label>
+            <input type="date" class="form-control" id="expected_date" name="expected_date" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Add Order</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
