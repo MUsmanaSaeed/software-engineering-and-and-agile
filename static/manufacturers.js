@@ -1,6 +1,5 @@
 let deleteId = null;
 const deleteModal = document.getElementById('deleteModal');
-const manufacturerBricks = JSON.parse(document.getElementById('manufacturerBricksData').textContent);
 deleteModal.addEventListener('show.bs.modal', function (event) {
   const button = event.relatedTarget;
   deleteId = button.getAttribute('data-id');
@@ -8,19 +7,6 @@ deleteModal.addEventListener('show.bs.modal', function (event) {
   document.getElementById('manufacturerName').textContent = name;
   const bricksList = document.getElementById('bricksList');
   bricksList.innerHTML = '';
-  if (manufacturerBricks[deleteId] && manufacturerBricks[deleteId].length > 0) {
-    manufacturerBricks[deleteId].forEach(function(brickName) {
-      const li = document.createElement('li');
-      li.className = 'list-group-item list-group-item-danger py-1';
-      li.textContent = brickName;
-      bricksList.appendChild(li);
-    });
-  } else {
-    const li = document.createElement('li');
-    li.className = 'list-group-item';
-    li.textContent = 'No bricks.';
-    bricksList.appendChild(li);
-  }
   setTimeout(function() {
     document.getElementById('cancelBtn').focus();
   }, 200);
@@ -73,26 +59,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (editLink) {
                 editLink.href = `/edit_manufacturer/${m.id}`;
             }
-            // Show/hide brick buttons (rendered in HTML) based on bricks
-            const brickList = document.getElementById('detail-m-bricks');
-            if (brickList) {
-                const brickBtns = brickList.querySelectorAll('.brick-link-btn');
-                const noBricksMsg = brickList.querySelector('.no-bricks-found');
-                if (m.bricks && m.bricks.length > 0) {
-                    brickBtns.forEach(btn => {
-                        const brickName = btn.textContent.trim();
-                        if (m.bricks.some(b => b.name === brickName)) {
-                            btn.style.display = '';
-                        } else {
-                            btn.style.display = 'none';
-                        }
-                    });
-                    if (noBricksMsg) noBricksMsg.style.display = 'none';
-                } else {
-                    brickBtns.forEach(btn => btn.style.display = 'none');
-                    if (noBricksMsg) noBricksMsg.style.display = '';
-                }
-            }
             panel.style.display = 'block';
             if (document.getElementById('manufacturer-placeholder-panel')) {
                 document.getElementById('manufacturer-placeholder-panel').classList.add('d-none');
@@ -132,26 +98,6 @@ document.addEventListener('DOMContentLoaded', function() {
             if (editLink) {
                 editLink.href = `/edit_manufacturer/${m.id}`;
             }
-            // Show/hide brick buttons (rendered in HTML) based on bricks
-            const brickList = document.getElementById('detail-m-bricks');
-            if (brickList) {
-                const brickBtns = brickList.querySelectorAll('.brick-link-btn');
-                const noBricksMsg = brickList.querySelector('.no-bricks-found');
-                if (m.bricks && m.bricks.length > 0) {
-                    brickBtns.forEach(btn => {
-                        const brickName = btn.textContent.trim();
-                        if (m.bricks.some(b => b.name === brickName)) {
-                            btn.style.display = '';
-                        } else {
-                            btn.style.display = 'none';
-                        }
-                    });
-                    if (noBricksMsg) noBricksMsg.style.display = 'none';
-                } else {
-                    brickBtns.forEach(btn => btn.style.display = 'none');
-                    if (noBricksMsg) noBricksMsg.style.display = '';
-                }
-            }
             panel.style.display = 'block';
             if (document.getElementById('manufacturer-placeholder-panel')) {
                 document.getElementById('manufacturer-placeholder-panel').classList.add('d-none');
@@ -180,30 +126,4 @@ if (manufacturerSearchBox) {
       }
     });
   });
-}
-
-// --- Brick search for manufacturer detail panel ---
-const brickSearchBox = document.getElementById('brick-search-box');
-if (brickSearchBox) {
-    brickSearchBox.addEventListener('input', function() {
-        const filter = this.value.trim().toLowerCase();
-        const brickList = document.getElementById('detail-m-bricks');
-        if (!brickList) return;
-        // Only show/hide bricks, do not create or style them here
-        const brickItems = brickList.querySelectorAll('.brick-link-btn');
-        let anyVisible = false;
-        brickItems.forEach(btn => {
-            if (btn.textContent.toLowerCase().includes(filter)) {
-                btn.style.display = '';
-                anyVisible = true;
-            } else {
-                btn.style.display = 'none';
-            }
-        });
-        // Show/hide the 'no bricks found' message
-        const noBricksMsg = brickList.querySelector('.no-bricks-found');
-        if (noBricksMsg) {
-            noBricksMsg.style.display = anyVisible ? 'none' : '';
-        }
-    });
 }
