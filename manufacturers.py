@@ -35,8 +35,8 @@ def addManufacturer():
         address = request.form['address']
         phoneNo = request.form.get('phoneNo', '')
         email = request.form.get('email', '')
-        if not name or not address:
-            flash('All fields are required.', 'danger')
+        if not name:
+            flash('Name is required.', 'danger')
             return render_template('add_manufacturer.html')
         # Duplicate name check (case-insensitive)
         existing = Manufacturer.query.filter(db.func.lower(Manufacturer.name) == name.lower()).first()

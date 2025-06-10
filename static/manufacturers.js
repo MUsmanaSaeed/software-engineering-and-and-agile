@@ -69,6 +69,10 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('detail-m-address').textContent = m.address;
             document.getElementById('detail-m-phone').textContent = m.phoneNo || '';
             document.getElementById('detail-m-email').textContent = m.email || '';
+            // Set edit link href
+            if (editLink) {
+                editLink.href = `/edit_manufacturer/${m.id}`;
+            }
             // Bricks list
             const brickList = document.getElementById('detail-m-bricks');
             brickList.innerHTML = '';
@@ -145,6 +149,10 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('detail-m-address').textContent = m.address;
             document.getElementById('detail-m-phone').textContent = m.phoneNo || '';
             document.getElementById('detail-m-email').textContent = m.email || '';
+            // Set edit link href
+            if (editLink) {
+                editLink.href = `/edit_manufacturer/${m.id}`;
+            }
             // Bricks list
             const brickList = document.getElementById('detail-m-bricks');
             brickList.innerHTML = '';
