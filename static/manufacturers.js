@@ -1,51 +1,51 @@
 let deleteId = null;
 const deleteModal = document.getElementById('deleteModal');
 deleteModal.addEventListener('show.bs.modal', function (event) {
-  // Always get the selected manufacturer row
-  let selectedRow = document.querySelector('.manufacturer-row.active');
-  let manufacturerId = null;
-  let manufacturerName = '';
-  if (selectedRow) {
-    const m = JSON.parse(selectedRow.dataset.manufacturer);
-    manufacturerId = m.id;
-    manufacturerName = m.name;
-  } else {
-    // fallback to button attributes if no row is selected
-    const button = event.relatedTarget;
-    manufacturerId = button ? button.getAttribute('data-id') : null;
-    manufacturerName = button ? button.getAttribute('data-name') : '';
-  }
-  deleteId = manufacturerId;
-  document.getElementById('manufacturerName').textContent = manufacturerName;
-  const bricksList = document.getElementById('bricksList');
-  bricksList.innerHTML = '';
-  // --- Populate bricks to be deleted ---
-  const bricksDataScript = document.getElementById('manufacturerBricksData');
-  if (bricksDataScript && deleteId) {
-    const bricksData = JSON.parse(bricksDataScript.textContent);
-    const brickNames = bricksData[deleteId] || [];
-    if (brickNames.length === 0) {
-      const li = document.createElement('li');
-      li.className = 'list-group-item text-center text-muted';
-      li.textContent = 'No bricks for this manufacturer.';
-      bricksList.appendChild(li);
+    // Always get the selected manufacturer row
+    let selectedRow = document.querySelector('.manufacturer-row.active');
+    let manufacturerId = null;
+    let manufacturerName = '';
+    if (selectedRow) {
+        const m = JSON.parse(selectedRow.dataset.manufacturer);
+        manufacturerId = m.id;
+        manufacturerName = m.name;
     } else {
-      brickNames.forEach(brickName => {
-        const li = document.createElement('li');
-        li.className = 'list-group-item';
-        li.textContent = brickName;
-        bricksList.appendChild(li);
-      });
+        // fallback to button attributes if no row is selected
+        const button = event.relatedTarget;
+        manufacturerId = button ? button.getAttribute('data-id') : null;
+        manufacturerName = button ? button.getAttribute('data-name') : '';
     }
-  }
-  setTimeout(function() {
-    document.getElementById('cancelBtn').focus();
-  }, 200);
+    deleteId = manufacturerId;
+    document.getElementById('manufacturerName').textContent = manufacturerName;
+    const bricksList = document.getElementById('bricksList');
+    bricksList.innerHTML = '';
+    // --- Populate bricks to be deleted ---
+    const bricksDataScript = document.getElementById('manufacturerBricksData');
+    if (bricksDataScript && deleteId) {
+        const bricksData = JSON.parse(bricksDataScript.textContent);
+        const brickNames = bricksData[deleteId] || [];
+        if (brickNames.length === 0) {
+            const li = document.createElement('li');
+            li.className = 'list-group-item text-center text-muted';
+            li.textContent = 'No bricks for this manufacturer.';
+            bricksList.appendChild(li);
+        } else {
+            brickNames.forEach(brickName => {
+                const li = document.createElement('li');
+                li.className = 'list-group-item';
+                li.textContent = brickName;
+                bricksList.appendChild(li);
+            });
+        }
+    }
+    setTimeout(function() {
+        document.getElementById('cancelBtn').focus();
+    }, 200);
 });
 document.getElementById('confirmDeleteBtn').onclick = function() {
-  if (deleteId) {
-    window.location.href = "/delete_manufacturer/" + deleteId;
-  }
+    if (deleteId) {
+        window.location.href = "/delete_manufacturer/" + deleteId;
+    }
 };
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -132,8 +132,8 @@ document.addEventListener('DOMContentLoaded', function() {
             li.className = 'list-group-item text-center text-muted py-4 border-0';
             li.innerHTML = `
                 <div class="d-flex flex-column align-items-center justify-content-center">
-                  <i class="bi bi-box" style="font-size: 2rem; opacity: 0.5;"></i>
-                  <div class="mt-2 fw-semibold">No bricks found</div>
+                    <i class="bi bi-box" style="font-size: 2rem; opacity: 0.5;"></i>
+                    <div class="mt-2 fw-semibold">No bricks found</div>
                 </div>
             `;
             bricksList.appendChild(li);
@@ -243,15 +243,15 @@ document.addEventListener('DOMContentLoaded', function() {
 // Search/filter functionality for manufacturers table
 const manufacturerSearchBox = document.getElementById('manufacturer-search-box');
 if (manufacturerSearchBox) {
-  manufacturerSearchBox.addEventListener('input', function() {
-    const filter = this.value.trim().toLowerCase();
-    document.querySelectorAll('.manufacturer-row').forEach(row => {
-      const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
-      if (name.includes(filter)) {
-        row.style.display = '';
-      } else {
-        row.style.display = 'none';
-      }
+    manufacturerSearchBox.addEventListener('input', function() {
+        const filter = this.value.trim().toLowerCase();
+        document.querySelectorAll('.manufacturer-row').forEach(row => {
+            const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+            if (name.includes(filter)) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        });
     });
-  });
 }

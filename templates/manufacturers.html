@@ -74,29 +74,30 @@
     </div>
 </div>
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
-    <div class="modal-content border-danger">
-      <div class="modal-header bg-danger text-white">
-        <h5 class="modal-title" id="deleteModalLabel">
-          <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirm Deletion
-        </h5>
-        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body text-center text-danger fw-bold fs-5">
-        <i class="bi bi-exclamation-octagon-fill display-4 mb-2"></i><br>
-        Are you sure you want to delete manufacturer <span id="manufacturerName" class="fw-bolder text-uppercase"></span> and all its bricks?
-        <div class="mt-3">This action <u>cannot be undone</u>!</div>
-        <div id="bricksListContainer" class="mt-4">
-          <div class="fw-normal text-dark mb-2">Bricks to be deleted:</div>
-          <ul id="bricksList" class="list-group mx-auto" style="max-height: 150px; overflow-y: auto; width: 80%;"></ul>
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content border-danger">
+            <div class="modal-header bg-danger text-white">
+                <h5 class="modal-title" id="deleteModalLabel">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i> Confirm Deletion
+                
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body text-center text-danger fw-bold fs-5">
+                <i class="bi bi-exclamation-octagon-fill display-4 mb-2"></i><br>
+                Are you sure you want to delete manufacturer <span id="manufacturerName" class="fw-bolder text-uppercase"></span> and all its bricks?
+                <div class="mt-3">This action <u>cannot be undone</u>!</div>
+                <div id="bricksListContainer" class="mt-4">
+                    <div class="fw-normal text-dark mb-2">Bricks to be deleted:</div>
+                    <ul id="bricksList" class="list-group mx-auto" style="max-height: 150px; overflow-y: auto; width: 80%;"></ul>
+                </div>
+            </div>
+            <div class="modal-footer justify-content-center flex-nowrap gap-2">
+                <button type="button" class="btn btn-lg btn-secondary w-50" data-bs-dismiss="modal" id="cancelBtn" autofocus>Cancel</button>
+                <button type="button" class="btn btn-lg btn-danger w-50" id="confirmDeleteBtn">Delete</button>
+            </div>
         </div>
-      </div>
-      <div class="modal-footer justify-content-center flex-nowrap gap-2">
-        <button type="button" class="btn btn-lg btn-secondary w-50" data-bs-dismiss="modal" id="cancelBtn" autofocus>Cancel</button>
-        <button type="button" class="btn btn-lg btn-danger w-50" id="confirmDeleteBtn">Delete</button>
-      </div>
     </div>
-  </div>
 </div>
 <script>
 window.selectedManufacturerId = "{{ selected_manufacturer_id|tojson|safe }}";
