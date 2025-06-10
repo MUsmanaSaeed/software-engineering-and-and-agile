@@ -27,6 +27,12 @@ document.addEventListener('DOMContentLoaded', () => {
             const brick = JSON.parse(this.dataset.brick);
             document.getElementById('detail-name').textContent = brick.name;
             document.getElementById('detail-manufacturer').textContent = brick.manufacturer.name;
+            // Show and update manufacturer details button
+            var manufacturerBtn = document.getElementById('detail-manufacturer-btn');
+            if (manufacturerBtn) {
+                manufacturerBtn.style.display = 'inline-block';
+                manufacturerBtn.href = `/manufacturers/${brick.manufacturer.id}`;
+            }
             document.getElementById('detail-colour').textContent = brick.colour;
             document.getElementById('detail-material').textContent = brick.material;
             document.getElementById('detail-strength').textContent = brick.strength;

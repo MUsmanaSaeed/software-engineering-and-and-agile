@@ -18,7 +18,6 @@
                       0
                     </span>
                 </button>
-                <!-- Filter Dropdown (not modal) -->
                 <div id="brick-filter-dropdown" class="brick-filter-dropdown" style="display:none;">
                     <div class="d-flex justify-content-between align-items-center mb-2">
                         <span class="fw-semibold">Filter Bricks</span>
@@ -55,7 +54,9 @@
                     {% for brick in bricks %}
                     <tr class="brick-row" data-brick='{{ brick | tojson | safe }}' data-id="{{ brick.id }}">
                         <td>{{ brick.name }}</td>
-                        <td>{{ brick.manufacturer.name }}</td>
+                        <td>
+                            {{ brick.manufacturer.name }}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -84,7 +85,11 @@
                     </div>
                     {% endif %}
                 </div>
-                <h6 class="card-subtitle mb-2 text-muted" id="detail-manufacturer"></h6>
+                <h6 class="card-subtitle mb-2 text-muted">
+                  <a id="detail-manufacturer-btn" href="#" class="manufacturer-link" style="display:none;">
+                    <span id="detail-manufacturer"></span>
+                  </a>
+                </h6>
                 <button id="back-to-brick-btn" class="btn btn-secondary btn-sm mb-3" style="display:none; width: fit-content;">Back to Brick</button>
                 <ul class="list-group list-group-flush mb-0">
                     <li class="list-group-item"><strong>Colour:</strong> <span id="detail-colour"></span></li>
