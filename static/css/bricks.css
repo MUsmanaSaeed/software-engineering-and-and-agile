@@ -218,6 +218,6 @@ thead tr:nth-child(2) th {
 
 @media (max-width: 991.98px) {
   #brick-detail-panel .card-body {
-    padding: 1.2rem 1rem 1.2rem 1rem;
+    padding: 1.2rem;
   }
 }
