@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', function() {
             li.className = 'list-group-item text-center text-muted py-4 border-0';
             li.innerHTML = `
                 <div class="d-flex flex-column align-items-center justify-content-center">
-                  <i class="bi bi-box-seam" style="font-size: 2rem; opacity: 0.5;"></i>
+                  <i class="bi bi-box" style="font-size: 2rem; opacity: 0.5;"></i>
                   <div class="mt-2 fw-semibold">No bricks found</div>
                 </div>
             `;
