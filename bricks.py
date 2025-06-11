@@ -40,38 +40,18 @@ def addBrick():
     manufacturers = ManufacturerMediator.get_all_manufacturers()
     selected_brick_id = request.args.get('selected_brick_id', type=int)
     if request.method == 'POST':
-        name = request.form['name']
-        colour = request.form['colour']
-        material = request.form['material']
-        strength = request.form['strength']
-        width = float(request.form['width'])
-        depth = float(request.form['depth'])
-        height = float(request.form['height'])
-        type_ = request.form['type']
-        voids = int(request.form['voids'])
-        manufacturerId = int(request.form['manufacturer_id'])
-        # Use mediator for business logic and creation
-        brick_data = {
-            'name': name,
-            'colour': colour,
-            'material': material,
-            'strength': strength,
-            'width': width,
-            'depth': depth,
-            'height': height,
-            'type': type_,
-            'voids': voids,
-            'manufacturerId': manufacturerId
-        }
-        # Duplicate name check via mediator
-        if BrickMediator.duplicate_name_exists(name):
-            flash('A brick with this name already exists.', 'danger')
+        brick_data = dict(request.form)
+        try:
+            newBrick = BrickMediator.add_brick(brick_data)
+            flash('Brick added successfully!', 'success')
+            return redirect(url_for('bricks.bricks', brick_id=newBrick.id))
+        except ValueError as e:
+            flash(str(e), 'danger')
+            # Ensure manufacturer_id is present for form repopulation
             form_data = dict(request.form)
-            form_data['manufacturerId'] = manufacturerId
+            if 'manufacturer_id' not in form_data and 'manufacturerId' in form_data:
+                form_data['manufacturer_id'] = form_data['manufacturerId']
             return render_template('add_brick.html', manufacturers=manufacturers, selected_brick_id=selected_brick_id, brick=form_data)
-        newBrick = BrickMediator.add_brick(brick_data)
-        flash('Brick added successfully!', 'success')
-        return redirect(url_for('bricks.bricks', brick_id=newBrick.id))
     return render_template('add_brick.html', manufacturers=manufacturers, selected_brick_id=selected_brick_id)
 
 @bricks_bp.route('/edit_brick/<int:id>', methods=['GET', 'POST'])
@@ -80,26 +60,14 @@ def editBrick(id):
     brick = BrickMediator.get_brick_by_id(id)
     manufacturers = ManufacturerMediator.get_all_manufacturers()
     if request.method == 'POST':
-        name = request.form['name']
-        # Duplicate name check via mediator (exclude self)
-        if BrickMediator.duplicate_name_exists(name, exclude_id=brick.id):
-            flash('A brick with this name already exists.', 'danger')
+        brick_data = dict(request.form)
+        try:
+            BrickMediator.update_brick(brick, brick_data)
+            flash('Brick updated successfully!', 'success')
+            return redirect(url_for('bricks.bricks', brick_id=brick.id))
+        except ValueError as e:
+            flash(str(e), 'danger')
             return render_template('edit_brick.html', brick=brick, manufacturers=manufacturers)
-        brick_data = {
-            'name': name,
-            'colour': request.form['colour'],
-            'material': request.form['material'],
-            'strength': request.form['strength'],
-            'width': float(request.form['width']),
-            'depth': float(request.form['depth']),
-            'height': float(request.form['height']),
-            'type': request.form['type'],
-            'voids': int(request.form['voids']),
-            'manufacturerId': int(request.form['manufacturer_id'])
-        }
-        BrickMediator.update_brick(brick, brick_data)
-        flash('Brick updated successfully!', 'success')
-        return redirect(url_for('bricks.bricks', brick_id=brick.id))
     return render_template('edit_brick.html', brick=brick, manufacturers=manufacturers)
 
 @bricks_bp.route('/delete_brick/<int:id>')

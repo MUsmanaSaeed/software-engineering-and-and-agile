@@ -29,19 +29,19 @@
                         <div class="col">
                             <div class="mb-3">
                                 <label class="form-label">Width (mm)</label>
-                                <input type="number" step="0.01" name="width" class="form-control" value="{{ brick.width }}" required>
+                                <input type="number" step="0.01" name="width" class="form-control" value="{{ brick.width }}" required min="0">
                             </div>
                         </div>
                         <div class="col">
                             <div class="mb-3">
                                 <label class="form-label">Depth (mm)</label>
-                                <input type="number" step="0.01" name="depth" class="form-control" value="{{ brick.depth }}" required>
+                                <input type="number" step="0.01" name="depth" class="form-control" value="{{ brick.depth }}" required min="0">
                             </div>
                         </div>
                         <div class="col">
                             <div class="mb-3">
                                 <label class="form-label">Height (mm)</label>
-                                <input type="number" step="0.01" name="height" class="form-control" value="{{ brick.height }}" required>
+                                <input type="number" step="0.01" name="height" class="form-control" value="{{ brick.height }}" required min="0">
                             </div>
                         </div>
                     </div>
@@ -50,8 +50,8 @@
                         <input type="text" name="type" class="form-control" value="{{ brick.type }}" required>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Voids</label>
-                        <input type="number" name="voids" class="form-control" value="{{ brick.voids }}" required>
+                        <label class="form-label">Voids (%)</label>
+                        <input type="number" name="voids" class="form-control" value="{{ brick.voids }}" required min="0" max="100">
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Manufacturer</label>
