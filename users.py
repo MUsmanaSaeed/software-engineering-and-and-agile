@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from werkzeug.security import check_password_hash
-from models import db, User
+from mediators.user_mediator import UserMediator
 from functools import wraps
 
 users_bp = Blueprint('users', __name__)
@@ -20,7 +20,7 @@ def login():
     if request.method == 'POST':
         userName = request.form['userName']
         password = request.form['password']
-        user = User.query.filter_by(userName=userName).first()
+        user = UserMediator.get_user_by_username(userName)
         if user and check_password_hash(user.password, password):
             session['userId'] = user.id
             session['userName'] = user.userName

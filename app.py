@@ -5,6 +5,7 @@ from manufacturers import manufacturers_bp
 from bricks import bricks_bp
 from manage_users import manage_users_bp
 from orders import orders_bp
+from mediators.user_mediator import UserMediator
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'brickManagementSystem'
@@ -36,14 +37,12 @@ app.register_blueprint(orders_bp)
 if __name__ == 'app':
     with app.app_context():
         db.create_all()
-        from models import User
         from werkzeug.security import generate_password_hash
-        if not User.query.filter_by(userName='admin').first():
-            admin_user = User(
-                userName='admin',
-                password=generate_password_hash('p4$$w0rd', method='pbkdf2:sha256'), # would not do this in real life
-                isAdmin=True
-            )
-            db.session.add(admin_user)
-            db.session.commit()
+        if not UserMediator.duplicate_username_exists('admin'):
+            admin_user_data = {
+                'userName': 'admin',
+                'password': generate_password_hash('p4$$w0rd', method='pbkdf2:sha256'),
+                'isAdmin': True
+            }
+            UserMediator.add_user(admin_user_data)
     app.run(debug=True)
