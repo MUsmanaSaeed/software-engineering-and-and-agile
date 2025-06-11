@@ -35,7 +35,14 @@ def addManufacturer():
         result = ManufacturerMediator.add_manufacturer_with_checks(request.form)
         if 'error' in result:
             flash(result['error'], 'danger')
-            return render_template('add_manufacturer.html')
+            # Pass entered data back as 'manufacturer' dict
+            manufacturer = {
+                'name': request.form.get('name', ''),
+                'address': request.form.get('address', ''),
+                'phoneNo': request.form.get('phoneNo', ''),
+                'email': request.form.get('email', '')
+            }
+            return render_template('add_manufacturer.html', manufacturer=manufacturer)
         flash('Manufacturer added successfully!', 'success')
         return redirect(url_for('manufacturers.manufacturers'))
     return render_template('add_manufacturer.html')
