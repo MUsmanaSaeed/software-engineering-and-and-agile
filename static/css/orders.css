@@ -268,6 +268,95 @@ html, body {
     align-self: flex-end;
 }
 
+/* Custom Cancel Modal Styles */
+.cancel-modal-backdrop {
+    display: none;
+    background: rgba(0,0,0,0.5);
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    z-index: 2000;
+    align-items: center;
+    justify-content: center;
+}
+.cancel-modal-backdrop.active {
+    display: flex;
+}
+.cancel-modal-dialog {
+    max-width: 400px;
+    margin: auto;
+}
+.cancel-modal-content {
+    border: 2px solid #e53935;
+    box-shadow: 0 8px 32px rgba(229,57,53,0.25);
+    background: #fff;
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+.cancel-modal-header {
+    background: #ffeaea;
+    border-bottom: 1px solid #e53935;
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem 1rem 1.2rem;
+}
+.cancel-modal-header .cancel-modal-icon {
+    color: #e53935;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+}
+.cancel-modal-title {
+    color: #b71c1c;
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin: 0;
+}
+.cancel-modal-body {
+    background: #fff0f0;
+    padding: 1.2rem 1.5rem 1rem 1.5rem;
+}
+.cancel-modal-body p {
+    color: #b71c1c;
+    font-size: 1.15rem;
+    font-weight: 500;
+    margin: 0;
+}
+.cancel-modal-footer {
+    background: #ffeaea;
+    border-top: 1px solid #e53935;
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+}
+.cancel-modal-btn {
+    font-weight: 600;
+    min-width: 120px;
+    width: 50%;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0;
+    font-size: 1rem;
+}
+.cancel-modal-btn.cancel {
+    background: #e53935;
+    color: #fff;
+    border: none;
+    transition: background 0.2s;
+}
+.cancel-modal-btn.cancel:hover {
+    background: #b71c1c;
+}
+.cancel-modal-btn.no {
+    background: #fff;
+    color: #b71c1c;
+    border: 1.5px solid #b71c1c;
+    transition: background 0.2s, color 0.2s;
+}
+.cancel-modal-btn.no:hover {
+    background: #ffeaea;
+    color: #e53935;
+}
+
 @media (max-width: 768px) {
     .order-list-info > div {
         margin-right: 0;
