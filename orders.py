@@ -45,3 +45,11 @@ def mark_received(order_id):
         order.received_date = datetime.today().date()  # Set received_date to today
         db.session.commit()
     return redirect(url_for('orders.order_detail', order_no=order.orderNo))
+
+@orders_bp.route('/orders/cancel/<int:order_id>', methods=['POST'])
+def cancel_order(order_id):
+    order = BrickOrder.query.get(order_id)
+    if order:
+        order.canceled_date = datetime.today().date()
+        db.session.commit()
+    return redirect(url_for('orders.order_detail', order_no=order.orderNo))

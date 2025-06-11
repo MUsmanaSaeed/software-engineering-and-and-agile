@@ -1,8 +1,9 @@
 {% if selected_order_no and order_details %}
-{% set not_received_orders = order_details|selectattr('received_date', '==', None)|sort(attribute='expected_date')|list %}
+{% set not_received_orders = order_details|selectattr('received_date', '==', None)|selectattr('canceled_date', '==', None)|sort(attribute='expected_date')|list %}
 {% set due_today_orders = not_received_orders|selectattr('expected_date', 'equalto', current_date)|list %}
 {% set other_not_received_orders = not_received_orders|rejectattr('expected_date', 'equalto', current_date)|list %}
-{% set received_orders = order_details|selectattr('received_date', '!=', None)|sort(attribute='expected_date')|list %}
+{% set received_orders = order_details|selectattr('received_date', '!=', None)|selectattr('canceled_date', '==', None)|sort(attribute='expected_date')|list %}
+{% set canceled_orders = order_details|selectattr('canceled_date', '!=', None)|sort(attribute='expected_date')|list %}
 <div id="order-detail-panel" class="card flex-grow-1 h-100">
     <div class="order-detail-header d-flex align-items-center justify-content-between">
         <div>
@@ -15,22 +16,27 @@
         <div class="order-list flex-grow-1 overflow-auto" style="max-height: 80vh;">
             {# Show due today orders at the very top #}
             {% for order in due_today_orders %}
-            <div class="order-list-item mb-3 p-0 rounded shadow-sm order-vertical-layout order-due-today-bg">
+            <div class="order-list-item mb-3 p-0 rounded shadow-sm order-vertical-layout">
                 <button class="order-collapse-btn w-100 text-start p-3 border-0 bg-transparent d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#order-{{ order.id }}-collapse" aria-expanded="false" aria-controls="order-{{ order.id }}-collapse" title="Click for more details">
                     <i class="bi bi-chevron-down me-2"></i>
                     <span><strong>Brick:</strong> {{ order.brick }} &mdash; <strong>Expected:</strong> {{ order.expected_date.strftime('%d/%m/%y') }} &mdash; <strong>Ordered:</strong> {{ order.bricks_ordered }}</span>
                 </button>
                 <div class="collapse" id="order-{{ order.id }}-collapse">
-                    <div class="order-list-info px-3 pb-3 pt-1">
-                        <div><strong>Bricks Ordered:</strong><br> {{ order.bricks_ordered }}</div>
-                        <div><strong>Bricks Received:</strong><br> {{ order.bricks_received }}</div>
-                        <div><strong>Ordered Date:</strong><br> {{ order.ordered_date.strftime('%d/%m/%y') }}</div>
-                        <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%d/%m/%y') }}</div>
-                    </div>
-                    <div class="order-list-actions px-3 pb-3">
-                        <form method="POST" action="{{ url_for('orders.mark_received', order_id=order.id) }}" style="display:inline;">
-                            <button type="submit" class="btn btn-order-received btn-sm">Order Received</button>
-                        </form>
+                    <div class="order-list-info-actions d-flex justify-content-between align-items-start px-3 pb-3 pt-1">
+                        <div class="order-list-info">
+                            <div><strong>Bricks Ordered:</strong><br> {{ order.bricks_ordered }}</div>
+                            <div><strong>Bricks Received:</strong><br> {{ order.bricks_received }}</div>
+                            <div><strong>Ordered Date:</strong><br> {{ order.ordered_date.strftime('%d/%m/%y') }}</div>
+                            <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%d/%m/%y') }}</div>
+                        </div>
+                        <div class="order-list-actions d-flex flex-column align-items-end ms-3">
+                            <form method="POST" action="{{ url_for('orders.mark_received', order_id=order.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-order-received btn-sm mb-2">Order Received</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('orders.cancel_order', order_id=order.id) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                                <button type="submit" class="btn btn-order-cancel btn-sm">Cancel</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -44,16 +50,21 @@
                     <span><strong>Brick:</strong> {{ order.brick }} &mdash; <strong>Expected:</strong> {{ order.expected_date.strftime('%d/%m/%y') }} &mdash; <strong>Ordered:</strong> {{ order.bricks_ordered }}</span>
                 </button>
                 <div class="collapse" id="order-{{ order.id }}-collapse">
-                    <div class="order-list-info px-3 pb-3 pt-1">
-                        <div><strong>Bricks Ordered:</strong><br> {{ order.bricks_ordered }}</div>
-                        <div><strong>Bricks Received:</strong><br> {{ order.bricks_received }}</div>
-                        <div><strong>Ordered Date:</strong><br> {{ order.ordered_date.strftime('%d/%m/%y') }}</div>
-                        <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%d/%m/%y') }}</div>
-                    </div>
-                    <div class="order-list-actions px-3 pb-3">
-                        <form method="POST" action="{{ url_for('orders.mark_received', order_id=order.id) }}" style="display:inline;">
-                            <button type="submit" class="btn btn-order-received btn-sm">Order Received</button>
-                        </form>
+                    <div class="order-list-info-actions d-flex justify-content-between align-items-start px-3 pb-3 pt-1">
+                        <div class="order-list-info">
+                            <div><strong>Bricks Ordered:</strong><br> {{ order.bricks_ordered }}</div>
+                            <div><strong>Bricks Received:</strong><br> {{ order.bricks_received }}</div>
+                            <div><strong>Ordered Date:</strong><br> {{ order.ordered_date.strftime('%d/%m/%y') }}</div>
+                            <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%d/%m/%y') }}</div>
+                        </div>
+                        <div class="order-list-actions d-flex flex-column align-items-end ms-3">
+                            <form method="POST" action="{{ url_for('orders.mark_received', order_id=order.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-order-received btn-sm mb-2">Order Received</button>
+                            </form>
+                            <form method="POST" action="{{ url_for('orders.cancel_order', order_id=order.id) }}" style="display:inline;" onsubmit="return confirm('Are you sure you want to cancel this order?');">
+                                <button type="submit" class="btn btn-order-cancel btn-sm">Cancel</button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -61,10 +72,13 @@
             {# Show received orders at the bottom, sorted by expected date #}
             {% for order in received_orders %}
             <div class="order-list-item mb-3 p-0 rounded shadow-sm order-vertical-layout order-received-bg">
-                <button class="order-collapse-btn w-100 text-start p-3 border-0 bg-transparent d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#order-{{ order.id }}-collapse" aria-expanded="false" aria-controls="order-{{ order.id }}-collapse" title="Click for more details">
-                    <i class="bi bi-chevron-down me-2"></i>
-                    <span><strong>Brick:</strong> {{ order.brick }} &mdash; <strong>Received:</strong> {{ order.received_date.strftime('%d/%m/%y') }}</span>
-                </button>
+                <div class="d-flex align-items-center justify-content-between w-100">
+                    <button class="order-collapse-btn text-start p-3 border-0 bg-transparent d-flex align-items-center flex-grow-1" type="button" data-bs-toggle="collapse" data-bs-target="#order-{{ order.id }}-collapse" aria-expanded="false" aria-controls="order-{{ order.id }}-collapse" title="Click for more details">
+                        <i class="bi bi-chevron-down me-2"></i>
+                        <span><strong>Brick:</strong> {{ order.brick }} &mdash; <strong>Received:</strong> {{ order.received_date.strftime('%d/%m/%y') }}</span>
+                    </button>
+                    <span class="badge badge-received me-3">Received</span>
+                </div>
                 <div class="collapse" id="order-{{ order.id }}-collapse">
                     <div class="order-list-info px-3 pb-3 pt-1">
                         <div><strong>Bricks Ordered:</strong><br> {{ order.bricks_ordered }}</div>
@@ -73,8 +87,26 @@
                         <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%d/%m/%y') }}</div>
                         <div><strong>Received Date:</strong><br> {{ order.received_date.strftime('%d/%m/%y') }}</div>
                     </div>
-                    <div class="order-list-actions px-3 pb-3">
-                        <span class="badge badge-received">Received</span>
+                </div>
+            </div>
+            {% endfor %}
+            {# Show canceled orders at the very bottom, sorted by expected date #}
+            {% for order in canceled_orders %}
+            <div class="order-list-item mb-3 p-0 rounded shadow-sm order-vertical-layout order-canceled-bg">
+                <div class="d-flex align-items-center justify-content-between w-100">
+                    <button class="order-collapse-btn text-start p-3 border-0 bg-transparent d-flex align-items-center flex-grow-1" type="button" data-bs-toggle="collapse" data-bs-target="#order-{{ order.id }}-collapse" aria-expanded="false" aria-controls="order-{{ order.id }}-collapse" title="Click for more details">
+                        <i class="bi bi-chevron-down me-2"></i>
+                        <span><strong>Brick:</strong> {{ order.brick }} &mdash; <strong>Canceled:</strong> {{ order.canceled_date.strftime('%d/%m/%y') }}</span>
+                    </button>
+                    <span class="badge badge-canceled me-3">Canceled</span>
+                </div>
+                <div class="collapse" id="order-{{ order.id }}-collapse">
+                    <div class="order-list-info px-3 pb-3 pt-1">
+                        <div><strong>Bricks Ordered:</strong><br> {{ order.bricks_ordered }}</div>
+                        <div><strong>Bricks Received:</strong><br> {{ order.bricks_received }}</div>
+                        <div><strong>Ordered Date:</strong><br> {{ order.ordered_date.strftime('%d/%m/%y') }}</div>
+                        <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%d/%m/%y') }}</div>
+                        <div><strong>Canceled Date:</strong><br> {{ order.canceled_date.strftime('%d/%m/%y') }}</div>
                     </div>
                 </div>
             </div>

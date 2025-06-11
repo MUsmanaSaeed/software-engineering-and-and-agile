@@ -129,28 +129,57 @@ html, body {
 .order-detail-table tbody tr:hover {
     background: #f1f8fe;
 }
-.order-detail-table .btn-order-received {
-    background: #38a1db;
-    border: none;
+.btn-order-received, .btn-order-cancel {
+    background: #43a047;
     color: #fff;
-    font-weight: 500;
-    border-radius: 0.5rem;
-    padding: 0.35rem 1.1rem;
-    box-shadow: 0 2px 8px rgba(13,110,253,0.08);
-    transition: background 0.2s, box-shadow 0.2s;
+    border: none;
+    border-radius: 8px;
+    padding: 0.45rem 1.1rem;
+    font-weight: 600;
+    font-size: 1rem;
+    box-shadow: none;
+    transition: background 0.2s, transform 0.1s;
+    margin-bottom: 0.3rem;
+    cursor: pointer;
+    outline: none;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    border: 1px solid #388e3c;
+    min-width: 180px;
+    justify-content: center;
 }
-.order-detail-table .btn-order-received:hover {
-    background: #4fd1c5;
-    box-shadow: 0 4px 16px rgba(13,110,253,0.12);
+.btn-order-cancel {
+    background: #e53935;
+    border: 1px solid #b71c1c;
 }
-.order-detail-table .badge-received {
+.btn-order-received:hover, .btn-order-received:focus {
+    background: #388e3c;
+    transform: translateY(-1px) scale(1.02);
+}
+.btn-order-cancel:hover, .btn-order-cancel:focus {
+    background: #b71c1c;
+    transform: translateY(-1px) scale(1.02);
+}
+.btn-order-received::before, .btn-order-cancel::before {
+    display: none;
+}
+.badge-received {
     background: #51cf66;
     color: #fff;
     font-size: 1rem;
     border-radius: 0.5rem;
     padding: 0.4em 1.2em;
     font-weight: 500;
-    box-shadow: 0 2px 8px rgba(40,167,69,0.08);
+    box-shadow: 0 2px 8px rgba(81,207,102,0.08);
+}
+.badge-received,
+.badge-canceled {
+    min-width: 110px;
+    text-align: center;
+    display: inline-block;
 }
 .order-detail-add-btn {
     margin-top: 0.5rem;
@@ -184,10 +213,21 @@ html, body {
     background: #e6f9e6 !important;
 }
 .order-list-item.order-overdue-bg {
-    background: #ffeaea !important;
+    background: #fff9db !important; /* light yellow */
 }
-.order-list-item.order-due-today-bg {
-    background-color: #fff9db !important;
+.order-list-item.order-canceled-bg {
+    background: #ffeaea !important; /* light red */
+    color: #a71d2a;
+    border: 1px solid #a71d2a;
+}
+.badge-canceled {
+    background: #a71d2a;
+    color: #fff;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    padding: 0.4em 1.2em;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(167,29,42,0.08);
 }
 .order-collapse-btn {
     font-size: 1.1rem;
@@ -211,6 +251,8 @@ html, body {
 }
 .order-list-actions {
     padding-top: 0.5rem;
+    align-items: flex-start !important;
+    gap: 0.3rem;
 }
 .order-vertical-layout {
     flex-direction: column !important;
