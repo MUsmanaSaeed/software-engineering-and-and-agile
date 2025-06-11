@@ -15,7 +15,7 @@ db.init_app(app)
 @app.before_request
 def require_login():
     # Require login for all routes except login, register, and static files
-    allowedRoutes = ['users.login']
+    allowedRoutes = ['users.login', 'users.register']
     endpoint = request.endpoint
     if endpoint is None:
         return  # Let Flask handle it

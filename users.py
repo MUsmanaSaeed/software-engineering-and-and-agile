@@ -38,3 +38,23 @@ def logout():
     session.clear()
     flash('Logged out successfully!', 'success')
     return redirect(url_for('users.login'))
+
+@users_bp.route('/register', methods=['GET', 'POST'])
+def register():
+    if session.get('userId'):
+        return redirect(url_for('index'))
+    error_fields = []
+    error_messages = []
+    if request.method == 'POST':
+        user_data = {
+            'userName': request.form.get('userName', '').strip(),
+            'password': request.form.get('password', ''),
+            'isAdmin': False  # Registration cannot set admin
+        }
+        valid, user, error_messages, error_fields = UserMediator.add_user(user_data)
+        if valid:
+            flash('Registration successful! Please log in.', 'success')
+            return redirect(url_for('users.login'))
+        else:
+            return render_template('register.html', error_fields=error_fields, error_messages=error_messages)
+    return render_template('register.html', error_fields=error_fields, error_messages=error_messages)

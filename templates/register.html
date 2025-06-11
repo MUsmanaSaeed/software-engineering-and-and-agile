@@ -1,0 +1,50 @@
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-12 col-sm-8 col-md-5 col-lg-4">
+        <div class="card shadow">
+            <div class="card-header text-center"><h4>Register</h4></div>
+            <div class="card-body">
+                {% if error_fields and error_messages %}
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                        {% for msg in error_messages %}
+                            <li>{{ msg }}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
+                <form method="POST" id="registerForm">
+                    <div class="mb-3">
+                        <label class="form-label">Username</label>
+                        <div class="input-group has-validation">
+                            <span class="input-group-text bg-white border-end-0 p-0" id="usernameErrorIcon" style="display: none;"><i class="bi bi-exclamation-circle text-danger"></i></span>
+                            <input type="text" name="userName" class="form-control{% if error_fields and 'userName' in error_fields %} is-invalid{% endif %}" value="{{ request.form.userName or '' }}" required aria-describedby="usernameErrorIcon">
+                        </div>
+                    </div>
+                    <div class="mb-3 position-relative">
+                        <label class="form-label">Password</label>
+                        <div class="input-group has-validation position-relative" style="width: 100%;">
+                            <span class="input-group-text bg-white border-end-0 p-0" id="passwordErrorIcon" style="display: none;"><i class="bi bi-exclamation-circle text-danger"></i></span>
+                            <input type="password" name="password" class="form-control pe-5{% if error_fields and 'password' in error_fields %} is-invalid{% endif %}" id="passwordInput" required style="padding-right: 2.5rem; position: relative; z-index: 1; background-color: transparent;" aria-describedby="passwordErrorIcon">
+                            <button type="button" class="peek-btn-login" id="togglePassword" tabindex="0">
+                                <i class="bi bi-eye" id="togglePasswordIcon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">Register</button>
+                </form>
+                <div id="formMessage" class="mt-2"></div>
+            </div>
+            <div class="card-footer text-center">
+                <a href="{{ url_for('users.login') }}" class="btn btn-link">Back to Login</a>
+            </div>
+        </div>
+    </div>
+</div>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/manage_user_form.css') }}">
+<script src="{{ url_for('static', filename='peek.js') }}"></script>
+<script src="{{ url_for('static', filename='manage_user_form.js') }}"></script>
+{% endblock %}

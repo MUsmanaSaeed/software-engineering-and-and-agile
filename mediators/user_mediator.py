@@ -39,6 +39,10 @@ class UserMediator:
         if is_edit and current_user and session_user_id and current_user.id == session_user_id and not isAdmin:
             error_fields.append('isAdmin')
             error_messages.append('Admins cannot remove their own admin rights.')
+        # Prevent registration as admin
+        if not is_edit and isAdmin:
+            error_fields.append('isAdmin')
+            error_messages.append('Cannot register as admin.')
         if error_fields:
             return False, error_messages, error_fields
         return True, [], []
