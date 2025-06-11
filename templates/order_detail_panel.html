@@ -12,7 +12,7 @@
         <a href="#" class="btn order-detail-add-btn ms-2" data-bs-toggle="modal" data-bs-target="#addOrderModal">Add Order</a>
     </div>
     <div class="card-body d-flex flex-column h-100">
-        <div class="order-list flex-grow-1 overflow-auto" style="max-height: 60vh;">
+        <div class="order-list flex-grow-1 overflow-auto" style="max-height: 80vh;">
             {# Show due today orders at the very top #}
             {% for order in due_today_orders %}
             <div class="order-list-item mb-3 p-0 rounded shadow-sm order-vertical-layout order-due-today-bg">
