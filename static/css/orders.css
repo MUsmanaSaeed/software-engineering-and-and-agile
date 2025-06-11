@@ -81,6 +81,96 @@ html, body {
     padding: 1rem;
 }
 
+/* Order Detail Panel Enhancements */
+#order-detail-panel.card {
+    border: none;
+    box-shadow: 0 6px 32px rgba(0,0,0,0.12);
+    background: #f8fafc;
+    padding: 0;
+    overflow: hidden;
+}
+.order-detail-header {
+    background: #e9f5ff;
+    border-bottom: 1px solid #dee2e6;
+    padding: 1.25rem 1.5rem 1rem 1.5rem;
+    border-radius: 1rem 1rem 0 0;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+.order-detail-header .bi {
+    font-size: 2rem;
+    color: #0d6efd;
+}
+.order-detail-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin: 0;
+}
+.order-detail-table {
+    background: #fff;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    margin-bottom: 1.5rem;
+}
+.order-detail-table th, .order-detail-table td {
+    vertical-align: middle;
+    text-align: center;
+}
+.order-detail-table thead th {
+    /* background: #e9f5ff; */
+    /* border-bottom: 2px solid #b6d9f7; */
+    font-weight: 500;
+}
+.order-detail-table tbody tr {
+    transition: background 0.2s;
+}
+.order-detail-table tbody tr:hover {
+    background: #f1f8fe;
+}
+.order-detail-table .btn-order-received {
+    background: #38a1db;
+    border: none;
+    color: #fff;
+    font-weight: 500;
+    border-radius: 0.5rem;
+    padding: 0.35rem 1.1rem;
+    box-shadow: 0 2px 8px rgba(13,110,253,0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.order-detail-table .btn-order-received:hover {
+    background: #4fd1c5;
+    box-shadow: 0 4px 16px rgba(13,110,253,0.12);
+}
+.order-detail-table .badge-received {
+    background: #51cf66;
+    color: #fff;
+    font-size: 1rem;
+    border-radius: 0.5rem;
+    padding: 0.4em 1.2em;
+    font-weight: 500;
+    box-shadow: 0 2px 8px rgba(40,167,69,0.08);
+}
+.order-detail-add-btn {
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding: 0.6rem 1.5rem;
+    font-size: 1.1rem;
+    border-radius: 0.5rem;
+    font-weight: 500;
+    background: #0d6efd;
+    color: #fff;
+    border: none;
+    box-shadow: 0 2px 8px rgba(13,110,253,0.08);
+    transition: background 0.2s, box-shadow 0.2s;
+}
+.order-detail-add-btn:hover {
+    background: #4fd1c5;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(13,110,253,0.12);
+}
+
 @media (max-width: 991.98px) {
     .orders-table-responsive {
       max-width: 100%;

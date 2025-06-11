@@ -1,11 +1,12 @@
 {% if selected_order_no and order_details %}
 <div id="order-detail-panel" class="card flex-grow-1 h-100">
+    <div class="order-detail-header">
+        <i class="bi bi-truck"></i>
+        <span class="order-detail-title">Order No: {{ selected_order_no }}</span>
+    </div>
     <div class="card-body d-flex flex-column h-100">
-        <div class="d-flex justify-content-between align-items-center mb-2">
-            <h4 class="card-title mb-0"><i class="bi bi-truck me-2"></i>Order No: {{ selected_order_no }}</h4>
-        </div>
-        <div class="table-responsive flex-grow-1">
-            <table class="table table-bordered">
+        <div class="table-responsive flex-grow-1 order-detail-table">
+            <table class="table table-bordered order-detail-table mb-0">
                 <thead>
                     <tr>
                         <th>ID</th>
@@ -29,10 +30,10 @@
                         <td>
                             {% if order.bricks_received < order.bricks_ordered %}
                             <form method="POST" action="{{ url_for('orders.mark_received', order_id=order.id) }}" style="display:inline;">
-                                <button type="submit" class="btn btn-success btn-sm">Order Received</button>
+                                <button type="submit" class="btn btn-order-received btn-sm">Order Received</button>
                             </form>
                             {% else %}
-                            <span class="badge bg-success">Received</span>
+                            <span class="badge badge-received">Received</span>
                             {% endif %}
                         </td>
                     </tr>
@@ -40,8 +41,8 @@
                 </tbody>
             </table>
         </div>
-        <div class="mb-3">
-            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addOrderModal">Add Order</a>
+        <div class="mb-3 text-end">
+            <a href="#" class="btn order-detail-add-btn" data-bs-toggle="modal" data-bs-target="#addOrderModal">Add Order</a>
         </div>
     </div>
 </div>
