@@ -78,15 +78,16 @@
 document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.order-row').forEach(function(row) {
         row.addEventListener('click', function(e) {
-            // Prevent default link if clicking the row
             if (e.target.tagName.toLowerCase() === 'a') return;
             const orderNo = row.getAttribute('data-order-no');
+            // Always use the base /orders URL and append the order number
+            let basePath = '/orders';
+            window.history.pushState({}, '', `${basePath}/${orderNo}`);
             fetch(`{{ url_for('orders.order_detail', order_no='ORDER_NO_PLACEHOLDER') }}`.replace('ORDER_NO_PLACEHOLDER', orderNo), {
                 headers: { 'X-Requested-With': 'XMLHttpRequest' }
             })
             .then(response => response.text())
             .then(html => {
-                // Parse the returned HTML and extract the detail panel
                 const parser = new DOMParser();
                 const doc = parser.parseFromString(html, 'text/html');
                 const detailPanel = doc.body.firstElementChild;
