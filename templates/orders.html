@@ -76,11 +76,21 @@
 <link rel="stylesheet" href="{{ url_for('static', filename='css/orders.css') }}">
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Search filter for orders table
+    const searchBox = document.getElementById('order-search-box');
+    if (searchBox) {
+        searchBox.addEventListener('input', function() {
+            const filter = searchBox.value.trim().toLowerCase();
+            document.querySelectorAll('#orders-table tbody tr').forEach(function(row) {
+                const orderNo = row.textContent.trim().toLowerCase();
+                row.style.display = orderNo.includes(filter) ? '' : 'none';
+            });
+        });
+    }
     document.querySelectorAll('.order-row').forEach(function(row) {
         row.addEventListener('click', function(e) {
             if (e.target.tagName.toLowerCase() === 'a') return;
             const orderNo = row.getAttribute('data-order-no');
-            // Always use the base /orders URL and append the order number
             let basePath = '/orders';
             window.history.pushState({}, '', `${basePath}/${orderNo}`);
             fetch(`{{ url_for('orders.order_detail', order_no='ORDER_NO_PLACEHOLDER') }}`.replace('ORDER_NO_PLACEHOLDER', orderNo), {
