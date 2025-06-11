@@ -171,6 +171,62 @@ html, body {
     box-shadow: 0 4px 16px rgba(13,110,253,0.12);
 }
 
+.order-list {
+    overflow-y: auto;
+    max-height: 60vh;
+}
+.order-list-item {
+    transition: box-shadow 0.2s;
+    background: #fff;
+    border: 1px solid #e3e3e3;
+}
+.order-list-item.order-received-bg {
+    background: #e6f9e6 !important;
+}
+.order-list-item.order-overdue-bg {
+    background: #ffeaea !important;
+}
+.order-list-item.order-due-today-bg {
+    background-color: #fff9db !important;
+}
+.order-collapse-btn {
+    font-size: 1.1rem;
+    font-weight: 500;
+    outline: none;
+    cursor: pointer;
+    border-radius: 0.5rem 0.5rem 0 0;
+    transition: background 0.2s;
+}
+.order-collapse-btn:focus {
+    background: #e9f5ff;
+}
+.order-list-info {
+    padding-top: 0.5rem;
+}
+.order-list-actions {
+    padding-top: 0.5rem;
+}
+.order-vertical-layout {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+}
+.order-vertical-layout .order-list-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    width: 100%;
+}
+.order-vertical-layout .order-list-actions {
+    align-self: flex-end;
+}
+
+@media (max-width: 768px) {
+    .order-list-info > div {
+        margin-right: 0;
+        min-width: unset;
+    }
+}
+
 @media (max-width: 991.98px) {
     .orders-table-responsive {
       max-width: 100%;

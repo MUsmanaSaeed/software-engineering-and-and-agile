@@ -13,13 +13,14 @@ def orders():
 def order_detail(order_no):
     orders = BrickOrder.query.filter_by(orderNo=order_no).all()
     order_nos = [o[0] for o in db.session.query(BrickOrder.orderNo).distinct().all()]
+    current_date = datetime.today().date()
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         if not orders:
             return render_template('order_detail_panel.html', selected_order_no=None, order_details=None)
-        return render_template('order_detail_panel.html', selected_order_no=order_no, order_details=orders)
+        return render_template('order_detail_panel.html', selected_order_no=order_no, order_details=orders, current_date=current_date)
     if not orders:
         return render_template('orders.html', order_nos=order_nos, selected_order_no=None, order_details=None)
-    return render_template('orders.html', order_nos=order_nos, selected_order_no=order_no, order_details=orders)
+    return render_template('orders.html', order_nos=order_nos, selected_order_no=order_no, order_details=orders, current_date=current_date)
 
 @orders_bp.route('/orders/add', methods=['POST'])
 def add_order():
