@@ -18,14 +18,14 @@
             <div class="order-list-item mb-3 p-0 rounded shadow-sm order-vertical-layout order-due-today-bg">
                 <button class="order-collapse-btn w-100 text-start p-3 border-0 bg-transparent d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#order-{{ order.id }}-collapse" aria-expanded="false" aria-controls="order-{{ order.id }}-collapse" title="Click for more details">
                     <i class="bi bi-chevron-down me-2"></i>
-                    <span><strong>Brick:</strong> {{ order.brick }} &mdash; <strong>Expected:</strong> {{ order.expected_date.strftime('%Y-%m-%d') }}</span>
+                    <span><strong>Brick:</strong> {{ order.brick }} &mdash; <strong>Expected:</strong> {{ order.expected_date.strftime('%d/%m/%y') }} &mdash; <strong>Ordered:</strong> {{ order.bricks_ordered }}</span>
                 </button>
                 <div class="collapse" id="order-{{ order.id }}-collapse">
                     <div class="order-list-info px-3 pb-3 pt-1">
                         <div><strong>Bricks Ordered:</strong><br> {{ order.bricks_ordered }}</div>
                         <div><strong>Bricks Received:</strong><br> {{ order.bricks_received }}</div>
-                        <div><strong>Ordered Date:</strong><br> {{ order.ordered_date.strftime('%Y-%m-%d') }}</div>
-                        <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%Y-%m-%d') }}</div>
+                        <div><strong>Ordered Date:</strong><br> {{ order.ordered_date.strftime('%d/%m/%y') }}</div>
+                        <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%d/%m/%y') }}</div>
                     </div>
                     <div class="order-list-actions px-3 pb-3">
                         <form method="POST" action="{{ url_for('orders.mark_received', order_id=order.id) }}" style="display:inline;">
@@ -41,14 +41,14 @@
             <div class="order-list-item mb-3 p-0 rounded shadow-sm order-vertical-layout {{ 'order-overdue-bg' if is_overdue else '' }}">
                 <button class="order-collapse-btn w-100 text-start p-3 border-0 bg-transparent d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#order-{{ order.id }}-collapse" aria-expanded="false" aria-controls="order-{{ order.id }}-collapse" title="Click for more details">
                     <i class="bi bi-chevron-down me-2"></i>
-                    <span><strong>Brick:</strong> {{ order.brick }} &mdash; <strong>Expected:</strong> {{ order.expected_date.strftime('%Y-%m-%d') }}</span>
+                    <span><strong>Brick:</strong> {{ order.brick }} &mdash; <strong>Expected:</strong> {{ order.expected_date.strftime('%d/%m/%y') }} &mdash; <strong>Ordered:</strong> {{ order.bricks_ordered }}</span>
                 </button>
                 <div class="collapse" id="order-{{ order.id }}-collapse">
                     <div class="order-list-info px-3 pb-3 pt-1">
                         <div><strong>Bricks Ordered:</strong><br> {{ order.bricks_ordered }}</div>
                         <div><strong>Bricks Received:</strong><br> {{ order.bricks_received }}</div>
-                        <div><strong>Ordered Date:</strong><br> {{ order.ordered_date.strftime('%Y-%m-%d') }}</div>
-                        <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%Y-%m-%d') }}</div>
+                        <div><strong>Ordered Date:</strong><br> {{ order.ordered_date.strftime('%d/%m/%y') }}</div>
+                        <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%d/%m/%y') }}</div>
                     </div>
                     <div class="order-list-actions px-3 pb-3">
                         <form method="POST" action="{{ url_for('orders.mark_received', order_id=order.id) }}" style="display:inline;">
@@ -63,15 +63,15 @@
             <div class="order-list-item mb-3 p-0 rounded shadow-sm order-vertical-layout order-received-bg">
                 <button class="order-collapse-btn w-100 text-start p-3 border-0 bg-transparent d-flex align-items-center" type="button" data-bs-toggle="collapse" data-bs-target="#order-{{ order.id }}-collapse" aria-expanded="false" aria-controls="order-{{ order.id }}-collapse" title="Click for more details">
                     <i class="bi bi-chevron-down me-2"></i>
-                    <span><strong>Brick:</strong> {{ order.brick }} &mdash; <strong>Received:</strong> {{ order.received_date.strftime('%Y-%m-%d') }}</span>
+                    <span><strong>Brick:</strong> {{ order.brick }} &mdash; <strong>Received:</strong> {{ order.received_date.strftime('%d/%m/%y') }}</span>
                 </button>
                 <div class="collapse" id="order-{{ order.id }}-collapse">
                     <div class="order-list-info px-3 pb-3 pt-1">
                         <div><strong>Bricks Ordered:</strong><br> {{ order.bricks_ordered }}</div>
                         <div><strong>Bricks Received:</strong><br> {{ order.bricks_received }}</div>
-                        <div><strong>Ordered Date:</strong><br> {{ order.ordered_date.strftime('%Y-%m-%d') }}</div>
-                        <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%Y-%m-%d') }}</div>
-                        <div><strong>Received Date:</strong><br> {{ order.received_date.strftime('%Y-%m-%d') }}</div>
+                        <div><strong>Ordered Date:</strong><br> {{ order.ordered_date.strftime('%d/%m/%y') }}</div>
+                        <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%d/%m/%y') }}</div>
+                        <div><strong>Received Date:</strong><br> {{ order.received_date.strftime('%d/%m/%y') }}</div>
                     </div>
                     <div class="order-list-actions px-3 pb-3">
                         <span class="badge badge-received">Received</span>
