@@ -28,11 +28,12 @@ class Brick(db.Model):
     type = db.Column(db.String(100), nullable=False)
     voids = db.Column(db.Integer, nullable=False)
     manufacturerId = db.Column(db.Integer, db.ForeignKey('manufacturer.id'), nullable=False)
+    brickOrders = db.relationship('BrickOrder', backref='brick', lazy=True)
 
 class BrickOrder(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     orderNo = db.Column(db.String(64), nullable=False, index=True)
-    brick = db.Column(db.String(128), nullable=False)
+    brickId = db.Column(db.Integer, db.ForeignKey('brick.id'), nullable=False)
     bricks_ordered = db.Column(db.Integer, nullable=False)
     bricks_received = db.Column(db.Integer, nullable=False, default=0)
     ordered_date = db.Column(db.Date, nullable=False)
@@ -41,4 +42,4 @@ class BrickOrder(db.Model):
     canceled_date = db.Column(db.Date, nullable=True, default=None)
 
     def __repr__(self):
-        return f'<BrickOrder {self.orderNo} - {self.brick}>'
+        return f'<BrickOrder {self.orderNo} - BrickID: {self.brickId}>'

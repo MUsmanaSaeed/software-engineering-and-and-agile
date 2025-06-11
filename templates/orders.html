@@ -49,8 +49,13 @@
                         <input type="text" class="form-control" id="orderNo" name="orderNo" required>
                     </div>
                     <div class="mb-3">
-                        <label for="brick" class="form-label">Brick</label>
-                        <input type="text" class="form-control" id="brick" name="brick" required>
+                        <label for="brickId" class="form-label">Brick</label>
+                        <select class="form-control" id="brickId" name="brickId" required>
+                            <option value="">Select Brick</option>
+                            {% for brick in bricks %}
+                                <option value="{{ brick.id }}">{{ brick.name }} ({{ brick.manufacturer.name }})</option>
+                            {% endfor %}
+                        </select>
                     </div>
                     <div class="mb-3">
                         <label for="bricks_ordered" class="form-label">Bricks Ordered</label>
