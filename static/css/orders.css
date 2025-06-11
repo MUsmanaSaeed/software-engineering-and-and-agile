@@ -76,6 +76,11 @@ html, body {
     padding: 1.5rem;
 }
 
+#order-detail-panel,
+#order-placeholder-panel {
+    padding: 1rem;
+}
+
 @media (max-width: 991.98px) {
     .orders-table-responsive {
       max-width: 100%;

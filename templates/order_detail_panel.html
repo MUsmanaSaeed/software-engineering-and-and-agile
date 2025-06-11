@@ -1,0 +1,59 @@
+{% if selected_order_no and order_details %}
+<div id="order-detail-panel" class="card flex-grow-1 h-100">
+    <div class="card-body d-flex flex-column h-100">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <h4 class="card-title mb-0"><i class="bi bi-truck me-2"></i>Order No: {{ selected_order_no }}</h4>
+        </div>
+        <div class="table-responsive flex-grow-1">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Brick</th>
+                        <th>Bricks Ordered</th>
+                        <th>Bricks Received</th>
+                        <th>Ordered Date</th>
+                        <th>Expected Date</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in order_details %}
+                    <tr>
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.brick }}</td>
+                        <td>{{ order.bricks_ordered }}</td>
+                        <td>{{ order.bricks_received }}</td>
+                        <td>{{ order.ordered_date.strftime('%Y-%m-%d') }}</td>
+                        <td>{{ order.expected_date.strftime('%Y-%m-%d') }}</td>
+                        <td>
+                            {% if order.bricks_received < order.bricks_ordered %}
+                            <form method="POST" action="{{ url_for('orders.mark_received', order_id=order.id) }}" style="display:inline;">
+                                <button type="submit" class="btn btn-success btn-sm">Order Received</button>
+                            </form>
+                            {% else %}
+                            <span class="badge bg-success">Received</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="mb-3">
+            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addOrderModal">Add Order</a>
+        </div>
+    </div>
+</div>
+{% else %}
+<!-- Placeholder shown when no order is selected -->
+<div id="order-placeholder-panel" class="card flex-grow-1 h-100">
+    <div class="card-body d-flex flex-column h-100 align-items-center justify-content-center text-muted">
+        <div class="text-center">
+            <i class="bi bi-truck" style="font-size: 3rem;"></i>
+            <h5 class="mt-3">No order selected</h5>
+            <p>Select an order from the list to view its details.</p>
+        </div>
+    </div>
+</div>
+{% endif %}

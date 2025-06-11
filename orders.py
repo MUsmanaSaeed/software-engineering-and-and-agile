@@ -12,7 +12,16 @@ def orders():
 @orders_bp.route('/orders/<order_no>')
 def order_detail(order_no):
     orders = BrickOrder.query.filter_by(orderNo=order_no).all()
-    return render_template('order_detail.html', order_no=order_no, orders=orders)
+    order_nos = [o[0] for o in db.session.query(BrickOrder.orderNo).distinct().all()]
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        # AJAX request: return only the detail panel
+        if not orders:
+            return render_template('order_detail_panel.html', selected_order_no=None, order_details=None)
+        return render_template('order_detail_panel.html', selected_order_no=order_no, order_details=orders)
+    # Full page load
+    if not orders:
+        return render_template('orders.html', order_nos=order_nos, selected_order_no=None, order_details=None)
+    return render_template('orders.html', order_nos=order_nos, selected_order_no=order_no, order_details=orders)
 
 @orders_bp.route('/orders/add', methods=['POST'])
 def add_order():
@@ -27,7 +36,7 @@ def add_order():
     )
     db.session.add(new_order)
     db.session.commit()
-    return redirect(url_for('orders.orders'))
+    return redirect(url_for('orders.order_detail', order_no=new_order.orderNo))
 
 @orders_bp.route('/orders/received/<int:order_id>', methods=['POST'])
 def mark_received(order_id):
