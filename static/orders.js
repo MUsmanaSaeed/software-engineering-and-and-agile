@@ -27,46 +27,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (detailPanel) {
                     document.querySelector('.col-lg-8').innerHTML = '';
                     document.querySelector('.col-lg-8').appendChild(detailPanel);
+                    attachCancelButtonLogic(); // Re-attach cancel logic after panel update
                 }
             });
         });
     });
 
-    // Custom Cancel Confirmation Popup Logic
-    let cancelFormToSubmit = null;
-    const modal = document.getElementById('cancelConfirmModal');
-    const modalYes = document.getElementById('cancelModalYes');
-    const modalNo = document.getElementById('cancelModalNo');
-
-    document.body.addEventListener('click', function(e) {
-        if (e.target.classList.contains('btn-order-cancel')) {
-            e.preventDefault();
-            cancelFormToSubmit = e.target.closest('form');
-            if (modal) modal.style.display = 'flex';
-        }
-    });
-    if (modalNo) {
-        modalNo.onclick = function() {
-            modal.style.display = 'none';
-            cancelFormToSubmit = null;
-        };
-    }
-    if (modalYes) {
-        modalYes.onclick = function() {
-            if (cancelFormToSubmit) {
-                modal.style.display = 'none';
-                cancelFormToSubmit.submit();
-                cancelFormToSubmit = null;
-            }
-        };
-    }
-    // Hide modal if clicking outside content
-    if (modal) {
-        modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
-                modal.style.display = 'none';
-                cancelFormToSubmit = null;
-            }
+    function attachCancelButtonLogic() {
+        var modal = document.getElementById('cancelConfirmModal');
+        if (!modal) return;
+        var newModal = modal.cloneNode(true);
+        modal.parentNode.replaceChild(newModal, modal);
+        document.querySelectorAll('.btn-order-cancel').forEach(function (button) {
+            button.onclick = function () {
+                var orderId = this.getAttribute('data-order-id');
+                var modal = document.getElementById('cancelConfirmModal');
+                if (modal) modal.classList.add('active');
+                var modalYes = document.getElementById('cancelModalYes');
+                var modalNo = document.getElementById('cancelModalNo');
+                if (modalYes) {
+                    modalYes.onclick = function() {
+                        var form = document.querySelector('.cancel-order-form [data-order-id="'+orderId+'"]')?.closest('form');
+                        modal.classList.remove('active');
+                        if (form) form.submit();
+                    };
+                }
+                if (modalNo) {
+                    modalNo.onclick = function() {
+                        modal.classList.remove('active');
+                    };
+                }
+                newModal.onclick = function(e) {
+                    if (e.target === newModal) {
+                        newModal.classList.remove('active');
+                    }
+                };
+            };
         });
     }
+
+    // At the end of DOMContentLoaded, also call it for initial load
+    attachCancelButtonLogic();
 });
