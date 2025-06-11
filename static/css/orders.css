@@ -200,6 +200,12 @@ html, body {
 .order-collapse-btn:focus {
     background: #e9f5ff;
 }
+.order-collapse-btn .bi-chevron-down {
+    transition: transform 0.3s ease;
+}
+.order-collapse-btn[aria-expanded="true"] .bi-chevron-down {
+    transform: rotate(180deg);
+}
 .order-list-info {
     padding-top: 0.5rem;
 }
