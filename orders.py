@@ -14,11 +14,9 @@ def order_detail(order_no):
     orders = BrickOrder.query.filter_by(orderNo=order_no).all()
     order_nos = [o[0] for o in db.session.query(BrickOrder.orderNo).distinct().all()]
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
-        # AJAX request: return only the detail panel
         if not orders:
             return render_template('order_detail_panel.html', selected_order_no=None, order_details=None)
         return render_template('order_detail_panel.html', selected_order_no=order_no, order_details=orders)
-    # Full page load
     if not orders:
         return render_template('orders.html', order_nos=order_nos, selected_order_no=None, order_details=None)
     return render_template('orders.html', order_nos=order_nos, selected_order_no=order_no, order_details=orders)
@@ -43,5 +41,6 @@ def mark_received(order_id):
     order = BrickOrder.query.get(order_id)
     if order:
         order.bricks_received = order.bricks_ordered
+        order.received_date = datetime.today().date()  # Set received_date to today
         db.session.commit()
     return redirect(url_for('orders.order_detail', order_no=order.orderNo))

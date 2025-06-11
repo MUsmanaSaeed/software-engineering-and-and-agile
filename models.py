@@ -37,6 +37,7 @@ class BrickOrder(db.Model):
     bricks_received = db.Column(db.Integer, nullable=False, default=0)
     ordered_date = db.Column(db.Date, nullable=False)
     expected_date = db.Column(db.Date, nullable=False)
+    received_date = db.Column(db.Date, nullable=True)
 
     def __repr__(self):
         return f'<BrickOrder {self.orderNo} - {self.brick}>'
