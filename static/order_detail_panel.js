@@ -1,5 +1,3 @@
-// Cancel Confirmation Modal Logic
-
 document.addEventListener('DOMContentLoaded', function () {
     // Handle cancel button click
     document.querySelectorAll('.btn-order-cancel').forEach(function (button) {
