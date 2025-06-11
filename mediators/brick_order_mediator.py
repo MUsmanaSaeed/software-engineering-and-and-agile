@@ -16,7 +16,6 @@ class BrickOrderMediator:
 
     @staticmethod
     def add_order(order_data):
-        # Add business logic here
         order = BrickOrder(**order_data)
         BrickOrderDB.add(order)
         return order
