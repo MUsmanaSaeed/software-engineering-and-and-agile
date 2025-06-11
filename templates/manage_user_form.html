@@ -6,6 +6,16 @@
         <div class="card shadow">
             <div class="card-header text-center"><h4>{% if user %}Edit{% else %}Add{% endif %} User</h4></div>
             <div class="card-body">
+                {# Display all error messages if present #}
+                {% if error_fields and error_messages %}
+                    <div class="alert alert-danger">
+                        <ul class="mb-0">
+                        {% for msg in error_messages %}
+                            <li>{{ msg }}</li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                {% endif %}
                 <form method="POST" id="userForm">
                     <div class="mb-3">
                         <label class="form-label">Username</label>
