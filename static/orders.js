@@ -14,6 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
         row.addEventListener('click', function(e) {
             if (e.target.tagName.toLowerCase() === 'a') return;
             const orderNo = row.getAttribute('data-order-no');
+            selectedOrderNo = orderNo; // Set selected order number
             let basePath = '/orders';
             window.history.pushState({}, '', `${basePath}/${orderNo}`);
             fetch(ORDER_DETAIL_URL.replace('ORDER_NO_PLACEHOLDER', orderNo), {
@@ -28,6 +29,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     document.querySelector('.col-lg-8').innerHTML = '';
                     document.querySelector('.col-lg-8').appendChild(detailPanel);
                     attachCancelButtonLogic(); // Re-attach cancel logic after panel update
+                    // Re-attach Add Order button logic
+                    attachAddOrderButtonLogic();
                 }
             });
         });
@@ -66,6 +69,44 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    function attachAddOrderButtonLogic() {
+        // Only attach to Add Order button in the detail panel
+        document.querySelectorAll('.order-detail-add-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var orderNoInput = document.getElementById('orderNo');
+                if (orderNoInput) {
+                    orderNoInput.value = selectedOrderNo;
+                }
+            });
+        });
+        // Also clear orderNo when main Add Order button is clicked
+        var mainAddOrderBtn = document.querySelector('.btn-primary[data-bs-target="#addOrderModal"]');
+        if (mainAddOrderBtn) {
+            mainAddOrderBtn.addEventListener('click', function() {
+                var orderNoInput = document.getElementById('orderNo');
+                if (orderNoInput) {
+                    orderNoInput.value = '';
+                }
+            });
+        }
+    }
+
     // At the end of DOMContentLoaded, also call it for initial load
     attachCancelButtonLogic();
+    attachAddOrderButtonLogic();
+
+    // Set default ordered_date to today when Add Order modal is shown
+    const addOrderModal = document.getElementById('addOrderModal');
+    if (addOrderModal) {
+        addOrderModal.addEventListener('show.bs.modal', function () {
+            const orderedDateInput = document.getElementById('ordered_date');
+            if (orderedDateInput) {
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                orderedDateInput.value = `${yyyy}-${mm}-${dd}`;
+            }
+        });
+    }
 });

@@ -357,6 +357,11 @@ html, body {
     color: #e53935;
 }
 
+/* Make modal form labels bolder */
+.modal .form-label {
+    font-weight: 600;
+}
+
 @media (max-width: 768px) {
     .order-list-info > div {
         margin-right: 0;
