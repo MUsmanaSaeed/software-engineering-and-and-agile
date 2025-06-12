@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Set selectedOrderNo from detail panel if present (for page refresh)
+    var detailTitle = document.querySelector('.order-detail-title');
+    if (detailTitle) {
+        var match = detailTitle.textContent.match(/Order No:\s*(\S+)/);
+        if (match) {
+            selectedOrderNo = match[1];
+        }
+    }
+
     // Search filter for orders table
     const searchBox = document.getElementById('order-search-box');
     if (searchBox) {
