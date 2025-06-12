@@ -99,7 +99,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // At the end of DOMContentLoaded, also call it for initial load
     attachCancelButtonLogic();
     attachAddOrderButtonLogic();
 
