@@ -193,17 +193,49 @@ document.addEventListener('DOMContentLoaded', function() {
     attachAddOrderButtonLogic();
     attachMarkReceivedLogic();
 
-    // Set default ordered_date to today when Add Order modal is shown
+    // Set min/max for ordered_date and disable other dates
     const addOrderModal = document.getElementById('addOrderModal');
     if (addOrderModal) {
         addOrderModal.addEventListener('show.bs.modal', function () {
             const orderedDateInput = document.getElementById('ordered_date');
+            const expectedDateInput = document.getElementById('expected_date');
             if (orderedDateInput) {
                 const today = new Date();
                 const yyyy = today.getFullYear();
                 const mm = String(today.getMonth() + 1).padStart(2, '0');
                 const dd = String(today.getDate()).padStart(2, '0');
-                orderedDateInput.value = `${yyyy}-${mm}-${dd}`;
+                const todayStr = `${yyyy}-${mm}-${dd}`;
+                const minDate = new Date(today);
+                minDate.setDate(today.getDate() - 3);
+                const minY = minDate.getFullYear();
+                const minM = String(minDate.getMonth() + 1).padStart(2, '0');
+                const minD = String(minDate.getDate()).padStart(2, '0');
+                const minStr = `${minY}-${minM}-${minD}`;
+                orderedDateInput.setAttribute('max', todayStr);
+                orderedDateInput.setAttribute('min', minStr);
+                orderedDateInput.value = todayStr;
+                // Disable all other dates
+                orderedDateInput.addEventListener('input', function() {
+                    if (this.value < minStr || this.value > todayStr) {
+                        this.setCustomValidity('Order date must be within the last 3 days and not in the future.');
+                    } else {
+                        this.setCustomValidity('');
+                    }
+                    // Update expected date min when ordered date changes
+                    if (expectedDateInput) {
+                        expectedDateInput.setAttribute('min', this.value);
+                        if (expectedDateInput.value < this.value) {
+                            expectedDateInput.value = this.value;
+                        }
+                    }
+                });
+                // Set initial min for expected date
+                if (expectedDateInput) {
+                    expectedDateInput.setAttribute('min', orderedDateInput.value);
+                    if (expectedDateInput.value < orderedDateInput.value) {
+                        expectedDateInput.value = orderedDateInput.value;
+                    }
+                }
             }
         });
     }
