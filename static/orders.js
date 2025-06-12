@@ -36,9 +36,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (detailPanel) {
                     document.querySelector('.col-lg-8').innerHTML = '';
                     document.querySelector('.col-lg-8').appendChild(detailPanel);
-                    attachCancelButtonLogic(); // Re-attach cancel logic after panel update
-                    // Re-attach Add Order button logic
+                    attachCancelButtonLogic();
                     attachAddOrderButtonLogic();
+                    attachMarkReceivedLogic();
                 }
             });
         });
@@ -99,8 +99,99 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    function attachMarkReceivedLogic() {
+        document.querySelectorAll('.btn-order-received').forEach(function(button) {
+            button.onclick = function () {
+                var orderId = this.getAttribute('data-order-id');
+                var bricksOrdered = this.getAttribute('data-bricks-ordered');
+                var modal = document.getElementById('receivedBricksModal');
+                document.getElementById('receivedOrderIdInput').value = orderId;
+                var input = document.getElementById('bricksReceivedInput');
+                input.value = bricksOrdered;
+                input.max = bricksOrdered;
+                modal.classList.add('active');
+                setTimeout(function() { input.focus(); }, 200);
+            };
+        });
+        var form = document.getElementById('receivedBricksForm');
+        if (form) {
+            form.onsubmit = function(e) {
+                e.preventDefault();
+                var orderId = document.getElementById('receivedOrderIdInput').value;
+                var bricksReceived = document.getElementById('bricksReceivedInput').value;
+                var modal = document.getElementById('receivedBricksModal');
+                var formData = new FormData();
+                formData.append('bricks_received', bricksReceived);
+                fetch('/orders/received/' + orderId, {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        modal.classList.remove('active');
+                        // Refresh order detail panel only
+                        if (typeof selectedOrderNo !== 'undefined') {
+                            fetch(ORDER_DETAIL_URL.replace('ORDER_NO_PLACEHOLDER', selectedOrderNo), {
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                            })
+                            .then(response => response.text())
+                            .then(html => {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+                                const detailPanel = doc.body.firstElementChild;
+                                if (detailPanel) {
+                                    document.querySelector('.col-lg-8').innerHTML = '';
+                                    document.querySelector('.col-lg-8').appendChild(detailPanel);
+                                    attachCancelButtonLogic();
+                                    attachAddOrderButtonLogic();
+                                    attachMarkReceivedLogic();
+                                }
+                            });
+                        }
+                    } else {
+                        // Show flash message dynamically
+                        modal.classList.remove('active');
+                        var flashContainer = document.querySelector('.floating-flash-container');
+                        if (flashContainer) {
+                            var alertDiv = document.createElement('div');
+                            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+                            alertDiv.role = 'alert';
+                            alertDiv.style.animation = 'flash-in 0.4s';
+                            alertDiv.innerHTML = data.error + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+                            flashContainer.appendChild(alertDiv);
+                            setTimeout(function() {
+                                alertDiv.classList.remove('show');
+                                alertDiv.classList.add('hide');
+                                setTimeout(function() { alertDiv.remove(); }, 500);
+                            }, 4000);
+                        } else {
+                            alert(data.error);
+                        }
+                    }
+                });
+            };
+        }
+        var modal = document.getElementById('receivedBricksModal');
+        var cancelBtn = document.getElementById('receivedModalNo');
+        if (cancelBtn) {
+            cancelBtn.onclick = function() {
+                modal.classList.remove('active');
+            };
+        }
+        // Close modal when clicking outside dialog
+        if (modal) {
+            modal.onclick = function(e) {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            };
+        }
+    }
     attachCancelButtonLogic();
     attachAddOrderButtonLogic();
+    attachMarkReceivedLogic();
 
     // Set default ordered_date to today when Add Order modal is shown
     const addOrderModal = document.getElementById('addOrderModal');

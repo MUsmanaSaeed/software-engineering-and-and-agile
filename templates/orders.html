@@ -78,6 +78,30 @@
         </div>
     </div>
 </div>
+<!-- Received Bricks Modal -->
+<div id="receivedBricksModal" class="cancel-modal-backdrop confirm-modal-backdrop" tabindex="-1">
+    <div class="cancel-modal-dialog confirm-modal-dialog">
+        <div class="cancel-modal-content confirm-modal-content">
+            <form id="receivedBricksForm">
+                <div class="cancel-modal-header confirm-modal-header">
+                    <span class="cancel-modal-icon confirm-modal-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="#43a047" viewBox="0 0 16 16"><path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM7 10.293l4.146-4.147-.708-.707L7 8.879 5.354 7.146l-.708.708L7 10.293z"/></svg>
+                    </span>
+                    <h5 class="cancel-modal-title confirm-modal-title">Bricks Received</h5>
+                </div>
+                <div class="cancel-modal-body confirm-modal-body">
+                    <p class="mb-3 confirm-modal-text">Please confirm the number of bricks you have received for this order.</p>
+                    <input type="number" class="form-control form-control-lg text-center mb-2 confirm-modal-input" id="bricksReceivedInput" name="bricks_received" min="0" required placeholder="Enter quantity...">
+                    <input type="hidden" id="receivedOrderIdInput" name="order_id">
+                </div>
+                <div class="cancel-modal-footer confirm-modal-footer">
+                    <button type="button" class="confirm-modal-btn-no" id="receivedModalNo">Cancel</button>
+                    <button type="submit" class="confirm-modal-btn-yes">Confirm</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <div id="cancelConfirmModal" class="cancel-modal-backdrop" tabindex="-1">
     <div class="cancel-modal-dialog">

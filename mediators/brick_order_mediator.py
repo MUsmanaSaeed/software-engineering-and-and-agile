@@ -34,10 +34,15 @@ class BrickOrderMediator:
         return [o[0] for o in db.session.query(BrickOrder.orderNo).distinct().all()]
 
     @staticmethod
-    def mark_received(order_id):
+    def mark_received(order_id, bricks_received=None):
         order = BrickOrderDB.get_by_id(order_id)
         if order:
-            order.bricks_received = order.bricks_ordered
+            if bricks_received is not None:
+                if bricks_received <= 0:
+                    raise ValueError('The number of bricks received must be greater than 0.')
+                order.bricks_received = bricks_received
+            else:
+                order.bricks_received = order.bricks_ordered
             from datetime import datetime
             order.received_date = datetime.today().date()
             BrickOrderDB.commit()

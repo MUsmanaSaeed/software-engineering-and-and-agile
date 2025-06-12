@@ -357,9 +357,143 @@ html, body {
     color: #e53935;
 }
 
+/* Green Confirm Modal Styles for Received Bricks */
+.confirm-modal-content {
+    border: 2px solid #51cf66;
+    box-shadow: 0 8px 32px rgba(81,207,102,0.18);
+    background: #fff;
+    border-radius: 0.75rem;
+    overflow: hidden;
+}
+.confirm-modal-header {
+    background: #eaffea;
+    border-bottom: 1px solid #51cf66;
+    align-items: center;
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem 1rem 1.2rem;
+}
+.confirm-modal-icon svg {
+    color: #43a047;
+    font-size: 2rem;
+    display: flex;
+    align-items: center;
+}
+.confirm-modal-title {
+    color: #388e3c;
+    font-weight: 700;
+    font-size: 1.25rem;
+    margin: 0;
+}
+.confirm-modal-body {
+    background: #f4fff4;
+    padding: 1.2rem 1.5rem 1rem 1.5rem;
+}
+.confirm-modal-text {
+    color: #388e3c !important;
+    font-size: 1.15rem;
+    font-weight: 500;
+    margin: 0;
+    text-align: center;
+}
+.confirm-modal-input {
+    max-width: 250px;
+    margin: 0 auto;
+    border: 2px solid #51cf66;
+    color: #388e3c;
+    font-weight: 600;
+}
+.confirm-modal-footer {
+    background: #eaffea;
+    border-top: 1px solid #51cf66;
+    display: flex;
+    gap: 0.5rem;
+    padding: 1rem 1.5rem;
+}
+.confirm-modal-btn-yes, .confirm-modal-btn-no {
+    font-weight: 600;
+    min-width: 120px;
+    width: 50%;
+    border-radius: 0.5rem;
+    padding: 0.5rem 0;
+    font-size: 1rem;
+}
+.confirm-modal-btn-yes {
+    background: #43a047;
+    color: #fff;
+    border: none;
+    transition: background 0.2s;
+}
+.confirm-modal-btn-yes:hover {
+    background: #388e3c;
+}
+.confirm-modal-btn-no {
+    background: #fff;
+    color: #388e3c;
+    border: 1.5px solid #388e3c;
+    transition: background 0.2s, color 0.2s;
+}
+.confirm-modal-btn-no:hover {
+    background: #eaffea;
+    color: #43a047;
+}
+
 /* Make modal form labels bolder */
 .modal .form-label {
     font-weight: 600;
+}
+
+/* Beautiful Received Bricks Modal Styles */
+#receivedBricksModal .modal-content {
+    border-radius: 1.25rem;
+    box-shadow: 0 8px 32px rgba(40,167,69,0.15);
+    border: 2px solid #51cf66;
+}
+#receivedBricksModal .modal-header {
+    border-radius: 1.25rem 1.25rem 0 0;
+    background: linear-gradient(90deg, #43a047 60%, #51cf66 100%);
+    color: #fff;
+    border-bottom: none;
+}
+#receivedBricksModal .modal-title i {
+    font-size: 2.2rem;
+    vertical-align: middle;
+}
+#receivedBricksModal .modal-body {
+    background: #f8fafc;
+    border-radius: 0 0 1.25rem 1.25rem;
+}
+#receivedBricksModal .modal-body .bi-cube {
+    font-size: 3.5rem;
+    color: #43a047;
+    opacity: 0.85;
+}
+#receivedBricksModal .form-control-lg {
+    font-size: 1.5rem;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.75rem;
+    border: 2px solid #51cf66;
+    box-shadow: 0 2px 8px rgba(81,207,102,0.08);
+}
+#receivedBricksModal .modal-footer {
+    background: none;
+    border-top: none;
+    padding-top: 0;
+}
+#receivedBricksModal .btn-success {
+    background: linear-gradient(90deg, #43a047 60%, #51cf66 100%);
+    border: none;
+    font-size: 1.15rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(81,207,102,0.08);
+}
+#receivedBricksModal .btn-success:hover {
+    background: #388e3c;
+}
+#receivedBricksModal .btn-outline-secondary {
+    font-size: 1.1rem;
+    font-weight: 500;
+    border-radius: 0.75rem;
 }
 
 @media (max-width: 768px) {

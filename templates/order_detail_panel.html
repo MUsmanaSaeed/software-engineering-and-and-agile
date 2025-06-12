@@ -30,8 +30,8 @@
                             <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%d/%m/%y') }}</div>
                         </div>
                         <div class="order-list-actions d-flex flex-column align-items-end ms-3">
-                            <form method="POST" action="{{ url_for('orders.mark_received', order_id=order.id) }}" style="display:inline;">
-                                <button type="submit" class="btn btn-order-received btn-sm mb-2">Order Received</button>
+                            <form method="POST" action="{{ url_for('orders.mark_received', order_id=order.id) }}" style="display:inline;" class="mark-received-form">
+                                <button type="button" class="btn btn-order-received btn-sm mb-2" data-order-id="{{ order.id }}" data-bricks-ordered="{{ order.bricks_ordered }}">Order Received</button>
                             </form>
                             <form method="POST" action="{{ url_for('orders.cancel_order', order_id=order.id) }}" style="display:inline;" class="cancel-order-form">
                                 <button type="button" class="btn btn-order-cancel btn-sm" data-order-id="{{ order.id }}">Cancel</button>
@@ -58,8 +58,8 @@
                             <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%d/%m/%y') }}</div>
                         </div>
                         <div class="order-list-actions d-flex flex-column align-items-end ms-3">
-                            <form method="POST" action="{{ url_for('orders.mark_received', order_id=order.id) }}" style="display:inline;">
-                                <button type="submit" class="btn btn-order-received btn-sm mb-2">Order Received</button>
+                            <form method="POST" action="{{ url_for('orders.mark_received', order_id=order.id) }}" style="display:inline;" class="mark-received-form">
+                                <button type="button" class="btn btn-order-received btn-sm mb-2" data-order-id="{{ order.id }}" data-bricks-ordered="{{ order.bricks_ordered }}">Order Received</button>
                             </form>
                             <form method="POST" action="{{ url_for('orders.cancel_order', order_id=order.id) }}" style="display:inline;" class="cancel-order-form">
                                 <button type="button" class="btn btn-order-cancel btn-sm" data-order-id="{{ order.id }}">Cancel</button>

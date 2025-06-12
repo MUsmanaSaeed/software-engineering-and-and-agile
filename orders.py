@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash
 from models import db, BrickOrder, Brick
 from datetime import datetime
 from mediators.brick_order_mediator import BrickOrderMediator
@@ -42,7 +42,18 @@ def add_order():
 
 @orders_bp.route('/orders/received/<int:order_id>', methods=['POST'])
 def mark_received(order_id):
-    BrickOrderMediator.mark_received(order_id)
+    bricks_received = request.form.get('bricks_received', type=int)
+    is_ajax = request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+    try:
+        BrickOrderMediator.mark_received(order_id, bricks_received)
+    except ValueError as e:
+        if is_ajax:
+            return jsonify({'success': False, 'error': str(e)})
+        flash(str(e), 'danger')
+        order = BrickOrderMediator.get_order_by_id(order_id)
+        return redirect(url_for('orders.order_detail', order_no=order.orderNo))
+    if is_ajax:
+        return jsonify({'success': True})
     order = BrickOrderMediator.get_order_by_id(order_id)
     return redirect(url_for('orders.order_detail', order_no=order.orderNo))
 
