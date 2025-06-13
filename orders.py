@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash, session
 from models import db, BrickOrder, Brick
 from datetime import datetime, timedelta
 from mediators.brick_order_mediator import BrickOrderMediator
@@ -87,13 +87,23 @@ def cancel_order(order_id):
 @orders_bp.route('/orders/edit/<int:order_id>', methods=['POST'])
 def edit_order(order_id):
     order = BrickOrderMediator.get_order_by_id(order_id)
+    from flask import session
+    is_admin = session.get('isAdmin', False)
     if not order:
         return jsonify({'success': False, 'error': 'Order not found.'}), 404 if request.headers.get('X-Requested-With') == 'XMLHttpRequest' else (flash('Order not found.', 'danger'), redirect(url_for('orders.orders')))
-    if order.received_date or order.canceled_date:
-        return jsonify({'success': False, 'error': 'Cannot edit an order that has been received or canceled.'}), 400 if request.headers.get('X-Requested-With') == 'XMLHttpRequest' else (flash('Cannot edit an order that has been received or canceled.', 'warning'), redirect(url_for('orders.order_detail', order_no=order.orderNo)))
+    if order.canceled_date:
+        return jsonify({'success': False, 'error': 'Cannot edit an order that has been canceled.'}), 400 if request.headers.get('X-Requested-With') == 'XMLHttpRequest' else (flash('Cannot edit an order that has been canceled.', 'warning'), redirect(url_for('orders.order_detail', order_no=order.orderNo)))
     try:
         order.bricks_ordered = int(request.form['bricks_ordered'])
         order.expected_date = datetime.strptime(request.form['expected_date'], '%Y-%m-%d')
+        # Admins can edit received status
+        if is_admin:
+            if 'set_unreceived' in request.form and request.form['set_unreceived'] == '1':
+                order.received_date = None
+                order.bricks_received = 0
+            elif 'received_date' in request.form and request.form['received_date']:
+                order.received_date = datetime.strptime(request.form['received_date'], '%Y-%m-%d')
+                order.bricks_received = int(request.form.get('bricks_received', order.bricks_received or 0))
         db.session.commit()
         if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
             return jsonify({'success': True})

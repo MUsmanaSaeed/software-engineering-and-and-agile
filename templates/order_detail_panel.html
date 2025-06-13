@@ -37,6 +37,9 @@
                                 <button type="button" class="btn btn-order-cancel btn-sm" data-order-id="{{ order.id }}">Cancel</button>
                             </form>
                             <button type="button" class="btn btn-order-edit btn-sm" data-order-id="{{ order.id }}" data-order-no="{{ order.orderNo }}" data-brick="{{ order.brick.name }} ({{ order.brick.manufacturer.name }})" data-bricks-ordered="{{ order.bricks_ordered }}" data-ordered-date="{{ order.ordered_date.strftime('%Y-%m-%d') }}" data-expected-date="{{ order.expected_date.strftime('%Y-%m-%d') }}">Edit</button>
+                            {% if session.get('isAdmin') %}
+                            <button type="button" class="btn btn-order-delete btn-sm mt-2" data-order-id="{{ order.id }}">Delete</button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -66,6 +69,9 @@
                                 <button type="button" class="btn btn-order-cancel btn-sm" data-order-id="{{ order.id }}">Cancel</button>
                             </form>
                             <button type="button" class="btn btn-order-edit btn-sm" data-order-id="{{ order.id }}" data-order-no="{{ order.orderNo }}" data-brick="{{ order.brick.name }} ({{ order.brick.manufacturer.name }})" data-bricks-ordered="{{ order.bricks_ordered }}" data-ordered-date="{{ order.ordered_date.strftime('%Y-%m-%d') }}" data-expected-date="{{ order.expected_date.strftime('%Y-%m-%d') }}">Edit</button>
+                            {% if session.get('isAdmin') %}
+                            <button type="button" class="btn btn-order-delete btn-sm mt-2" data-order-id="{{ order.id }}">Delete</button>
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -82,12 +88,20 @@
                     <span class="badge badge-received me-3">Received</span>
                 </div>
                 <div class="collapse" id="order-{{ order.id }}-collapse">
-                    <div class="order-list-info px-3 pb-3 pt-1">
-                        <div><strong>Bricks Ordered:</strong><br> {{ order.bricks_ordered }}</div>
-                        <div><strong>Bricks Received:</strong><br> {{ order.bricks_received }}</div>
-                        <div><strong>Ordered Date:</strong><br> {{ order.ordered_date.strftime('%d/%m/%y') }}</div>
-                        <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%d/%m/%y') }}</div>
-                        <div><strong>Received Date:</strong><br> {{ order.received_date.strftime('%d/%m/%y') }}</div>
+                    <div class="order-list-info-actions d-flex justify-content-between align-items-start px-3 pb-3 pt-1">
+                        <div class="order-list-info">
+                            <div><strong>Bricks Ordered:</strong><br> {{ order.bricks_ordered }}</div>
+                            <div><strong>Bricks Received:</strong><br> {{ order.bricks_received }}</div>
+                            <div><strong>Ordered Date:</strong><br> {{ order.ordered_date.strftime('%d/%m/%y') }}</div>
+                            <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%d/%m/%y') }}</div>
+                            <div><strong>Received Date:</strong><br> {{ order.received_date.strftime('%d/%m/%y') }}</div>
+                        </div>
+                        {% if session.get('isAdmin') %}
+                        <div class="order-list-actions d-flex flex-column align-items-end ms-3">
+                            <button type="button" class="btn btn-order-edit btn-sm" data-order-id="{{ order.id }}" data-order-no="{{ order.orderNo }}" data-brick="{{ order.brick.name }} ({{ order.brick.manufacturer.name }})" data-bricks-ordered="{{ order.bricks_ordered }}" data-ordered-date="{{ order.ordered_date.strftime('%Y-%m-%d') }}" data-expected-date="{{ order.expected_date.strftime('%Y-%m-%d') }}" data-received-date="{{ order.received_date.strftime('%Y-%m-%d') }}" data-bricks-received="{{ order.bricks_received }}">Edit</button>
+                            <button type="button" class="btn btn-order-delete btn-sm mt-2" data-order-id="{{ order.id }}">Delete</button>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
@@ -111,6 +125,11 @@
                         <div><strong>Expected Date:</strong><br> {{ order.expected_date.strftime('%d/%m/%y') }}</div>
                         <div><strong>Canceled Date:</strong><br> {{ order.canceled_date.strftime('%d/%m/%y') }}</div>
                     </div>
+                    {% if session.get('isAdmin') %}
+                    <div class="order-list-actions d-flex flex-column align-items-end ms-3">
+                        <button type="button" class="btn btn-order-delete btn-sm mt-2" data-order-id="{{ order.id }}">Delete</button>
+                    </div>
+                    {% endif %}
                 </div>
             </div>
             {% endfor %}

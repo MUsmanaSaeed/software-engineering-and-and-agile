@@ -39,7 +39,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     attachCancelButtonLogic();
                     attachAddOrderButtonLogic();
                     attachMarkReceivedLogic();
-                    attachEditOrderButtonLogic(); // Attach edit logic here
+                    attachEditOrderButtonLogic();
+                    attachDeleteOrderButtonLogic(); // Ensure delete logic is attached after AJAX load
                 }
             });
         });
@@ -202,13 +203,118 @@ document.addEventListener('DOMContentLoaded', function() {
                 var bricksOrdered = this.getAttribute('data-bricks-ordered');
                 var orderedDate = this.getAttribute('data-ordered-date');
                 var expectedDate = this.getAttribute('data-expected-date');
+                var receivedDate = this.getAttribute('data-received-date');
+                var bricksReceived = this.getAttribute('data-bricks-received');
+                var isReceived = false;
+                var parent = button.closest('.order-list-item');
+                if (parent && parent.classList.contains('order-received-bg')) {
+                    isReceived = true;
+                }
                 document.getElementById('editOrderId').value = orderId;
                 document.getElementById('editOrderNo').value = orderNo;
                 document.getElementById('editBrick').value = brick;
                 document.getElementById('editBricksOrdered').value = bricksOrdered;
                 document.getElementById('editOrderedDate').value = orderedDate;
                 document.getElementById('editExpectedDate').value = expectedDate;
+                var isReceivedInput = document.getElementById('editIsReceived');
+                if (isReceivedInput) isReceivedInput.value = isReceived ? '1' : '';
+                var adminFields = document.getElementById('editAdminFields');
+                if (adminFields) adminFields.style.display = isReceived ? '' : 'none';
+                var receivedDateGroup = document.getElementById('editReceivedDateGroup');
+                var bricksReceivedGroup = document.getElementById('editBricksReceivedGroup');
+                var setUnreceivedCheckbox = document.getElementById('editSetUnreceived');
+                var receivedDateInput = document.getElementById('editReceivedDate');
+                var bricksReceivedInput = document.getElementById('editBricksReceived');
+                // Autofill received date and bricks received if received
+                if (isReceived) {
+                    if (receivedDateInput) {
+                        receivedDateInput.value = receivedDate || '';
+                        var today = new Date();
+                        var yyyy = today.getFullYear();
+                        var mm = String(today.getMonth() + 1).padStart(2, '0');
+                        var dd = String(today.getDate()).padStart(2, '0');
+                        var todayStr = `${yyyy}-${mm}-${dd}`;
+                        receivedDateInput.setAttribute('min', orderedDate);
+                        receivedDateInput.setAttribute('max', todayStr);
+                        receivedDateInput.disabled = false;
+                    }
+                    if (bricksReceivedInput) {
+                        bricksReceivedInput.value = bricksReceived || bricksOrdered;
+                        bricksReceivedInput.disabled = false;
+                    }
+                } else {
+                    if (receivedDateInput) {
+                        receivedDateInput.value = '';
+                        receivedDateInput.disabled = true;
+                    }
+                    if (bricksReceivedInput) {
+                        bricksReceivedInput.value = '';
+                        bricksReceivedInput.disabled = true;
+                    }
+                }
+                // Hide/show received fields based on checkbox (no animation) and disable inputs if unchecked
+                function toggleReceivedFields() {
+                    var show = !(setUnreceivedCheckbox && setUnreceivedCheckbox.checked);
+                    if (receivedDateGroup) receivedDateGroup.style.display = show ? '' : 'none';
+                    if (bricksReceivedGroup) bricksReceivedGroup.style.display = show ? '' : 'none';
+                    if (receivedDateInput) receivedDateInput.disabled = !show;
+                    if (bricksReceivedInput) bricksReceivedInput.disabled = !show;
+                }
+                if (setUnreceivedCheckbox) {
+                    setUnreceivedCheckbox.checked = false;
+                    setUnreceivedCheckbox.onchange = toggleReceivedFields;
+                }
+                toggleReceivedFields();
                 var modal = new bootstrap.Modal(document.getElementById('editOrderModal'));
+                modal.show();
+            };
+        });
+    }
+
+    function attachDeleteOrderButtonLogic() {
+        var modalEl = document.getElementById('deleteOrderModal');
+        var confirmBtn = document.getElementById('confirmDeleteOrderBtn');
+        var currentOrderId = null;
+        // Remove any previous event handler
+        confirmBtn.onclick = null;
+        // Attach a single event handler for the confirm button
+        confirmBtn.onclick = function() {
+            if (!currentOrderId) return;
+            fetch('/orders/delete/' + currentOrderId, {
+                method: 'POST',
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                var modal = bootstrap.Modal.getInstance(modalEl);
+                if (modal) modal.hide();
+                if (data.success) {
+                    if (typeof selectedOrderNo !== 'undefined') {
+                        fetch(ORDER_DETAIL_URL.replace('ORDER_NO_PLACEHOLDER', selectedOrderNo), {
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        })
+                        .then(response => response.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const detailPanel = doc.body.firstElementChild;
+                            if (detailPanel) {
+                                document.querySelector('.col-lg-8').innerHTML = '';
+                                document.querySelector('.col-lg-8').appendChild(detailPanel);
+                                reloadDetailPanel();
+                            }
+                        });
+                    }
+                } else {
+                    alert(data.error || 'Failed to delete order.');
+                }
+            });
+        };
+        // Attach click handler to all delete buttons to set currentOrderId and show modal
+        document.querySelectorAll('.btn-order-delete').forEach(function(button) {
+            button.onclick = function() {
+                currentOrderId = this.getAttribute('data-order-id');
+                var modal = new bootstrap.Modal(modalEl);
                 modal.show();
             };
         });
@@ -220,12 +326,14 @@ document.addEventListener('DOMContentLoaded', function() {
         attachAddOrderButtonLogic();
         attachMarkReceivedLogic();
         attachEditOrderButtonLogic();
+        attachDeleteOrderButtonLogic();
     }
 
     attachCancelButtonLogic();
     attachAddOrderButtonLogic();
     attachMarkReceivedLogic();
-    attachEditOrderButtonLogic(); // Initial attach
+    attachEditOrderButtonLogic();
+    attachDeleteOrderButtonLogic(); // Initial attach
 
     // Set min/max for ordered_date and disable other dates
     const addOrderModal = document.getElementById('addOrderModal');
@@ -399,6 +507,19 @@ document.addEventListener('DOMContentLoaded', function() {
             var formData = new FormData();
             formData.append('bricks_ordered', bricksOrdered);
             formData.append('expected_date', expectedDate);
+            // Admin fields
+            var receivedDateInput = document.getElementById('editReceivedDate');
+            var bricksReceivedInput = document.getElementById('editBricksReceived');
+            var setUnreceivedCheckbox = document.getElementById('editSetUnreceived');
+            if (setUnreceivedCheckbox && setUnreceivedCheckbox.checked) {
+                formData.append('set_unreceived', '1');
+            }
+            if (receivedDateInput && receivedDateInput.value) {
+                formData.append('received_date', receivedDateInput.value);
+            }
+            if (bricksReceivedInput && bricksReceivedInput.value) {
+                formData.append('bricks_received', bricksReceivedInput.value);
+            }
             fetch('/orders/edit/' + orderId, {
                 method: 'POST',
                 body: formData,
