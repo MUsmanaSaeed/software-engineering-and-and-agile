@@ -565,6 +565,33 @@ html, body {
     color: #0d6efd;
 }
 
+.btn-order-edit {
+    background: #ffc107;
+    color: #fff;
+    border: 1px solid #b8860b;
+    border-radius: 8px;
+    padding: 0.45rem 1.1rem;
+    font-weight: 600;
+    font-size: 1rem;
+    box-shadow: none;
+    transition: background 0.2s, transform 0.1s;
+    margin-bottom: 0.3rem;
+    cursor: pointer;
+    outline: none;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    min-width: 180px;
+    justify-content: center;
+}
+.btn-order-edit:hover, .btn-order-edit:focus {
+    background: #e0a800;
+    color: #fff;
+    transform: translateY(-1px) scale(1.02);
+}
+
 @media (max-width: 768px) {
     .order-list-info > div {
         margin-right: 0;

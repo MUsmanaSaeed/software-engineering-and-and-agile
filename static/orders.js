@@ -39,6 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     attachCancelButtonLogic();
                     attachAddOrderButtonLogic();
                     attachMarkReceivedLogic();
+                    attachEditOrderButtonLogic(); // Attach edit logic here
                 }
             });
         });
@@ -147,6 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
                                     attachCancelButtonLogic();
                                     attachAddOrderButtonLogic();
                                     attachMarkReceivedLogic();
+                                    attachEditOrderButtonLogic(); // Re-attach edit logic after refresh
                                 }
                             });
                         }
@@ -189,9 +191,41 @@ document.addEventListener('DOMContentLoaded', function() {
             };
         }
     }
+
+    // Attach edit order button logic
+    function attachEditOrderButtonLogic() {
+        document.querySelectorAll('.btn-order-edit').forEach(function(button) {
+            button.onclick = function() {
+                var orderId = this.getAttribute('data-order-id');
+                var orderNo = this.getAttribute('data-order-no');
+                var brick = this.getAttribute('data-brick');
+                var bricksOrdered = this.getAttribute('data-bricks-ordered');
+                var orderedDate = this.getAttribute('data-ordered-date');
+                var expectedDate = this.getAttribute('data-expected-date');
+                document.getElementById('editOrderId').value = orderId;
+                document.getElementById('editOrderNo').value = orderNo;
+                document.getElementById('editBrick').value = brick;
+                document.getElementById('editBricksOrdered').value = bricksOrdered;
+                document.getElementById('editOrderedDate').value = orderedDate;
+                document.getElementById('editExpectedDate').value = expectedDate;
+                var modal = new bootstrap.Modal(document.getElementById('editOrderModal'));
+                modal.show();
+            };
+        });
+    }
+
+    // After loading detail panel, re-attach edit logic
+    function reloadDetailPanel() {
+        attachCancelButtonLogic();
+        attachAddOrderButtonLogic();
+        attachMarkReceivedLogic();
+        attachEditOrderButtonLogic();
+    }
+
     attachCancelButtonLogic();
     attachAddOrderButtonLogic();
     attachMarkReceivedLogic();
+    attachEditOrderButtonLogic(); // Initial attach
 
     // Set min/max for ordered_date and disable other dates
     const addOrderModal = document.getElementById('addOrderModal');
@@ -244,6 +278,30 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (expectedDateInput.value < todayStr) {
                         expectedDateInput.value = todayStr;
                     }
+                }
+            }
+        });
+    }
+
+    // --- Edit Order Modal Date Logic ---
+    const editOrderModal = document.getElementById('editOrderModal');
+    if (editOrderModal) {
+        editOrderModal.addEventListener('show.bs.modal', function () {
+            const orderedDateInput = document.getElementById('editOrderedDate');
+            const expectedDateInput = document.getElementById('editExpectedDate');
+            if (orderedDateInput && expectedDateInput) {
+                // Set expected date min to ordered date on modal open
+                expectedDateInput.setAttribute('min', orderedDateInput.value);
+                // Update expected date min whenever ordered date changes (should not change, but for consistency)
+                orderedDateInput.addEventListener('input', function() {
+                    expectedDateInput.setAttribute('min', this.value);
+                    if (expectedDateInput.value < this.value) {
+                        expectedDateInput.value = this.value;
+                    }
+                });
+                // If expected date is before ordered date, set it to ordered date
+                if (expectedDateInput.value < orderedDateInput.value) {
+                    expectedDateInput.value = orderedDateInput.value;
                 }
             }
         });
@@ -328,5 +386,47 @@ document.addEventListener('DOMContentLoaded', function() {
                 brickComboboxWrapper.classList.remove('active');
             });
         }
+    }
+
+    // --- Edit Order Modal Form Submission ---
+    var editOrderForm = document.getElementById('editOrderForm');
+    if (editOrderForm) {
+        editOrderForm.onsubmit = function(e) {
+            e.preventDefault();
+            var orderId = document.getElementById('editOrderId').value;
+            var bricksOrdered = document.getElementById('editBricksOrdered').value;
+            var expectedDate = document.getElementById('editExpectedDate').value;
+            var formData = new FormData();
+            formData.append('bricks_ordered', bricksOrdered);
+            formData.append('expected_date', expectedDate);
+            fetch('/orders/edit/' + orderId, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => response.text())
+            .then(html => {
+                // Hide modal
+                var modal = bootstrap.Modal.getInstance(document.getElementById('editOrderModal'));
+                if (modal) modal.hide();
+                // Refresh order detail panel
+                if (typeof selectedOrderNo !== 'undefined') {
+                    fetch(ORDER_DETAIL_URL.replace('ORDER_NO_PLACEHOLDER', selectedOrderNo), {
+                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                    })
+                    .then(response => response.text())
+                    .then(html => {
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const detailPanel = doc.body.firstElementChild;
+                        if (detailPanel) {
+                            document.querySelector('.col-lg-8').innerHTML = '';
+                            document.querySelector('.col-lg-8').appendChild(detailPanel);
+                            reloadDetailPanel();
+                        }
+                    });
+                }
+            });
+        };
     }
 });

@@ -83,3 +83,24 @@ def cancel_order(order_id):
     BrickOrderMediator.cancel_order(order_id)
     order = BrickOrderMediator.get_order_by_id(order_id)
     return redirect(url_for('orders.order_detail', order_no=order.orderNo))
+
+@orders_bp.route('/orders/edit/<int:order_id>', methods=['POST'])
+def edit_order(order_id):
+    order = BrickOrderMediator.get_order_by_id(order_id)
+    if not order:
+        return jsonify({'success': False, 'error': 'Order not found.'}), 404 if request.headers.get('X-Requested-With') == 'XMLHttpRequest' else (flash('Order not found.', 'danger'), redirect(url_for('orders.orders')))
+    if order.received_date or order.canceled_date:
+        return jsonify({'success': False, 'error': 'Cannot edit an order that has been received or canceled.'}), 400 if request.headers.get('X-Requested-With') == 'XMLHttpRequest' else (flash('Cannot edit an order that has been received or canceled.', 'warning'), redirect(url_for('orders.order_detail', order_no=order.orderNo)))
+    try:
+        order.bricks_ordered = int(request.form['bricks_ordered'])
+        order.expected_date = datetime.strptime(request.form['expected_date'], '%Y-%m-%d')
+        db.session.commit()
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': True})
+        flash('Order updated successfully!', 'success')
+        return redirect(url_for('orders.order_detail', order_no=order.orderNo))
+    except Exception as e:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': False, 'error': str(e)}), 400
+        flash(f'Error updating order: {e}', 'danger')
+        return redirect(url_for('orders.order_detail', order_no=order.orderNo))

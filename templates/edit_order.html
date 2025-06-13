@@ -1,0 +1,39 @@
+<!-- {% extends 'base.html' %}
+{% block title %}Edit Order{% endblock %}
+{% block content %}
+<div class="d-flex justify-content-center align-items-center" style="min-height: 80vh;">
+    <div class="col-12 col-sm-8 col-md-6 col-lg-5">
+        <div class="card shadow">
+            <div class="card-header text-center"><h4>Edit Order</h4></div>
+            <div class="card-body">
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Order No</label>
+                        <input type="text" name="orderNo" class="form-control" value="{{ order.orderNo }}" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Brick</label>
+                        <input type="text" class="form-control" value="{{ order.brick.name }} ({{ order.brick.manufacturer.name }})" readonly>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Bricks Ordered</label>
+                        <input type="number" name="bricks_ordered" class="form-control" value="{{ order.bricks_ordered }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ordered Date</label>
+                        <input type="date" name="ordered_date" class="form-control" value="{{ order.ordered_date.strftime('%Y-%m-%d') }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Expected Date</label>
+                        <input type="date" name="expected_date" class="form-control" value="{{ order.expected_date.strftime('%Y-%m-%d') }}" required>
+                    </div>
+                    <div class="d-flex gap-2">
+                        <a href="{{ url_for('orders.order_detail', order_no=order.orderNo) }}" class="btn btn-secondary w-50">Cancel</a>
+                        <button type="submit" class="btn btn-primary w-50">Save Changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} -->
