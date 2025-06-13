@@ -197,8 +197,31 @@ document.addEventListener('DOMContentLoaded', function() {
     const addOrderModal = document.getElementById('addOrderModal');
     if (addOrderModal) {
         addOrderModal.addEventListener('show.bs.modal', function () {
+            // Reset brick search and select
+            if (brickSearchBox && brickSelect && allOptions) {
+                brickSearchBox.value = '';
+                brickSelect.innerHTML = '';
+                allOptions.forEach(function(opt) {
+                    var option = document.createElement('option');
+                    option.value = opt.value;
+                    option.textContent = opt.text;
+                    brickSelect.appendChild(option);
+                });
+            }
+            // Date logic
             const orderedDateInput = document.getElementById('ordered_date');
             const expectedDateInput = document.getElementById('expected_date');
+            if (orderedDateInput && expectedDateInput) {
+                // Set expected date min to ordered date on modal open
+                expectedDateInput.setAttribute('min', orderedDateInput.value);
+                // Update expected date min whenever ordered date changes
+                orderedDateInput.addEventListener('input', function() {
+                    expectedDateInput.setAttribute('min', this.value);
+                    if (expectedDateInput.value < this.value) {
+                        expectedDateInput.value = this.value;
+                    }
+                });
+            }
             if (orderedDateInput) {
                 const today = new Date();
                 const yyyy = today.getFullYear();
@@ -213,30 +236,97 @@ document.addEventListener('DOMContentLoaded', function() {
                 const minStr = `${minY}-${minM}-${minD}`;
                 orderedDateInput.setAttribute('max', todayStr);
                 orderedDateInput.setAttribute('min', minStr);
+                // Always set value to today when modal opens
                 orderedDateInput.value = todayStr;
-                // Disable all other dates
-                orderedDateInput.addEventListener('input', function() {
-                    if (this.value < minStr || this.value > todayStr) {
-                        this.setCustomValidity('Order date must be within the last 3 days and not in the future.');
-                    } else {
-                        this.setCustomValidity('');
-                    }
-                    // Update expected date min when ordered date changes
-                    if (expectedDateInput) {
-                        expectedDateInput.setAttribute('min', this.value);
-                        if (expectedDateInput.value < this.value) {
-                            expectedDateInput.value = this.value;
-                        }
-                    }
-                });
                 // Set initial min for expected date
                 if (expectedDateInput) {
-                    expectedDateInput.setAttribute('min', orderedDateInput.value);
-                    if (expectedDateInput.value < orderedDateInput.value) {
-                        expectedDateInput.value = orderedDateInput.value;
+                    expectedDateInput.setAttribute('min', todayStr);
+                    if (expectedDateInput.value < todayStr) {
+                        expectedDateInput.value = todayStr;
                     }
                 }
             }
         });
+    }
+
+    // --- Custom Brick Combobox Logic ---
+    var brickInput = document.getElementById('brick-combobox-input');
+    var brickList = document.getElementById('brick-combobox-list');
+    var brickIdHidden = document.getElementById('brickId');
+    var brickComboboxWrapper = document.getElementById('brick-combobox-wrapper');
+    var brickOptions = [];
+    var brickOptionsData = document.getElementById('brickOptionsData');
+    if (brickOptionsData) {
+        try {
+            var raw = JSON.parse(brickOptionsData.textContent);
+            brickOptions = raw.map(function(b) {
+                return {
+                    id: b.id,
+                    text: b.name + ' (' + (b.manufacturer ? b.manufacturer.name : '') + ')'
+                };
+            });
+        } catch (e) { brickOptions = []; }
+    }
+    if (brickInput && brickList && brickIdHidden) {
+        function showBrickList(filtered) {
+            brickList.innerHTML = '';
+            if (!filtered.length) {
+                brickList.style.display = 'none';
+                brickComboboxWrapper.classList.remove('active');
+                return;
+            }
+            filtered.forEach(function(opt) {
+                var item = document.createElement('button');
+                item.type = 'button';
+                item.className = 'list-group-item list-group-item-action';
+                item.textContent = opt.text;
+                item.dataset.id = opt.id;
+                item.onclick = function() {
+                    brickInput.value = opt.text;
+                    brickIdHidden.value = opt.id;
+                    brickList.style.display = 'none';
+                    brickComboboxWrapper.classList.remove('active');
+                };
+                brickList.appendChild(item);
+            });
+            brickList.style.display = 'block';
+            brickComboboxWrapper.classList.add('active');
+        }
+        brickInput.addEventListener('input', function() {
+            var filter = brickInput.value.trim().toLowerCase();
+            var filtered = brickOptions.filter(function(opt) {
+                return opt.text.toLowerCase().includes(filter);
+            });
+            showBrickList(filtered);
+            brickIdHidden.value = '';
+        });
+        brickInput.addEventListener('focus', function() {
+            var filter = brickInput.value.trim().toLowerCase();
+            var filtered = brickOptions.filter(function(opt) {
+                return opt.text.toLowerCase().includes(filter);
+            });
+            showBrickList(filtered);
+        });
+        document.addEventListener('click', function(e) {
+            if (!brickComboboxWrapper.contains(e.target)) {
+                brickList.style.display = 'none';
+                brickComboboxWrapper.classList.remove('active');
+            }
+        });
+        // Clear hidden input if user types
+        brickInput.addEventListener('keydown', function(e) {
+            if (e.key !== 'Tab' && e.key !== 'Enter') {
+                brickIdHidden.value = '';
+            }
+        });
+        // On modal open, reset combobox
+        if (addOrderModal) {
+            addOrderModal.addEventListener('show.bs.modal', function () {
+                brickInput.value = '';
+                brickIdHidden.value = '';
+                brickList.style.display = 'none';
+                brickComboboxWrapper.classList.remove('active');
+            });
+        }
     }
 });

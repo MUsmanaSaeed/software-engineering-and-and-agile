@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash
 from models import db, BrickOrder, Brick
-from datetime import datetime
+from datetime import datetime, timedelta
 from mediators.brick_order_mediator import BrickOrderMediator
 from mediators.brick_mediator import BrickMediator
 
@@ -10,7 +10,18 @@ orders_bp = Blueprint('orders', __name__)
 def orders():
     order_nos = BrickOrderMediator.get_all_order_nos()
     bricks = BrickMediator.get_all_bricks()
-    return render_template('orders.html', order_nos=order_nos, bricks=bricks)
+    def brick_to_dict(brick):
+        return {
+            'id': brick.id,
+            'name': brick.name,
+            'manufacturer': {
+                'id': brick.manufacturer.id if brick.manufacturer else None,
+                'name': brick.manufacturer.name if brick.manufacturer else ''
+            }
+        }
+    brick_dicts = [brick_to_dict(b) for b in bricks]
+    current_date = datetime.today().date()
+    return render_template('orders.html', order_nos=order_nos, bricks=brick_dicts, current_date=current_date, timedelta=timedelta)
 
 @orders_bp.route('/orders/<order_no>')
 def order_detail(order_no):
@@ -18,13 +29,23 @@ def order_detail(order_no):
     order_nos = BrickOrderMediator.get_all_order_nos()
     bricks = BrickMediator.get_all_bricks()
     current_date = datetime.today().date()
+    def brick_to_dict(brick):
+        return {
+            'id': brick.id,
+            'name': brick.name,
+            'manufacturer': {
+                'id': brick.manufacturer.id if brick.manufacturer else None,
+                'name': brick.manufacturer.name if brick.manufacturer else ''
+            }
+        }
+    brick_dicts = [brick_to_dict(b) for b in bricks]
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         if not orders:
             return render_template('order_detail_panel.html', selected_order_no=None, order_details=None)
-        return render_template('order_detail_panel.html', selected_order_no=order_no, order_details=orders, current_date=current_date, bricks=bricks)
+        return render_template('order_detail_panel.html', selected_order_no=order_no, order_details=orders, current_date=current_date, bricks=brick_dicts)
     if not orders:
-        return render_template('orders.html', order_nos=order_nos, selected_order_no=None, order_details=None, bricks=bricks)
-    return render_template('orders.html', order_nos=order_nos, selected_order_no=order_no, order_details=orders, current_date=current_date, bricks=bricks)
+        return render_template('orders.html', order_nos=order_nos, selected_order_no=None, order_details=None, bricks=brick_dicts)
+    return render_template('orders.html', order_nos=order_nos, selected_order_no=order_no, order_details=orders, current_date=current_date, bricks=brick_dicts, timedelta=timedelta)
 
 @orders_bp.route('/orders/add', methods=['POST'])
 def add_order():

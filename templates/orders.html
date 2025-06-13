@@ -1,6 +1,7 @@
 {% extends 'base.html' %}
 {% block title %}Brick Orders{% endblock %}
 {% block content %}
+{% set min_date = (current_date - timedelta(days=3)) %}
 <div class="row flex-lg-nowrap" style="height: 100%; min-height: 500px;">
     <div class="col-lg-4 col-12 d-flex flex-column">
         <div class="d-flex justify-content-between align-items-center mb-3">
@@ -50,12 +51,17 @@
                     </div>
                     <div class="mb-3">
                         <label for="brickId" class="form-label">Brick</label>
-                        <select class="form-control" id="brickId" name="brickId" required>
-                            <option value="">Select Brick</option>
-                            {% for brick in bricks %}
-                                <option value="{{ brick.id }}">{{ brick.name }} ({{ brick.manufacturer.name }})</option>
-                            {% endfor %}
-                        </select>
+                        <div class="position-relative" id="brick-combobox-wrapper">
+                            <input type="text" class="form-control" id="brick-combobox-input" placeholder="Search or select brick..." autocomplete="off">
+                            <span id="brick-combobox-arrow" style="position:absolute; right: 12px; top: 50%; transform: translateY(-50%); pointer-events: none; transition: transform 0.2s;">
+                                <svg width="18" height="18" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M4.646 6.646a.5.5 0 0 1 .708 0L8 9.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z" fill="#888"/>
+                                </svg>
+                            </span>
+                            <div id="brick-combobox-list" class="list-group position-absolute w-100" style="z-index: 1050; max-height: 200px; overflow-y: auto; display: none;"></div>
+                            <input type="hidden" id="brickId" name="brickId" required>
+                        </div>
+                        <script id="brickOptionsData" type="application/json">{{ bricks | tojson | safe }}</script>
                     </div>
                     <div class="mb-3">
                         <label for="bricks_ordered" class="form-label">Bricks Ordered</label>
@@ -63,11 +69,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="ordered_date" class="form-label">Ordered Date</label>
-                        <input type="date" class="form-control" id="ordered_date" name="ordered_date" required>
+                        <input type="date" class="form-control" id="ordered_date" name="ordered_date" required min="{{ min_date.strftime('%Y-%m-%d') }}" max="{{ current_date.strftime('%Y-%m-%d') }}" value="{{ current_date.strftime('%Y-%m-%d') }}">
                     </div>
                     <div class="mb-3">
                         <label for="expected_date" class="form-label">Expected Date</label>
-                        <input type="date" class="form-control" id="expected_date" name="expected_date" required>
+                        <input type="date" class="form-control" id="expected_date" name="expected_date" required min="{{ current_date.strftime('%Y-%m-%d') }}">
                     </div>
                 </div>
                 <div class="modal-footer">

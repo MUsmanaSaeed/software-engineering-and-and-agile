@@ -496,6 +496,75 @@ html, body {
     border-radius: 0.75rem;
 }
 
+/* Brick combobox arrow styles */
+#brick-combobox-wrapper {
+    position: relative;
+}
+#brick-combobox-arrow {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%) rotate(0deg);
+    pointer-events: none;
+    transition: transform 0.2s;
+    color: #888;
+}
+#brick-combobox-wrapper.active #brick-combobox-arrow {
+    transform: translateY(-50%) rotate(180deg);
+}
+#brick-combobox-input {
+    padding-right: 2.2em;
+}
+#brick-combobox-list {
+    border: 2px solid #0d6efd;
+    box-shadow: 0 4px 16px rgba(13,110,253,0.12);
+    border-radius: 0.5rem;
+    background: #fff;
+    z-index: 1060;
+    /* Optional: add a slight margin to separate from input */
+    margin-top: 2px;
+    /* Ensure dropdown is visually distinct */
+    transition: box-shadow 0.2s, border-color 0.2s;
+    scrollbar-width: thin;
+    scrollbar-color: #b0b6be transparent; /* gray thumb, no track */
+}
+#brick-combobox-list::-webkit-scrollbar {
+    width: 7px;
+    background: transparent;
+    border-radius: 8px;
+    transition: width 0.2s;
+}
+#brick-combobox-list:hover::-webkit-scrollbar {
+    width: 13px;
+}
+#brick-combobox-list::-webkit-scrollbar-thumb {
+    background: #b0b6be;
+    border-radius: 8px;
+    border: none;
+    min-height: 20px;
+    box-shadow: 0 2px 8px rgba(176,182,190,0.10);
+    transition: background 0.2s;
+}
+#brick-combobox-list::-webkit-scrollbar-thumb:hover {
+    background: #868e96;
+}
+#brick-combobox-list::-webkit-scrollbar-track,
+#brick-combobox-list::-webkit-scrollbar-button,
+#brick-combobox-list::-webkit-scrollbar-corner {
+    display: none;
+    background: transparent;
+    height: 0;
+    width: 0;
+}
+#brick-combobox-list .list-group-item {
+    border: none;
+    background: transparent;
+}
+#brick-combobox-list .list-group-item:hover, #brick-combobox-list .list-group-item:focus {
+    background: #e9f5ff;
+    color: #0d6efd;
+}
+
 @media (max-width: 768px) {
     .order-list-info > div {
         margin-right: 0;
