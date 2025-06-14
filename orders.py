@@ -59,6 +59,8 @@ def add_order():
         'expected_date': datetime.strptime(data['expected_date'], '%Y-%m-%d')
     }
     new_order = BrickOrderMediator.add_order(order_data)
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({'success': True, 'orderNo': new_order.orderNo})
     return redirect(url_for('orders.order_detail', order_no=new_order.orderNo))
 
 @orders_bp.route('/orders/received/<int:order_id>', methods=['POST'])
@@ -114,3 +116,14 @@ def edit_order(order_id):
             return jsonify({'success': False, 'error': str(e)}), 400
         flash(f'Error updating order: {e}', 'danger')
         return redirect(url_for('orders.order_detail', order_no=order.orderNo))
+
+@orders_bp.route('/orders/delete/<int:order_id>', methods=['POST'])
+def delete_order(order_id):
+    success = BrickOrderMediator.delete_order(order_id)
+    if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+        return jsonify({'success': success})
+    if success:
+        flash('Order deleted!', 'success')
+    else:
+        flash('Order not found or could not be deleted.', 'danger')
+    return redirect(url_for('orders.orders'))

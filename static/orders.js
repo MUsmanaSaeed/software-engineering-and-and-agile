@@ -46,6 +46,23 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
+    function showOrderFlash(message, category = 'success') {
+        var flashContainer = document.querySelector('.floating-flash-container');
+        if (flashContainer) {
+            var alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${category} alert-dismissible fade show`;
+            alertDiv.role = 'alert';
+            alertDiv.style.animation = 'flash-in 0.4s';
+            alertDiv.innerHTML = message + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
+            flashContainer.appendChild(alertDiv);
+            setTimeout(function() {
+                alertDiv.classList.remove('show');
+                alertDiv.classList.add('hide');
+                setTimeout(function() { alertDiv.remove(); }, 500);
+            }, 4000);
+        }
+    }
+
     function attachCancelButtonLogic() {
         var modal = document.getElementById('cancelConfirmModal');
         if (!modal) return;
@@ -62,7 +79,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     modalYes.onclick = function() {
                         var form = document.querySelector('.cancel-order-form [data-order-id="'+orderId+'"]')?.closest('form');
                         modal.classList.remove('active');
-                        if (form) form.submit();
+                        if (form) {
+                            form.submit();
+                            showOrderFlash('Order canceled!');
+                        }
                     };
                 }
                 if (modalNo) {
@@ -133,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 .then(data => {
                     if (data.success) {
                         modal.classList.remove('active');
+                        showOrderFlash('Order marked as received!');
                         // Refresh order detail panel only
                         if (typeof selectedOrderNo !== 'undefined') {
                             fetch(ORDER_DETAIL_URL.replace('ORDER_NO_PLACEHOLDER', selectedOrderNo), {
@@ -154,24 +175,8 @@ document.addEventListener('DOMContentLoaded', function() {
                             });
                         }
                     } else {
-                        // Show flash message dynamically
                         modal.classList.remove('active');
-                        var flashContainer = document.querySelector('.floating-flash-container');
-                        if (flashContainer) {
-                            var alertDiv = document.createElement('div');
-                            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
-                            alertDiv.role = 'alert';
-                            alertDiv.style.animation = 'flash-in 0.4s';
-                            alertDiv.innerHTML = data.error + '<button type="button" class="btn-close" data-bs-dismiss="alert"></button>';
-                            flashContainer.appendChild(alertDiv);
-                            setTimeout(function() {
-                                alertDiv.classList.remove('show');
-                                alertDiv.classList.add('hide');
-                                setTimeout(function() { alertDiv.remove(); }, 500);
-                            }, 4000);
-                        } else {
-                            alert(data.error);
-                        }
+                        showOrderFlash(data.error || 'Failed to mark as received', 'danger');
                     }
                 });
             };
@@ -271,51 +276,57 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
+    // --- Delete Order Modal Logic ---
+    var currentOrderId = null;
     function attachDeleteOrderButtonLogic() {
         var modalEl = document.getElementById('deleteOrderModal');
         var confirmBtn = document.getElementById('confirmDeleteOrderBtn');
-        var currentOrderId = null;
         // Remove any previous event handler
-        confirmBtn.onclick = null;
-        // Attach a single event handler for the confirm button
-        confirmBtn.onclick = function() {
-            if (!currentOrderId) return;
-            fetch('/orders/delete/' + currentOrderId, {
-                method: 'POST',
-                headers: { 'X-Requested-With': 'XMLHttpRequest' }
-            })
-            .then(response => response.json())
-            .then(data => {
-                var modal = bootstrap.Modal.getInstance(modalEl);
-                if (modal) modal.hide();
-                if (data.success) {
-                    if (typeof selectedOrderNo !== 'undefined') {
-                        fetch(ORDER_DETAIL_URL.replace('ORDER_NO_PLACEHOLDER', selectedOrderNo), {
-                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                        })
-                        .then(response => response.text())
-                        .then(html => {
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(html, 'text/html');
-                            const detailPanel = doc.body.firstElementChild;
-                            if (detailPanel) {
-                                document.querySelector('.col-lg-8').innerHTML = '';
-                                document.querySelector('.col-lg-8').appendChild(detailPanel);
-                                reloadDetailPanel();
-                            }
-                        });
-                    }
-                } else {
-                    alert(data.error || 'Failed to delete order.');
-                }
-            });
-        };
+        if (confirmBtn) {
+            confirmBtn.replaceWith(confirmBtn.cloneNode(true));
+            confirmBtn = document.getElementById('confirmDeleteOrderBtn');
+        }
         // Attach click handler to all delete buttons to set currentOrderId and show modal
         document.querySelectorAll('.btn-order-delete').forEach(function(button) {
             button.onclick = function() {
                 currentOrderId = this.getAttribute('data-order-id');
                 var modal = new bootstrap.Modal(modalEl);
                 modal.show();
+                // Re-bind confirm button handler for this order
+                if (confirmBtn) {
+                    confirmBtn.onclick = function() {
+                        if (!currentOrderId) return;
+                        fetch('/orders/delete/' + currentOrderId, {
+                            method: 'POST',
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        })
+                        .then(response => response.json())
+                        .then(data => {
+                            var modal = bootstrap.Modal.getInstance(modalEl);
+                            if (modal) modal.hide();
+                            if (data.success) {
+                                showOrderFlash('Order deleted!');
+                                if (typeof selectedOrderNo !== 'undefined') {
+                                    fetch(ORDER_DETAIL_URL.replace('ORDER_NO_PLACEHOLDER', selectedOrderNo), {
+                                        headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                                    })
+                                    .then(response => response.text())
+                                    .then(html => {
+                                        const parser = new DOMParser();
+                                        const detailPanel = parser.parseFromString(html, 'text/html').body.firstElementChild;
+                                        if (detailPanel) {
+                                            document.querySelector('.col-lg-8').innerHTML = '';
+                                            document.querySelector('.col-lg-8').appendChild(detailPanel);
+                                            reloadDetailPanel();
+                                        }
+                                    });
+                                }
+                            } else {
+                                showOrderFlash(data.error || 'Failed to delete order', 'danger');
+                            }
+                        });
+                    };
+                }
             };
         });
     }
@@ -527,10 +538,9 @@ document.addEventListener('DOMContentLoaded', function() {
             })
             .then(response => response.text())
             .then(html => {
-                // Hide modal
                 var modal = bootstrap.Modal.getInstance(document.getElementById('editOrderModal'));
                 if (modal) modal.hide();
-                // Refresh order detail panel
+                showOrderFlash('Order updated!');
                 if (typeof selectedOrderNo !== 'undefined') {
                     fetch(ORDER_DETAIL_URL.replace('ORDER_NO_PLACEHOLDER', selectedOrderNo), {
                         headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -547,6 +557,49 @@ document.addEventListener('DOMContentLoaded', function() {
                         }
                     });
                 }
+            });
+        };
+    }
+
+    // --- Add Order Modal Form Submission ---
+    var addOrderForm = document.querySelector('#addOrderModal form');
+    if (addOrderForm) {
+        addOrderForm.onsubmit = function(e) {
+            e.preventDefault();
+            var formData = new FormData(addOrderForm);
+            fetch(addOrderForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    var modal = bootstrap.Modal.getInstance(document.getElementById('addOrderModal'));
+                    if (modal) modal.hide();
+                    showOrderFlash('Order added!');
+                    if (typeof selectedOrderNo !== 'undefined') {
+                        fetch(ORDER_DETAIL_URL.replace('ORDER_NO_PLACEHOLDER', selectedOrderNo), {
+                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                        })
+                        .then(response => response.text())
+                        .then(html => {
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(html, 'text/html');
+                            const detailPanel = doc.body.firstElementChild;
+                            if (detailPanel) {
+                                document.querySelector('.col-lg-8').innerHTML = '';
+                                document.querySelector('.col-lg-8').appendChild(detailPanel);
+                                reloadDetailPanel();
+                            }
+                        });
+                    }
+                } else {
+                    showOrderFlash(data.error || 'Failed to add order', 'danger');
+                }
+            })
+            .catch(() => {
+                showOrderFlash('Failed to add order', 'danger');
             });
         };
     }
