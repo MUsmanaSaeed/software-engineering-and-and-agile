@@ -15,6 +15,7 @@ def bricks(brick_id=None):
         return {
             'id': brick.id,
             'name': brick.name,
+            'price': brick.price,
             'colour': brick.colour,
             'material': brick.material,
             'strength': brick.strength,

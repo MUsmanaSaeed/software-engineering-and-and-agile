@@ -44,6 +44,11 @@ document.addEventListener('DOMContentLoaded', () => {
             document.getElementById('detail-height').textContent = brick.height;
             document.getElementById('detail-type').textContent = brick.type;
             document.getElementById('detail-voids').textContent = brick.voids;
+            const priceSpan = document.getElementById('detail-price');
+            if (priceSpan) {
+                let price = Number(brick.price);
+                priceSpan.textContent = isNaN(price) ? '' : price.toLocaleString('en-GB', { style: 'currency', currency: 'GBP' });
+            }
             panel.style.display = 'block';
             if (document.getElementById('brick-placeholder-panel')) {
                 document.getElementById('brick-placeholder-panel').classList.add('d-none');
@@ -188,17 +193,26 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function filterRows() {
         const searchValue = searchBox ? searchBox.value.trim().toLowerCase() : '';
-        // Get selected manufacturer (single select)
         let selectedManufacturer = '';
         if (manufacturerSelect) {
             selectedManufacturer = manufacturerSelect.value;
         }
+        // Get price range values
+        const minPriceInput = document.getElementById('price-min-filter');
+        const maxPriceInput = document.getElementById('price-max-filter');
+        const minPrice = minPriceInput && minPriceInput.value !== '' ? parseFloat(minPriceInput.value) : null;
+        const maxPrice = maxPriceInput && maxPriceInput.value !== '' ? parseFloat(maxPriceInput.value) : null;
         document.querySelectorAll('.brick-row').forEach(row => {
             const name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
             const manufacturer = row.querySelector('td:nth-child(2)').textContent;
+            // Price cell is always the third column
+            let priceText = row.querySelector('td:nth-child(3)').textContent.replace(/[^\d.]/g, '');
+            let price = parseFloat(priceText);
             const matchesName = name.includes(searchValue);
             const matchesManufacturer = !selectedManufacturer || manufacturer === selectedManufacturer;
-            row.style.display = (matchesName && matchesManufacturer) ? '' : 'none';
+            const matchesMin = minPrice === null || (!isNaN(price) && price >= minPrice);
+            const matchesMax = maxPrice === null || (!isNaN(price) && price <= maxPrice);
+            row.style.display = (matchesName && matchesManufacturer && matchesMin && matchesMax) ? '' : 'none';
         });
         updateFilterBadge();
     }
@@ -212,6 +226,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (clearFilterBtn && manufacturerSelect) {
         clearFilterBtn.addEventListener('click', function() {
             manufacturerSelect.value = '';
+            // Reset price range inputs
+            const minPriceInput = document.getElementById('price-min-filter');
+            const maxPriceInput = document.getElementById('price-max-filter');
+            if (minPriceInput) minPriceInput.value = '';
+            if (maxPriceInput) maxPriceInput.value = '';
             filterRows();
             hideFilterDropdown();
         });

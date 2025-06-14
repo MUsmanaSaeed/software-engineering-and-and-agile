@@ -13,7 +13,7 @@ class BrickMediator:
     @staticmethod
     def add_brick(brick_data):
         # Validate required fields
-        required_fields = ['name', 'colour', 'material', 'strength', 'width', 'depth', 'height', 'type', 'voids', 'manufacturer_id']
+        required_fields = ['name', 'colour', 'material', 'strength', 'width', 'depth', 'height', 'type', 'voids', 'manufacturer_id', 'price']
         for field in required_fields:
             if field not in brick_data or brick_data[field] == '':
                 raise ValueError(f"Field '{field}' is required.")
@@ -28,6 +28,7 @@ class BrickMediator:
             brick_data['height'] = float(brick_data['height'])
             brick_data['voids'] = int(brick_data['voids'])
             brick_data['manufacturerId'] = int(brick_data['manufacturer_id'])
+            brick_data['price'] = float(brick_data['price'])
         except Exception:
             raise ValueError('Invalid data type for one or more fields.')
         # Additional checks
@@ -39,6 +40,8 @@ class BrickMediator:
             raise ValueError('Height must be greater than 0.')
         if not (0 <= brick_data['voids'] <= 100):
             raise ValueError('Voids must be between 0 and 100.')
+        if brick_data['price'] < 0:
+            raise ValueError('Price must be 0 or greater.')
         # Remove form field
         brick_data.pop('manufacturer_id', None)
         brick = Brick(**brick_data)
@@ -48,7 +51,7 @@ class BrickMediator:
     @staticmethod
     def update_brick(brick, brick_data):
         # Validate required fields
-        required_fields = ['name', 'colour', 'material', 'strength', 'width', 'depth', 'height', 'type', 'voids', 'manufacturer_id']
+        required_fields = ['name', 'colour', 'material', 'strength', 'width', 'depth', 'height', 'type', 'voids', 'manufacturer_id', 'price']
         for field in required_fields:
             if field not in brick_data or brick_data[field] == '':
                 raise ValueError(f"Field '{field}' is required.")
@@ -63,6 +66,7 @@ class BrickMediator:
             brick_data['height'] = float(brick_data['height'])
             brick_data['voids'] = int(brick_data['voids'])
             brick_data['manufacturerId'] = int(brick_data['manufacturer_id'])
+            brick_data['price'] = float(brick_data['price'])
         except Exception:
             raise ValueError('Invalid data type for one or more fields.')
         # Additional checks
@@ -74,6 +78,8 @@ class BrickMediator:
             raise ValueError('Height must be greater than 0.')
         if not (0 <= brick_data['voids'] <= 100):
             raise ValueError('Voids must be between 0 and 100.')
+        if brick_data['price'] < 0:
+            raise ValueError('Price must be 0 or greater.')
         # Remove form field
         brick_data.pop('manufacturer_id', None)
         for key, value in brick_data.items():

@@ -33,6 +33,14 @@
                             {% endfor %}
                         </select>
                     </div>
+                    <div class="mb-3">
+                        <label class="form-label">Price Range (£)</label>
+                        <div class="d-flex gap-2 align-items-center">
+                            <input type="number" step="0.01" min="0" id="price-min-filter" class="form-control" placeholder="Min" style="max-width: 90px;">
+                            <span class="mx-1">-</span>
+                            <input type="number" step="0.01" min="0" id="price-max-filter" class="form-control" placeholder="Max" style="max-width: 90px;">
+                        </div>
+                    </div>
                     <div class="d-flex justify-content-end gap-2">
                         <button type="button" class="btn btn-secondary btn-sm" id="clear-filter-btn">Clear</button>
                         <button type="button" class="btn btn-primary btn-sm" id="apply-filter-btn">Apply</button>
@@ -41,22 +49,23 @@
             </div>
             <table class="table table-striped table-hover align-middle" id="bricks-table">
                 <colgroup>
-                    <col style="width: 60%">
-                    <col style="width: 40%">
+                    <col>
+                    <col style="width: 35%">
+                    <col style="width: 70px">
                 </colgroup>
                 <thead class="table-primary">
                     <tr>
                         <th>Name</th>
                         <th>Manufacturer</th>
+                        <th>Price</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for brick in bricks %}
                     <tr class="brick-row" data-brick='{{ brick | tojson | safe }}' data-id="{{ brick.id }}">
                         <td>{{ brick.name }}</td>
-                        <td>
-                            {{ brick.manufacturer.name }}
-                        </td>
+                        <td>{{ brick.manufacturer.name }}</td>
+                        <td>£{{ '%.2f'|format(brick.price|float) }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -94,6 +103,7 @@
                 </h6>
                 <button id="back-to-brick-btn" class="btn btn-secondary btn-sm mb-3" style="display:none; width: fit-content;">Back to Brick</button>
                 <ul class="list-group list-group-flush mb-0">
+                    <li class="list-group-item"><strong>Price:</strong> <span id="detail-price"></span></li>
                     <li class="list-group-item"><strong>Colour:</strong> <span id="detail-colour"></span></li>
                     <li class="list-group-item"><strong>Material:</strong> <span id="detail-material"></span></li>
                     <li class="list-group-item"><strong>Strength:</strong> <span id="detail-strength"></span></li>
