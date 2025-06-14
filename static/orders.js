@@ -402,7 +402,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- Edit Order Modal Date Logic ---
+    // Edit Order Modal Date Logic
     const editOrderModal = document.getElementById('editOrderModal');
     if (editOrderModal) {
         editOrderModal.addEventListener('show.bs.modal', function () {
@@ -426,7 +426,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // --- Custom Brick Combobox Logic ---
+    // Custom Brick Combobox Logic
     var brickInput = document.getElementById('brick-combobox-input');
     var brickList = document.getElementById('brick-combobox-list');
     var brickIdHidden = document.getElementById('brickId');
@@ -507,7 +507,7 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    // --- Edit Order Modal Form Submission ---
+    // Edit Order Modal Form Submission
     var editOrderForm = document.getElementById('editOrderForm');
     if (editOrderForm) {
         editOrderForm.onsubmit = function(e) {
@@ -561,7 +561,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    // --- Add Order Modal Form Submission ---
+    // Add Order Modal Form Submission
     var addOrderForm = document.querySelector('#addOrderModal form');
     if (addOrderForm) {
         addOrderForm.onsubmit = function(e) {
@@ -635,7 +635,7 @@ document.addEventListener('DOMContentLoaded', function() {
         };
     }
 
-    // --- Add Order Modal: Reset Form on Close ---
+    // Add Order Modal: Reset Form on Close
     const addOrderModalEl = document.getElementById('addOrderModal');
     if (addOrderModalEl) {
         addOrderModalEl.addEventListener('hidden.bs.modal', function () {
