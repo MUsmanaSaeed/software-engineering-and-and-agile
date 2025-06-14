@@ -10,6 +10,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const backBtn = document.getElementById('back-to-brick-btn');
     let previousBrickId = null;
 
+    // Add a global variable for admin status
+    const isAdmin = window.isAdmin === true || window.isAdmin === 'true';
+
     // Add event listener for Back to Brick button
     if (backBtn) {
         backBtn.addEventListener('click', function() {
@@ -45,9 +48,16 @@ document.addEventListener('DOMContentLoaded', () => {
             if (document.getElementById('brick-placeholder-panel')) {
                 document.getElementById('brick-placeholder-panel').classList.add('d-none');
             }
-            if (actions && editLink && deleteLink) {
+            if (actions && editLink) {
                 editLink.href = `/edit_brick/${brick.id}`;
-                deleteLink.href = `/delete_brick/${brick.id}`;
+                if (deleteLink) {
+                    if (isAdmin) {
+                        deleteLink.href = `/delete_brick/${brick.id}`;
+                        deleteLink.style.display = '';
+                    } else {
+                        deleteLink.style.display = 'none';
+                    }
+                }
                 actions.style.display = 'block';
             }
             // Update the URL with the selected brick ID

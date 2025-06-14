@@ -50,7 +50,9 @@
                 {% if session.get('userId') %}
                   <div id="detail-m-actions">
                     <a href="#" id="edit-m-link" class="btn btn-warning btn-sm">Edit</a>
+                    {% if session.get('isAdmin') %}
                     <a href="#" id="delete-m-link" class="btn btn-danger btn-sm">Delete</a>
+                    {% endif %}
                   </div>
                 {% endif %}
               </div>

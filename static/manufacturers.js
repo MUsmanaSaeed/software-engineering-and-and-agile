@@ -160,6 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
         if (editLink) {
             editLink.href = `/edit_manufacturer/${m.id}`;
         }
+        if (actions) actions.style.display = 'block'; // Ensure actions (edit/delete) are always shown
         panel.style.display = 'block';
         if (document.getElementById('manufacturer-placeholder-panel')) {
             document.getElementById('manufacturer-placeholder-panel').classList.add('d-none');

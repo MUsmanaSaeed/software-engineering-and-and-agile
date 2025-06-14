@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from models import db, Manufacturer
 from users import loginRequired
+from manage_users import adminRequired
 from bricks import delete_bricks_by_manufacturer
 from mediators.manufacturer_mediator import ManufacturerMediator
 
@@ -68,6 +69,7 @@ def cancelEditManufacturer(id):
 
 @manufacturers_bp.route('/delete_manufacturer/<int:id>')
 @loginRequired
+@adminRequired
 def deleteManufacturer(id):
     result = ManufacturerMediator.delete_manufacturer_with_checks(id, session.get('isAdmin'))
     if 'error' in result:

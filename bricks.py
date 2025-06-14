@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash
+from flask import Blueprint, render_template, request, redirect, url_for, flash, session
 from models import db, Brick, Manufacturer
 from users import loginRequired
 from mediators.brick_mediator import BrickMediator
@@ -73,6 +73,9 @@ def editBrick(id):
 @bricks_bp.route('/delete_brick/<int:id>')
 @loginRequired
 def deleteBrick(id):
+    if not session.get('isAdmin'):
+        flash('Only admins can delete bricks.', 'danger')
+        return redirect(url_for('bricks.bricks'))
     BrickMediator.delete_brick(id)
     flash('Brick deleted successfully!', 'success')
     return redirect(url_for('bricks.bricks'))
