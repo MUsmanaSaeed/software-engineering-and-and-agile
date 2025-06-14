@@ -524,9 +524,6 @@ html, body {
     transition: transform 0.2s;
     color: #888;
 }
-#brick-combobox-wrapper.active #brick-combobox-arrow {
-    transform: translateY(-50%) rotate(180deg);
-}
 #brick-combobox-input {
     padding-right: 2.2em;
 }
