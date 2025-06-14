@@ -176,14 +176,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function updateFilterBadge() {
         const badge = document.getElementById('brick-filter-badge');
-        const rows = document.querySelectorAll('.brick-row');
-        let hiddenCount = 0;
-        rows.forEach(row => {
-            if (row.style.display === 'none') hiddenCount++;
-        });
+        let activeFilters = 0;
+        // Manufacturer filter
+        if (manufacturerSelect && manufacturerSelect.value) activeFilters++;
+        // Price filters
+        const minPriceInput = document.getElementById('price-min-filter');
+        const maxPriceInput = document.getElementById('price-max-filter');
+        if (minPriceInput && minPriceInput.value !== '') activeFilters++;
+        if (maxPriceInput && maxPriceInput.value !== '') activeFilters++;
+        // Search box
+        if (searchBox && searchBox.value.trim() !== '') activeFilters++;
         if (badge) {
-            if (hiddenCount > 0) {
-                badge.textContent = '1'; // Only show indicator, not count
+            if (activeFilters > 0) {
+                badge.textContent = activeFilters;
                 badge.style.display = 'inline-block';
             } else {
                 badge.style.display = 'none';
@@ -242,6 +247,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
         manufacturerSelect.addEventListener('change', updateFilterBadge);
+    }
+
+    // Allow pressing Enter in the filter dropdown to apply filters
+    if (filterDropdown) {
+        filterDropdown.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                if (applyFilterBtn) applyFilterBtn.click();
+            }
+        });
     }
 
     // Update filterRows to also run on search
