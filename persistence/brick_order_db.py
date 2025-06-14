@@ -1,17 +1,18 @@
 from models import db, BrickOrder
+from sqlalchemy.orm import joinedload
 
 class BrickOrderDB:
     @staticmethod
     def get_by_id(order_id):
-        return BrickOrder.query.get(order_id)
+        return BrickOrder.query.options(joinedload(BrickOrder.brick)).get(order_id)
 
     @staticmethod
     def get_by_order_no(order_no):
-        return BrickOrder.query.filter_by(orderNo=order_no).all()
+        return BrickOrder.query.options(joinedload(BrickOrder.brick)).filter_by(orderNo=order_no).all()
 
     @staticmethod
     def get_all():
-        return BrickOrder.query.all()
+        return BrickOrder.query.options(joinedload(BrickOrder.brick)).all()
 
     @staticmethod
     def add(order):
