@@ -694,3 +694,9 @@ html, body {
     color: #fff;
     box-shadow: 0 4px 16px rgba(211,47,47,0.18);
 }
+
+.is-invalid {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.2rem rgba(220,53,69,.15) !important;
+    animation: flash-in 0.4s;
+}

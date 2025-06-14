@@ -16,6 +16,9 @@ class BrickOrderMediator:
 
     @staticmethod
     def add_order(order_data):
+        # Validate that a brick is selected
+        if 'brickId' not in order_data or not order_data['brickId']:
+            raise ValueError('Please select a brick before adding the order.')
         order = BrickOrder(**order_data)
         BrickOrderDB.add(order)
         return order

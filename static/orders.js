@@ -565,6 +565,19 @@ document.addEventListener('DOMContentLoaded', function() {
     var addOrderForm = document.querySelector('#addOrderModal form');
     if (addOrderForm) {
         addOrderForm.onsubmit = function(e) {
+            var brickIdHidden = document.getElementById('brickId');
+            if (!brickIdHidden || !brickIdHidden.value) {
+                showOrderFlash('Please select a brick before adding the order.', 'danger');
+                var brickInput = document.getElementById('brick-combobox-input');
+                if (brickInput) {
+                    brickInput.classList.add('is-invalid');
+                    brickInput.focus();
+                    setTimeout(function() {
+                        brickInput.classList.remove('is-invalid');
+                    }, 1200);
+                }
+                return false;
+            }
             e.preventDefault();
             var formData = new FormData(addOrderForm);
             fetch(addOrderForm.action, {
@@ -578,29 +591,89 @@ document.addEventListener('DOMContentLoaded', function() {
                     var modal = bootstrap.Modal.getInstance(document.getElementById('addOrderModal'));
                     if (modal) modal.hide();
                     showOrderFlash('Order added!');
-                    if (typeof selectedOrderNo !== 'undefined') {
-                        fetch(ORDER_DETAIL_URL.replace('ORDER_NO_PLACEHOLDER', selectedOrderNo), {
-                            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-                        })
-                        .then(response => response.text())
-                        .then(html => {
-                            const parser = new DOMParser();
-                            const doc = parser.parseFromString(html, 'text/html');
-                            const detailPanel = doc.body.firstElementChild;
-                            if (detailPanel) {
-                                document.querySelector('.col-lg-8').innerHTML = '';
-                                document.querySelector('.col-lg-8').appendChild(detailPanel);
-                                reloadDetailPanel();
-                            }
-                        });
+                    if (data.orderNo) {
+                        var currentOrderNo = typeof selectedOrderNo !== 'undefined' ? selectedOrderNo : null;
+                        if (!currentOrderNo || currentOrderNo !== data.orderNo) {
+                            window.location.href = `/orders/${encodeURIComponent(data.orderNo)}`;
+                            return;
+                        } else {
+                            // If already selected, refresh the detail panel
+                            fetch(ORDER_DETAIL_URL.replace('ORDER_NO_PLACEHOLDER', data.orderNo), {
+                                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                            })
+                            .then(response => response.text())
+                            .then(html => {
+                                const parser = new DOMParser();
+                                const doc = parser.parseFromString(html, 'text/html');
+                                const detailPanel = doc.body.firstElementChild;
+                                if (detailPanel) {
+                                    document.querySelector('.col-lg-8').innerHTML = '';
+                                    document.querySelector('.col-lg-8').appendChild(detailPanel);
+                                    reloadDetailPanel();
+                                }
+                            });
+                        }
                     }
                 } else {
+                    // Show error from mediator (e.g. brick not selected)
                     showOrderFlash(data.error || 'Failed to add order', 'danger');
+                    if (data.error && data.error.toLowerCase().includes('brick')) {
+                        var brickInput = document.getElementById('brick-combobox-input');
+                        if (brickInput) {
+                            brickInput.classList.add('is-invalid');
+                            brickInput.focus();
+                            setTimeout(function() {
+                                brickInput.classList.remove('is-invalid');
+                            }, 1200);
+                        }
+                    }
                 }
             })
             .catch(() => {
                 showOrderFlash('Failed to add order', 'danger');
             });
         };
+    }
+
+    // --- Add Order Modal: Reset Form on Close ---
+    const addOrderModalEl = document.getElementById('addOrderModal');
+    if (addOrderModalEl) {
+        addOrderModalEl.addEventListener('hidden.bs.modal', function () {
+            var form = addOrderModalEl.querySelector('form');
+            if (form) form.reset();
+            // Explicitly clear custom combobox fields
+            var brickInput = document.getElementById('brick-combobox-input');
+            var brickIdHidden = document.getElementById('brickId');
+            var brickList = document.getElementById('brick-combobox-list');
+            var brickComboboxWrapper = document.getElementById('brick-combobox-wrapper');
+            if (brickInput) brickInput.value = '';
+            if (brickIdHidden) brickIdHidden.value = '';
+            if (brickList) brickList.style.display = 'none';
+            if (brickComboboxWrapper) brickComboboxWrapper.classList.remove('active');
+            // Reset ordered date to today (if present)
+            var orderedDateInput = document.getElementById('ordered_date');
+            if (orderedDateInput) {
+                const today = new Date();
+                const yyyy = today.getFullYear();
+                const mm = String(today.getMonth() + 1).padStart(2, '0');
+                const dd = String(today.getDate()).padStart(2, '0');
+                const todayStr = `${yyyy}-${mm}-${dd}`;
+                orderedDateInput.value = todayStr;
+                orderedDateInput.setAttribute('max', todayStr);
+                const minDate = new Date(today);
+                minDate.setDate(today.getDate() - 3);
+                const minY = minDate.getFullYear();
+                const minM = String(minDate.getMonth() + 1).padStart(2, '0');
+                const minD = String(minDate.getDate()).padStart(2, '0');
+                const minStr = `${minY}-${minM}-${minD}`;
+                orderedDateInput.setAttribute('min', minStr);
+            }
+            // Set expected date to null (empty string)
+            var expectedDateInput = document.getElementById('expected_date');
+            if (expectedDateInput) {
+                expectedDateInput.value = '';
+                if (orderedDateInput) expectedDateInput.setAttribute('min', orderedDateInput.value);
+            }
+        });
     }
 });

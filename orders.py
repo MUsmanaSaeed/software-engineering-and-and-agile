@@ -50,15 +50,21 @@ def order_detail(order_no):
 @orders_bp.route('/orders/add', methods=['POST'])
 def add_order():
     data = request.form
-    order_data = {
-        'orderNo': data['orderNo'],
-        'brickId': int(data['brickId']),
-        'bricks_ordered': int(data['bricks_ordered']),
-        'bricks_received': int(data.get('bricks_received', 0)),
-        'ordered_date': datetime.strptime(data['ordered_date'], '%Y-%m-%d'),
-        'expected_date': datetime.strptime(data['expected_date'], '%Y-%m-%d')
-    }
-    new_order = BrickOrderMediator.add_order(order_data)
+    try:
+        order_data = {
+            'orderNo': data['orderNo'],
+            'brickId': int(data['brickId']) if data.get('brickId') else None,
+            'bricks_ordered': int(data['bricks_ordered']),
+            'bricks_received': int(data.get('bricks_received', 0)),
+            'ordered_date': datetime.strptime(data['ordered_date'], '%Y-%m-%d'),
+            'expected_date': datetime.strptime(data['expected_date'], '%Y-%m-%d')
+        }
+        new_order = BrickOrderMediator.add_order(order_data)
+    except ValueError as e:
+        if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
+            return jsonify({'success': False, 'error': str(e)})
+        flash(str(e), 'danger')
+        return redirect(url_for('orders.orders'))
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return jsonify({'success': True, 'orderNo': new_order.orderNo})
     return redirect(url_for('orders.order_detail', order_no=new_order.orderNo))
