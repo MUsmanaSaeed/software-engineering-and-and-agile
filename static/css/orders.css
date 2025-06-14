@@ -119,8 +119,6 @@ html, body {
     text-align: center;
 }
 .order-detail-table thead th {
-    /* background: #e9f5ff; */
-    /* border-bottom: 2px solid #b6d9f7; */
     font-weight: 500;
 }
 .order-detail-table tbody tr {
@@ -148,7 +146,6 @@ html, body {
     align-items: center;
     gap: 0.4em;
     border: 1px solid #388e3c;
-    min-width: 180px;
     justify-content: center;
 }
 .btn-order-edit,
@@ -158,7 +155,7 @@ html, body {
     min-height: 44px;
     padding-top: 0.45rem;
     padding-bottom: 0.45rem;
-    /* The rest of the button-specific styles remain unchanged */
+    width: 44px !important;
 }
 .btn-order-cancel {
     background: #e53935;
@@ -259,9 +256,15 @@ html, body {
     padding-top: 0.5rem;
 }
 .order-list-actions {
+    display: flex;
+    flex-direction: row;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    gap: 0.5rem !important;
     padding-top: 0.5rem;
-    align-items: flex-start !important;
-    gap: 0.3rem !important;
+    margin-top: auto;
+    margin-bottom: 0;
+    margin-left: 0 !important;
 }
 .order-vertical-layout {
     flex-direction: column !important;
@@ -274,7 +277,10 @@ html, body {
     width: 100%;
 }
 .order-vertical-layout .order-list-actions {
-    align-self: flex-end;
+    align-self: flex-end !important;
+    margin-top: auto;
+    margin-bottom: 0;
+    margin-left: 0 !important;
 }
 
 /* Custom Cancel Modal Styles */
@@ -592,7 +598,6 @@ html, body {
     display: inline-flex;
     align-items: center;
     gap: 0.4em;
-    min-width: 180px;
     justify-content: center;
 }
 .btn-order-edit:hover, .btn-order-edit:focus {
@@ -645,9 +650,10 @@ html, body {
     border: 1.5px solid #b71c1c;
     border-radius: 8px;
     padding: 0.45rem 1.1rem;
-    font-weight: 700;
+    font-weight: 600;
     font-size: 1rem;
-    box-shadow: 0 2px 8px rgba(211,47,47,0.12);
+    box-shadow: none;
+    transition: background 0.2s, transform 0.1s;
     margin-bottom: 0.3rem;
     cursor: pointer;
     outline: none;
@@ -656,10 +662,34 @@ html, body {
     display: inline-flex;
     align-items: center;
     gap: 0.4em;
-    min-width: 180px;
     justify-content: center;
 }
 .btn-order-delete:hover, .btn-order-delete:focus {
+    background: #b71c1c;
+    color: #fff;
+    box-shadow: 0 4px 16px rgba(211,47,47,0.18);
+}
+.btn-delete-confirm {
+    background: #d32f2f;
+    color: #fff;
+    border: 1.5px solid #b71c1c;
+    border-radius: 8px;
+    padding: 0.45rem 1.1rem;
+    font-weight: 600;
+    font-size: 1rem;
+    box-shadow: none;
+    transition: background 0.2s, transform 0.1s;
+    margin-bottom: 0.3rem;
+    cursor: pointer;
+    outline: none;
+    letter-spacing: 0.01em;
+    text-transform: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    justify-content: center;
+}
+.btn-delete-confirm:hover, .btn-delete-confirm:focus {
     background: #b71c1c;
     color: #fff;
     box-shadow: 0 4px 16px rgba(211,47,47,0.18);
