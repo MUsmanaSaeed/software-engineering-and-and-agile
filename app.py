@@ -37,12 +37,10 @@ app.register_blueprint(orders_bp)
 if __name__ == 'app':
     with app.app_context():
         db.create_all()
-        from werkzeug.security import generate_password_hash
         if not UserMediator.duplicate_username_exists('admin'):
             admin_user_data = {
                 'userName': 'admin',
-                'password': generate_password_hash('p4$$w0rd', method='pbkdf2:sha256'),
-                'isAdmin': True
+                'password': 'p4$$w0rd',
             }
-            UserMediator.add_user(admin_user_data)
+            UserMediator.add_admin_user(admin_user_data)
     app.run(debug=True)

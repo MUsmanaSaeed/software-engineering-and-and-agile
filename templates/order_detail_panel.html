@@ -148,7 +148,7 @@
         {% if order_details %}
         {% set total_bricks = namespace(val=0) %}
         {% set total_price = namespace(val=0) %}
-        {% for order in order_details %}
+        {% for order in order_details if not order.canceled_date %}
             {% if order.brick and order.brick.price is not none %}
                 {% set total_bricks.val = total_bricks.val + (order.bricks_ordered or 0) %}
                 {% set total_price.val = total_price.val + ((order.bricks_ordered or 0) * (order.brick.price or 0)) %}

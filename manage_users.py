@@ -36,7 +36,7 @@ def add_user():
             'password': request.form['password'],
             'isAdmin': bool(request.form.get('isAdmin'))
         }
-        success, newUser, error_messages, error_fields = UserMediator.add_user(user_data)
+        success, newUser, error_messages, error_fields = UserMediator.add_user(user_data, by_admin=True)
         if not success:
             if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
                 return {"success": False, "message": error_messages[0] if error_messages else '', "error_fields": error_fields}, 400

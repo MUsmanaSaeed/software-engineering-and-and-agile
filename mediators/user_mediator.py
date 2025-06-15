@@ -48,8 +48,12 @@ class UserMediator:
         return True, [], []
 
     @staticmethod
-    def add_user(user_data):
-        valid, error_messages, error_fields = UserMediator.validate_user_data(user_data)
+    def add_user(user_data, by_admin=False):
+        # Determine if admin creation is allowed
+        allow_admin = by_admin and user_data.get('isAdmin', False)
+        # For admin creation by admin, validate as normal user (isAdmin=False) to skip the 'Cannot register as admin.' error
+        validate_data = {**user_data, 'isAdmin': False} if allow_admin else user_data
+        valid, error_messages, error_fields = UserMediator.validate_user_data(validate_data)
         if not valid:
             return False, None, error_messages, error_fields
         from werkzeug.security import generate_password_hash
@@ -57,7 +61,7 @@ class UserMediator:
         user = User(
             userName=user_data['userName'],
             password=user_data['password'],
-            isAdmin=user_data.get('isAdmin', False)
+            isAdmin=allow_admin or user_data.get('isAdmin', False)
         )
         UserDB.add(user)
         return True, user, [], []
@@ -91,3 +95,8 @@ class UserMediator:
             user.password = generate_password_hash(user_data['password'])
         UserDB.commit()
         return True, user, [], []
+
+    @staticmethod
+    def add_admin_user(user_data):
+        # Deprecated: use add_user(user_data, by_admin=True) instead
+        return UserMediator.add_user(user_data, by_admin=True)
