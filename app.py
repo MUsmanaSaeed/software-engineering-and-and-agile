@@ -41,6 +41,7 @@ if __name__ == 'app':
             admin_user_data = {
                 'userName': 'admin',
                 'password': 'p4$$w0rd',
+                'isAdmin': True
             }
             UserMediator.add_admin_user(admin_user_data)
     app.run(debug=True)
