@@ -4,7 +4,10 @@ from sqlalchemy.orm import joinedload
 class BrickOrderDB:
     @staticmethod
     def get_by_id(order_id):
-        return BrickOrder.query.options(joinedload(BrickOrder.brick)).get(order_id)
+        order = db.session.get(BrickOrder, order_id)
+        if order:
+            db.session.refresh(order, ['brick'])
+        return order
 
     @staticmethod
     def get_by_order_no(order_no):

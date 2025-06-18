@@ -3,7 +3,7 @@ from models import db, Brick
 class BrickDB:
     @staticmethod
     def get_by_id(brick_id):
-        return Brick.query.get(brick_id)
+        return db.session.get(Brick, brick_id)
 
     @staticmethod
     def get_all():

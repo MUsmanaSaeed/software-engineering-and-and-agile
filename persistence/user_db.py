@@ -3,7 +3,7 @@ from models import db, User
 class UserDB:
     @staticmethod
     def get_by_id(user_id):
-        return User.query.get(user_id)
+        return db.session.get(User, user_id)
 
     @staticmethod
     def get_by_username(username):

@@ -3,7 +3,7 @@ from models import db, Manufacturer
 class ManufacturerDB:
     @staticmethod
     def get_by_id(manufacturer_id):
-        return Manufacturer.query.get(manufacturer_id)
+        return db.session.get(Manufacturer, manufacturer_id)
 
     @staticmethod
     def get_by_name(name):

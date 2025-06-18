@@ -1,6 +1,10 @@
 import pytest
 from flask import session
-from models import Brick, Manufacturer
+from models import db, Brick, Manufacturer
+
+# Import logger for debug output
+import logging
+logger = logging.getLogger(__name__)
 
 def create_admin_user(app):
     """Create an admin user directly in the database"""
@@ -118,7 +122,7 @@ def test_edit_brick(client, app):
         from models import db
         
         # Get manufacturer
-        manu = Manufacturer.query.get(manu_id)
+        manu = db.session.get(Manufacturer, manu_id)
         assert manu is not None, "Test manufacturer not found"
         
         # Check if test brick already exists
@@ -179,7 +183,7 @@ def test_delete_brick(client, app):
         from models import db
         
         # Get manufacturer
-        manu = Manufacturer.query.get(manu_id)
+        manu = db.session.get(Manufacturer, manu_id)
         assert manu is not None, "Test manufacturer not found"
         
         # Check if test brick already exists

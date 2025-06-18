@@ -1,5 +1,5 @@
 import pytest
-from models import User, db
+from models import db, User
 from werkzeug.security import generate_password_hash
 import logging
 
@@ -111,7 +111,7 @@ def test_edit_user(client, app):
     
     # Verify the changes in the database
     with app.app_context():
-        updated_user = User.query.get(user_id)
+        updated_user = db.session.get(User, user_id)
         assert updated_user is not None
         assert updated_user.userName == 'testuser1edited'
 
@@ -140,7 +140,7 @@ def test_delete_user(client, app):
     
     # Verify the user no longer exists in the database
     with app.app_context():
-        deleted_user = User.query.get(user_id)
+        deleted_user = db.session.get(User, user_id)
         assert deleted_user is None
 
 def test_admin_required(client, app):
